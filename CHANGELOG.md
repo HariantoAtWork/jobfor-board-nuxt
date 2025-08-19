@@ -4,6 +4,12 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-08-19T13:41:14+0200
+- Fixed Card component resolution issue in BoardColumn component
+- Renamed Card.vue to BoardCard.vue for consistency
+- Added proper import for BoardCard component in BoardColumn
+- Cards now display properly when added to columns
+
 ### Fixed - 2025-08-19T12:37:48+0200
 - Fixed component resolution error by renaming `Column.vue` to `BoardColumn.vue`
 - Fixed TypeScript type issues with readonly properties in useBoard composable

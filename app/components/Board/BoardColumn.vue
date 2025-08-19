@@ -46,7 +46,7 @@
     </div>
 
     <div class="cards-container">
-      <Card
+      <BoardCard
         v-for="card in cards"
         :key="card.id"
         :card="card"
@@ -153,6 +153,7 @@
 <script setup lang="ts">
 import type { IColumn, ICard } from '~/types'
 import { ref, computed } from 'vue'
+import BoardCard from './BoardCard.vue'
 
 interface Props {
   column: IColumn
