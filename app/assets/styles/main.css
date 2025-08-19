@@ -29,7 +29,9 @@
     }
 
     .board-header {
-        @apply bg-white border-b border-gray-200 px-6 py-4 shadow-sm;
+        @apply border-b border-gray-200 px-6 py-4 shadow-md;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        color: white;
     }
 
     .board-content {
@@ -42,7 +44,7 @@
     }
 
     .board-columns {
-        @apply flex gap-4 p-6;
+        @apply flex gap-4 p-4;
         min-height: fit-content;
         align-items: flex-start; /* Align columns to top instead of stretching */
     }
@@ -74,7 +76,7 @@
     }
 
     .column-title {
-        @apply font-semibold text-gray-700 text-sm tracking-wide;
+        @apply font-semibold text-gray-700 tracking-wide;
     }
 
     .column-count {
