@@ -24,6 +24,7 @@ export interface ICard {
   via?: string;
   company?: string;
   jobTitle?: string;
+  location?: string;
   link?: string;
   contact?: string;
   description?: string;

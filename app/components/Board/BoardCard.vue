@@ -10,6 +10,7 @@
       <div class="card-title">{{ card.title }}</div>
       <div v-if="card.company" class="card-company">{{ card.company }}</div>
       <div v-if="card.jobTitle" class="card-job-title">{{ card.jobTitle }}</div>
+      <div v-if="card.location" class="card-location">{{ card.location }}</div>
     </div>
 
     <div v-if="card.via || card.contact" class="card-meta">

@@ -4,6 +4,22 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-08-20T01:45:37+0200
+- **Location field support** for job applications
+  - Added `location?: string` to `ICard` interface
+  - Added location field to add card form with placeholder "e.g., London, Remote, New York"
+  - Added location field to edit card form
+  - Added location display in card details modal
+  - Added location display in card component with proper styling
+  - Updated all card creation and editing logic to handle location field
+
+### Changed - 2025-08-20T01:50:15+0200
+- Renamed `place` field to `location` throughout the application for better clarity
+  - Updated `ICard` interface from `place?: string` to `location?: string`
+  - Updated all form labels from "Place" to "Location"
+  - Updated all CSS classes from `.card-place` to `.card-location`
+  - Updated all data binding and references throughout components
+
 ### Fixed - 2025-08-19T13:41:14+0200
 - Fixed Card component resolution issue in BoardColumn component
 - Renamed Card.vue to BoardCard.vue for consistency

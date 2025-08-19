@@ -118,6 +118,15 @@
               />
             </div>
             <div class="form-group">
+              <label class="form-label">Location</label>
+              <input
+                v-model="newCard.location"
+                type="text"
+                class="form-input"
+                placeholder="e.g., London, Remote, New York"
+              />
+            </div>
+            <div class="form-group">
               <label class="form-label">Via</label>
               <input
                 v-model="newCard.via"
@@ -274,6 +283,12 @@
               </div>
             </div>
 
+            <!-- Location -->
+            <div v-if="selectedCard.location">
+              <label class="form-label">Location</label>
+              <p class="text-gray-900">{{ selectedCard.location }}</p>
+            </div>
+
             <!-- Via and Contact -->
             <div
               v-if="selectedCard.via || selectedCard.contact"
@@ -358,6 +373,15 @@
                   placeholder="Specific job title"
                 />
               </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Location</label>
+              <input
+                v-model="editCardData.location"
+                type="text"
+                class="form-input"
+                placeholder="e.g., London, Remote, New York"
+              />
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div class="form-group">
@@ -457,6 +481,7 @@ const newCard = ref({
   title: '',
   company: '',
   jobTitle: '',
+  location: '',
   via: '',
   contact: '',
   link: '',
@@ -471,6 +496,7 @@ const editCardData = ref({
   title: '',
   company: '',
   jobTitle: '',
+  location: '',
   via: '',
   contact: '',
   link: '',
@@ -549,6 +575,7 @@ const addCard = () => {
       title: '',
       company: '',
       jobTitle: '',
+      location: '',
       via: '',
       contact: '',
       link: '',
@@ -577,6 +604,7 @@ const startEditCard = () => {
       title: selectedCard.value.title,
       company: selectedCard.value.company || '',
       jobTitle: selectedCard.value.jobTitle || '',
+      location: selectedCard.value.location || '',
       via: selectedCard.value.via || '',
       contact: selectedCard.value.contact || '',
       link: selectedCard.value.link || '',
