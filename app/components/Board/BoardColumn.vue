@@ -14,35 +14,35 @@
       <div class="column-menu">
         <button
           @click="showColumnMenu = !showColumnMenu"
-          class="text-gray-400 hover:text-gray-600"
+          class="text-gray-400 hover:text-gray-600 relative"
         >
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
             />
           </svg>
-        </button>
 
-        <!-- Column Menu Dropdown -->
-        <div
-          v-if="showColumnMenu"
-          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10"
-        >
-          <div class="py-1">
-            <button
-              @click="editColumn"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              Edit Column
-            </button>
-            <button
-              @click="deleteColumn"
-              class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-            >
-              Delete Column
-            </button>
+          <!-- Column Menu Dropdown -->
+          <div
+            v-if="showColumnMenu"
+            class="absolute right-0 top-full mt-1 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200"
+          >
+            <div class="py-1">
+              <button
+                @click="editColumn"
+                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Edit Column
+              </button>
+              <button
+                @click="deleteColumn"
+                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
+                Delete Column
+              </button>
+            </div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
 
