@@ -1,13 +1,26 @@
 <template>
   <div
-    :class="['column', { 'drag-over': isDragOver }]"
+    :class="[
+      'column',
+      {
+        'drag-over': isDragOver || isColumnDragOver,
+        dragging:
+          columnDragState.isDragging &&
+          columnDragState.draggedColumn?.id === column.id,
+      },
+    ]"
     :data-column-id="column.id"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
     @drop="handleDrop"
   >
     <div class="column-header">
-      <div class="flex items-center gap-2">
+      <div
+        class="flex items-center gap-2 cursor-move"
+        draggable="true"
+        @dragstart="handleColumnDragStart"
+        @dragend="handleColumnDragEnd"
+      >
         <h3 class="column-title">{{ column.title }}</h3>
         <span class="column-count">{{ cards.length }}</span>
       </div>
@@ -164,6 +177,11 @@ interface Props {
     draggedCard: ICard | null
     sourceColumnId: string | null
   }
+  columnDragState: {
+    isDragging: boolean
+    draggedColumn: IColumn | null
+    sourceIndex: number
+  }
 }
 
 interface Emits {
@@ -174,6 +192,9 @@ interface Emits {
   (e: 'editcolumn', columnId: string): void
   (e: 'deletecolumn', columnId: string): void
   (e: 'cardclick', card: ICard): void
+  (e: 'columndragstart', column: IColumn): void
+  (e: 'columndragend'): void
+  (e: 'columndrop', targetIndex: number): void
 }
 
 const props = defineProps<Props>()
@@ -182,6 +203,7 @@ const emit = defineEmits<Emits>()
 const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
 const isDragOver = ref(false)
+const isColumnDragOver = ref(false)
 
 const newCard = ref({
   title: '',
@@ -201,17 +223,33 @@ const isCardDragging = (cardId: string) => {
 
 const handleDragOver = (event: DragEvent) => {
   event.preventDefault()
-  isDragOver.value = true
+  if (props.columnDragState.isDragging) {
+    isColumnDragOver.value = true
+  } else {
+    isDragOver.value = true
+  }
 }
 
 const handleDragLeave = () => {
   isDragOver.value = false
+  isColumnDragOver.value = false
 }
 
 const handleDrop = (event: DragEvent) => {
   event.preventDefault()
   isDragOver.value = false
-  emit('drop', props.column.id)
+  isColumnDragOver.value = false
+
+  if (props.columnDragState.isDragging) {
+    // Handle column drop - emit the target index
+    const columnIndex = Array.from(
+      document.querySelectorAll('.column')
+    ).indexOf(event.currentTarget as Element)
+    emit('columndrop', columnIndex)
+  } else {
+    // Handle card drop
+    emit('drop', props.column.id)
+  }
 }
 
 const handleCardDragStart = (card: ICard) => {
@@ -220,6 +258,18 @@ const handleCardDragStart = (card: ICard) => {
 
 const handleCardDragEnd = () => {
   emit('dragend')
+}
+
+const handleColumnDragStart = (event: DragEvent) => {
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', props.column.id)
+  }
+  emit('columndragstart', props.column)
+}
+
+const handleColumnDragEnd = () => {
+  emit('columndragend')
 }
 
 const handleCardClick = (card: ICard) => {

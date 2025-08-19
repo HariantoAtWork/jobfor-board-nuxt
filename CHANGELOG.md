@@ -32,6 +32,12 @@ All notable changes to the Job Application Tracker project will be documented in
 - Modern, responsive UI design
 - Action buttons in footer (History, Export, Import File, Import from URL)
 
+### Added - 2025-08-19T15:11:31+0200
+- Added column drag and drop functionality for reordering
+- Column headers are now draggable with visual feedback
+- Cursor changes to grab/grabbing when dragging columns
+- Enhanced board layout with reorderable columns
+
 ### Added - 2025-08-19T14:12:49+0200
 - Added background drop zone functionality
 - Cards can now be dropped in the empty space below columns

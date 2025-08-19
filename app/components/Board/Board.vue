@@ -37,6 +37,7 @@
           :column="column"
           :cards="getCardsForColumn(cards, column.id)"
           :drag-state="dragState"
+          :column-drag-state="columnDragState"
           @dragstart="handleCardDragStart"
           @dragend="handleCardDragEnd"
           @drop="handleCardDrop"
@@ -44,6 +45,9 @@
           @editcolumn="handleEditColumn"
           @deletecolumn="handleDeleteColumn"
           @cardclick="handleCardClick"
+          @columndragstart="handleColumnDragStart"
+          @columndragend="handleColumnDragEnd"
+          @columndrop="handleColumnDrop"
         />
 
         <!-- Add Column Button -->
@@ -213,6 +217,7 @@ const {
   columns,
   cards,
   dragState,
+  columnDragState,
   loadBoard,
   addCard,
   addColumn: addColumnToBoard,
@@ -220,6 +225,9 @@ const {
   startDrag,
   endDrag,
   dropCard,
+  startColumnDrag,
+  endColumnDrag,
+  reorderColumns,
 } = useBoard()
 
 // UI state
@@ -282,6 +290,19 @@ const handleCardDrop = (columnId: string) => {
   dropCard(columnId)
 }
 
+// Column drag and drop
+const handleColumnDragStart = (column: IColumn) => {
+  startColumnDrag(column)
+}
+
+const handleColumnDragEnd = () => {
+  endColumnDrag()
+}
+
+const handleColumnDrop = (targetIndex: number) => {
+  reorderColumns(targetIndex)
+}
+
 // Drop zone for background
 const handleBoardDragOver = (event: DragEvent) => {
   event.preventDefault()
@@ -319,7 +340,9 @@ const handleBoardDrop = (event: DragEvent) => {
     })
 
     if (closestColumn) {
-      const columnId = closestColumn.getAttribute('data-column-id')
+      const columnId = (closestColumn as HTMLElement).getAttribute(
+        'data-column-id'
+      )
       if (columnId && columnId !== dragState.value.sourceColumnId) {
         dropCard(columnId)
       }

@@ -14,6 +14,12 @@ export function useBoard() {
     sourceColumnId: null
   })
 
+  const columnDragState = ref({
+    isDragging: false,
+    draggedColumn: null as IColumn | null,
+    sourceIndex: -1
+  })
+
   // Computed properties
   const columns = computed(() => board.value.columns.sort((a, b) => a.order - b.order))
   const cards = computed(() => board.value.cards)
@@ -163,6 +169,41 @@ export function useBoard() {
     endDrag()
   }
 
+  // Column drag and drop handlers
+  const startColumnDrag = (column: IColumn) => {
+    const sourceIndex = board.value.columns.findIndex(col => col.id === column.id)
+    columnDragState.value = {
+      isDragging: true,
+      draggedColumn: column,
+      sourceIndex
+    }
+  }
+
+  const endColumnDrag = () => {
+    columnDragState.value = {
+      isDragging: false,
+      draggedColumn: null,
+      sourceIndex: -1
+    }
+  }
+
+  const reorderColumns = (targetIndex: number) => {
+    if (columnDragState.value.draggedColumn && columnDragState.value.sourceIndex !== targetIndex) {
+      const newColumns = [...board.value.columns]
+      const draggedColumn = newColumns.splice(columnDragState.value.sourceIndex, 1)[0]
+      newColumns.splice(targetIndex, 0, draggedColumn)
+      
+      // Update order values
+      newColumns.forEach((column, index) => {
+        column.order = index + 1
+      })
+      
+      board.value.columns = newColumns
+      saveBoard()
+    }
+    endColumnDrag()
+  }
+
   return {
     // State
     board,
@@ -171,6 +212,7 @@ export function useBoard() {
     isLoading,
     error,
     dragState,
+    columnDragState,
     
     // Actions
     loadBoard,
@@ -184,6 +226,9 @@ export function useBoard() {
     deleteColumn,
     startDrag,
     endDrag,
-    dropCard
+    dropCard,
+    startColumnDrag,
+    endColumnDrag,
+    reorderColumns
   }
 }

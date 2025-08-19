@@ -56,6 +56,19 @@
         @apply flex items-center justify-between mb-4;
     }
 
+    .column-header .cursor-move {
+        cursor: grab;
+    }
+
+    .column-header .cursor-move:active {
+        cursor: grabbing;
+    }
+
+    .column.dragging {
+        opacity: 0.5;
+        transform: rotate(5deg);
+    }
+
     .column-title {
         @apply font-semibold text-gray-700 text-sm uppercase tracking-wide;
     }
