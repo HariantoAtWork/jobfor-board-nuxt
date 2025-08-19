@@ -1,8 +1,9 @@
 import { formatDistanceToNow } from 'date-fns'
 import type { ICard, IColumn, ICardHistory } from '~/types'
+import { v7 as uuidv7 } from 'uuid'
 
 export function generateId(): string {
-  return Math.random().toString(36).substr(2, 9)
+  return uuidv7()
 }
 
 export function formatTimeAgo(dateString: string): string {
@@ -43,16 +44,16 @@ export function moveCard(card: ICard, newColumnId: string, newColumnTitle: strin
 
 export function getDefaultColumns(): IColumn[] {
   return [
-    { id: 'job-posting', title: 'Job Posting', order: 1 },
-    { id: 'cover-letter', title: 'Cover Letter', order: 2 },
-    { id: 'applied', title: 'Applied', order: 3 },
-    { id: 'first-meeting', title: 'First Meeting', order: 4 },
-    { id: 'under-review', title: 'Under Review', order: 5 },
-    { id: 'follow-up', title: 'Follow Up', order: 6 },
-    { id: 'offer', title: 'Offer', order: 7 },
-    { id: 'rejected-expired', title: 'Rejected / Expired', order: 8 },
-    { id: 'recruit-companies', title: 'Recruit Companies', order: 9 },
-    { id: 'missed-calls', title: 'Missed Calls', order: 10 }
+    { id: generateId(), title: 'Job Posting', order: 1 },
+    { id: generateId(), title: 'Cover Letter', order: 2 },
+    { id: generateId(), title: 'Applied', order: 3 },
+    { id: generateId(), title: 'First Meeting', order: 4 },
+    { id: generateId(), title: 'Under Review', order: 5 },
+    { id: generateId(), title: 'Follow Up', order: 6 },
+    { id: generateId(), title: 'Offer', order: 7 },
+    { id: generateId(), title: 'Rejected / Expired', order: 8 },
+    { id: generateId(), title: 'Recruit Companies', order: 9 },
+    { id: generateId(), title: 'Missed Calls', order: 10 }
   ]
 }
 
