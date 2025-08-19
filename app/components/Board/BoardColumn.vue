@@ -291,7 +291,7 @@
             <div v-if="selectedCard.link">
               <label class="form-label">Job Link</label>
               <a
-                :href="selectedCard.link"
+                :href="formattedCardLink"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-blue-600 hover:text-blue-800 underline break-all"
@@ -601,6 +601,26 @@ const saveCardEdit = () => {
 const cancelCardEdit = () => {
   isEditingCard.value = false
 }
+
+// Computed property to format the link with protocol
+const formattedCardLink = computed(() => {
+  if (!selectedCard.value?.link) return ''
+
+  const link = selectedCard.value.link.trim()
+
+  // If link already has a protocol, return as is
+  if (link.match(/^https?:\/\//)) {
+    return link
+  }
+
+  // If link starts with www., add https://
+  if (link.startsWith('www.')) {
+    return `https://${link}`
+  }
+
+  // For other cases, add https://
+  return `https://${link}`
+})
 
 const deleteColumn = () => {
   showColumnMenu.value = false

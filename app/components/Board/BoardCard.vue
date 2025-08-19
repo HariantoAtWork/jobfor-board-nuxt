@@ -24,7 +24,7 @@
     <div class="card-meta">
       <div v-if="card.link" class="mb-2">
         <a
-          :href="card.link"
+          :href="formattedLink"
           target="_blank"
           rel="noopener noreferrer"
           class="card-link"
@@ -60,6 +60,26 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+
+// Computed property to format the link with protocol
+const formattedLink = computed(() => {
+  if (!props.card.link) return ''
+
+  const link = props.card.link.trim()
+
+  // If link already has a protocol, return as is
+  if (link.match(/^https?:\/\//)) {
+    return link
+  }
+
+  // If link starts with www., add https://
+  if (link.startsWith('www.')) {
+    return `https://${link}`
+  }
+
+  // For other cases, add https://
+  return `https://${link}`
+})
 
 const handleDragStart = (event: DragEvent) => {
   if (event.dataTransfer) {
