@@ -152,18 +152,26 @@
 
     .modal-content {
         @apply bg-white rounded-lg shadow-xl max-w-md w-full mx-4;
+        max-height: 90vh; /* Limit height to 90% of viewport */
+        display: flex;
+        flex-direction: column;
     }
 
     .modal-header {
         @apply px-6 py-4 border-b border-gray-200;
+        flex-shrink: 0; /* Prevent header from shrinking */
     }
 
     .modal-body {
         @apply px-6 py-4;
+        overflow-y: auto; /* Make body scrollable */
+        flex: 1; /* Take remaining space */
+        min-height: 0; /* Allow shrinking */
     }
 
     .modal-footer {
         @apply px-6 py-4 border-t border-gray-200 flex justify-end gap-3;
+        flex-shrink: 0; /* Prevent footer from shrinking */
     }
 
     .form-group {
