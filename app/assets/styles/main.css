@@ -48,12 +48,12 @@
     }
 
     .column {
-        @apply bg-gray-100 rounded-lg p-4 min-w-80 max-w-80 flex flex-col;
+        @apply bg-gray-100 rounded-lg min-w-80 max-w-80 flex flex-col;
         height: fit-content; /* Allow natural height based on content */
     }
 
     .column-header {
-        @apply flex items-center justify-between mb-4;
+        @apply flex items-center justify-between p-2 border-b border-gray-200;
     }
 
     .column-header .cursor-move {
@@ -64,13 +64,17 @@
         cursor: grabbing;
     }
 
+    .column-footer {
+        @apply px-2 pb-2;
+    }
+
     .column.dragging {
         opacity: 0.5;
         transform: rotate(5deg);
     }
 
     .column-title {
-        @apply font-semibold text-gray-700 text-sm uppercase tracking-wide;
+        @apply font-semibold text-gray-700 text-sm tracking-wide;
     }
 
     .column-count {
@@ -82,12 +86,12 @@
     }
 
     .cards-container {
-        @apply space-y-3;
+        @apply space-y-3 pt-2 px-2;
         min-height: 0;
     }
 
     .card {
-        @apply bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer;
+        @apply bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer;
     }
 
     .card.dragging {
@@ -95,7 +99,7 @@
     }
 
     .card-header {
-        @apply mb-2;
+        @apply mb-2 px-3 pt-3;
     }
 
     .card-title {
@@ -111,7 +115,7 @@
     }
 
     .card-meta {
-        @apply mt-2 pt-2 border-t border-gray-100;
+        @apply mt-2 pt-2 border-t border-gray-100 px-3 pb-3;
     }
 
     .card-link {

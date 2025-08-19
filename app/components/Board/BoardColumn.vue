@@ -71,9 +71,11 @@
       />
     </div>
 
-    <button @click="showAddCardForm = true" class="add-card-button">
-      + Add card
-    </button>
+    <div class="column-footer">
+      <button @click="showAddCardForm = true" class="add-card-button">
+        + Add card
+      </button>
+    </div>
 
     <!-- Add Card Modal -->
     <div
