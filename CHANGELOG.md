@@ -32,6 +32,12 @@ All notable changes to the Job Application Tracker project will be documented in
 - Modern, responsive UI design
 - Action buttons in footer (History, Export, Import File, Import from URL)
 
+### Added - 2025-08-19T15:24:14+0200
+- Added column title editing functionality
+- Edit column modal with form validation
+- Column titles can now be changed via context menu
+- Enhanced column management capabilities
+
 ### Added - 2025-08-19T15:11:31+0200
 - Added column drag and drop functionality for reordering
 - Column headers are now draggable with visual feedback

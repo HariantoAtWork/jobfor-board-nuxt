@@ -161,6 +161,39 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Column Modal -->
+    <div
+      v-if="showEditColumnForm"
+      class="modal-overlay"
+      @click="showEditColumnForm = false"
+    >
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3 class="text-lg font-medium">Edit Column</h3>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Column Title</label>
+            <input
+              v-model="editColumnData.title"
+              type="text"
+              class="form-input"
+              placeholder="Enter column title"
+              @keyup.enter="saveColumnEdit"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click="showEditColumnForm = false" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button @click="saveColumnEdit" class="btn btn-primary">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -189,7 +222,7 @@ interface Emits {
   (e: 'dragend'): void
   (e: 'drop', columnId: string): void
   (e: 'addcard', cardData: Partial<ICard>, columnId: string): void
-  (e: 'editcolumn', columnId: string): void
+  (e: 'editcolumn', columnId: string, title: string): void
   (e: 'deletecolumn', columnId: string): void
   (e: 'cardclick', card: ICard): void
   (e: 'columndragstart', column: IColumn): void
@@ -202,6 +235,7 @@ const emit = defineEmits<Emits>()
 
 const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
+const showEditColumnForm = ref(false)
 const isDragOver = ref(false)
 const isColumnDragOver = ref(false)
 
@@ -213,6 +247,10 @@ const newCard = ref({
   contact: '',
   link: '',
   description: '',
+})
+
+const editColumnData = ref({
+  title: '',
 })
 
 const isCardDragging = (cardId: string) => {
@@ -295,7 +333,16 @@ const addCard = () => {
 
 const editColumn = () => {
   showColumnMenu.value = false
-  emit('editcolumn', props.column.id)
+  editColumnData.value.title = props.column.title
+  showEditColumnForm.value = true
+}
+
+const saveColumnEdit = () => {
+  if (editColumnData.value.title.trim()) {
+    emit('editcolumn', props.column.id, editColumnData.value.title)
+    showEditColumnForm.value = false
+    editColumnData.value.title = ''
+  }
 }
 
 const deleteColumn = () => {

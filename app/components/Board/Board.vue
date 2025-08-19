@@ -221,6 +221,7 @@ const {
   loadBoard,
   addCard,
   addColumn: addColumnToBoard,
+  updateColumn,
   deleteColumn: deleteColumnFromBoard,
   startDrag,
   endDrag,
@@ -262,9 +263,8 @@ const addColumn = () => {
   }
 }
 
-const handleEditColumn = (columnId: string) => {
-  // TODO: Implement column edit modal
-  console.log('Edit column:', columnId)
+const handleEditColumn = (columnId: string, title: string) => {
+  updateColumn(columnId, { title })
 }
 
 const handleDeleteColumn = (columnId: string) => {
