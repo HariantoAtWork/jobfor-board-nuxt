@@ -105,7 +105,7 @@
     }
 
     .card-title {
-        @apply font-medium text-gray-900 text-sm mb-1;
+        @apply font-medium text-gray-800 text-sm truncate mb-1;
     }
 
     .card-company {
