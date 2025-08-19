@@ -6,5 +6,8 @@ export default defineNuxtConfig({
   tailwindcss: {
     cssPath: '~/assets/styles/main.css',
     configPath: 'tailwind.config.js',
+  },
+  nitro: {
+    preset: 'cloudflare-pages',
   }
 })
