@@ -32,6 +32,13 @@ All notable changes to the Job Application Tracker project will be documented in
 - Modern, responsive UI design
 - Action buttons in footer (History, Export, Import File, Import from URL)
 
+### Added - 2025-08-19T14:12:49+0200
+- Added background drop zone functionality
+- Cards can now be dropped in the empty space below columns
+- Automatic column detection based on mouse position when dropping in background
+- Visual feedback when dragging over the board area
+- Enhanced drag and drop UX for better user experience
+
 ### Technical Implementation
 - **Framework**: Nuxt v4 with Vue 3
 - **Package Manager**: pnpm

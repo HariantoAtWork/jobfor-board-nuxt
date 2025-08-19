@@ -1,6 +1,7 @@
 <template>
   <div
     :class="['column', { 'drag-over': isDragOver }]"
+    :data-column-id="column.id"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
     @drop="handleDrop"

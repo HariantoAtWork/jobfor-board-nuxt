@@ -25,7 +25,11 @@
     </header>
 
     <!-- Board Content -->
-    <main class="board-content">
+    <main
+      class="board-content"
+      @dragover="handleBoardDragOver"
+      @drop="handleBoardDrop"
+    >
       <div class="board-columns">
         <BoardColumn
           v-for="column in columns"
@@ -276,6 +280,51 @@ const handleCardDragEnd = () => {
 
 const handleCardDrop = (columnId: string) => {
   dropCard(columnId)
+}
+
+// Drop zone for background
+const handleBoardDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  // Add a class to indicate a drop zone
+  const mainContent = document.querySelector('.board-content')
+  if (mainContent) {
+    mainContent.classList.add('drop-over')
+  }
+}
+
+const handleBoardDrop = (event: DragEvent) => {
+  event.preventDefault()
+  // Remove the class
+  const mainContent = document.querySelector('.board-content')
+  if (mainContent) {
+    mainContent.classList.remove('drop-over')
+  }
+
+  // If we have a dragged card, find the closest column based on mouse position
+  if (dragState.value.draggedCard && dragState.value.sourceColumnId) {
+    const mouseX = event.clientX
+    const columns = document.querySelectorAll('.column')
+    let closestColumn: Element | null = null
+    let closestDistance = Infinity
+
+    columns.forEach((column) => {
+      const rect = column.getBoundingClientRect()
+      const columnCenterX = rect.left + rect.width / 2
+      const distance = Math.abs(mouseX - columnCenterX)
+
+      if (distance < closestDistance) {
+        closestDistance = distance
+        closestColumn = column
+      }
+    })
+
+    if (closestColumn) {
+      const columnId = closestColumn.getAttribute('data-column-id')
+      if (columnId && columnId !== dragState.value.sourceColumnId) {
+        dropCard(columnId)
+      }
+    }
+  }
 }
 
 // Import/Export
