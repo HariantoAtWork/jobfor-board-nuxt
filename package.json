@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy": "pnpm run build && npx wrangler pages deploy dist"
+    "deploy": "rm -rf .output && pnpm run build && npx wrangler pages deploy dist"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
