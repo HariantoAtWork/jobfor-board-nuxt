@@ -14,13 +14,13 @@
     @dragleave="handleDragLeave"
     @drop="handleDrop"
   >
-    <div class="column-header">
-      <div
-        class="flex items-center gap-2 cursor-move"
-        draggable="true"
-        @dragstart="handleColumnDragStart"
-        @dragend="handleColumnDragEnd"
-      >
+    <div
+      class="column-header cursor-move"
+      draggable="true"
+      @dragstart="handleColumnDragStart"
+      @dragend="handleColumnDragEnd"
+    >
+      <div class="flex items-center gap-2">
         <h3 class="column-title">{{ column.title }}</h3>
         <span class="column-count">{{ cards.length }}</span>
       </div>
