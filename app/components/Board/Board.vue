@@ -47,6 +47,7 @@
           @cardclick="handleCardClick"
           @editcard="handleEditCard"
           @deletecard="handleDeleteCard"
+          @updatecard="handleUpdateCard"
           @columndragstart="handleColumnDragStart"
           @columndragend="handleColumnDragEnd"
           @columndrop="handleColumnDrop"
@@ -223,6 +224,7 @@ const {
   loadBoard,
   addCard,
   deleteCard,
+  updateCard,
   addColumn: addColumnToBoard,
   updateColumn,
   deleteColumn: deleteColumnFromBoard,
@@ -266,6 +268,10 @@ const handleDeleteCard = (cardId: string) => {
   if (confirm('Are you sure you want to delete this card?')) {
     deleteCard(cardId)
   }
+}
+
+const handleUpdateCard = (cardId: string, cardData: Partial<ICard>) => {
+  updateCard(cardId, cardData)
 }
 
 // Column management

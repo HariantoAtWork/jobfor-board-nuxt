@@ -207,10 +207,25 @@
             <h3 class="text-lg font-medium">{{ selectedCard.title }}</h3>
             <div class="flex items-center gap-2">
               <button
-                @click="emit('editcard', selectedCard)"
+                v-if="!isEditingCard"
+                @click="startEditCard"
                 class="text-blue-600 hover:text-blue-800 text-sm font-medium"
               >
                 Edit
+              </button>
+              <button
+                v-if="isEditingCard"
+                @click="saveCardEdit"
+                class="text-green-600 hover:text-green-800 text-sm font-medium"
+              >
+                Save
+              </button>
+              <button
+                v-if="isEditingCard"
+                @click="cancelCardEdit"
+                class="text-gray-600 hover:text-gray-800 text-sm font-medium"
+              >
+                Cancel
               </button>
               <button
                 @click="emit('deletecard', selectedCard.id)"
@@ -240,7 +255,8 @@
           </div>
         </div>
         <div class="modal-body">
-          <div class="space-y-4">
+          <!-- View Mode -->
+          <div v-if="!isEditingCard" class="space-y-4">
             <!-- Company and Job Title -->
             <div
               v-if="selectedCard.company || selectedCard.jobTitle"
@@ -308,6 +324,78 @@
               </div>
             </div>
           </div>
+
+          <!-- Edit Mode -->
+          <div v-else class="space-y-4">
+            <div class="form-group">
+              <label class="form-label">Title *</label>
+              <input
+                v-model="editCardData.title"
+                type="text"
+                class="form-input"
+                placeholder="Job title or application name"
+                required
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Company</label>
+                <input
+                  v-model="editCardData.company"
+                  type="text"
+                  class="form-input"
+                  placeholder="Company name"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Job Title</label>
+                <input
+                  v-model="editCardData.jobTitle"
+                  type="text"
+                  class="form-input"
+                  placeholder="Specific job title"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Via</label>
+                <input
+                  v-model="editCardData.via"
+                  type="text"
+                  class="form-input"
+                  placeholder="e.g., Indeed, LinkedIn, Direct"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact</label>
+                <input
+                  v-model="editCardData.contact"
+                  type="text"
+                  class="form-input"
+                  placeholder="Contact person or email"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Job Link</label>
+              <input
+                v-model="editCardData.link"
+                type="url"
+                class="form-input"
+                placeholder="https://..."
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea
+                v-model="editCardData.description"
+                class="form-textarea"
+                rows="4"
+                placeholder="Additional notes or description"
+              ></textarea>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -345,6 +433,7 @@ interface Emits {
   (e: 'cardclick', card: ICard): void
   (e: 'editcard', card: ICard): void
   (e: 'deletecard', cardId: string): void
+  (e: 'updatecard', cardId: string, cardData: Partial<ICard>): void
   (e: 'columndragstart', column: IColumn): void
   (e: 'columndragend'): void
   (e: 'columndrop', targetIndex: number): void
@@ -357,6 +446,7 @@ const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
 const showEditColumnForm = ref(false)
 const showCardDetails = ref(false)
+const isEditingCard = ref(false)
 const selectedCard = ref<ICard | null>(null)
 const isDragOver = ref(false)
 const isColumnDragOver = ref(false)
@@ -373,6 +463,16 @@ const newCard = ref({
 
 const editColumnData = ref({
   title: '',
+})
+
+const editCardData = ref({
+  title: '',
+  company: '',
+  jobTitle: '',
+  via: '',
+  contact: '',
+  link: '',
+  description: '',
 })
 
 const isCardDragging = (cardId: string) => {
@@ -435,6 +535,7 @@ const handleColumnDragEnd = () => {
 const handleCardClick = (card: ICard) => {
   selectedCard.value = card
   showCardDetails.value = true
+  isEditingCard.value = false
 }
 
 const addCard = () => {
@@ -466,6 +567,39 @@ const saveColumnEdit = () => {
     showEditColumnForm.value = false
     editColumnData.value.title = ''
   }
+}
+
+const startEditCard = () => {
+  if (selectedCard.value) {
+    editCardData.value = {
+      title: selectedCard.value.title,
+      company: selectedCard.value.company || '',
+      jobTitle: selectedCard.value.jobTitle || '',
+      via: selectedCard.value.via || '',
+      contact: selectedCard.value.contact || '',
+      link: selectedCard.value.link || '',
+      description: selectedCard.value.description || '',
+    }
+    isEditingCard.value = true
+  }
+}
+
+const saveCardEdit = () => {
+  if (editCardData.value.title.trim() && selectedCard.value) {
+    emit('updatecard', selectedCard.value.id, editCardData.value)
+    // Update the selectedCard with the new data
+    if (selectedCard.value) {
+      selectedCard.value = {
+        ...selectedCard.value,
+        ...editCardData.value,
+      }
+    }
+    isEditingCard.value = false
+  }
+}
+
+const cancelCardEdit = () => {
+  isEditingCard.value = false
 }
 
 const deleteColumn = () => {
