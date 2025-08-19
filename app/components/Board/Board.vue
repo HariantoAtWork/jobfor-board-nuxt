@@ -45,6 +45,8 @@
           @editcolumn="handleEditColumn"
           @deletecolumn="handleDeleteColumn"
           @cardclick="handleCardClick"
+          @editcard="handleEditCard"
+          @deletecard="handleDeleteCard"
           @columndragstart="handleColumnDragStart"
           @columndragend="handleColumnDragEnd"
           @columndrop="handleColumnDrop"
@@ -220,6 +222,7 @@ const {
   columnDragState,
   loadBoard,
   addCard,
+  deleteCard,
   addColumn: addColumnToBoard,
   updateColumn,
   deleteColumn: deleteColumnFromBoard,
@@ -250,8 +253,19 @@ const handleAddCard = (cardData: Partial<ICard>, columnId: string) => {
 }
 
 const handleCardClick = (card: ICard) => {
-  // TODO: Implement card details modal
+  // This is now handled in the BoardColumn component
   console.log('Card clicked:', card)
+}
+
+const handleEditCard = (card: ICard) => {
+  // TODO: Implement card editing modal
+  console.log('Edit card:', card)
+}
+
+const handleDeleteCard = (cardId: string) => {
+  if (confirm('Are you sure you want to delete this card?')) {
+    deleteCard(cardId)
+  }
 }
 
 // Column management

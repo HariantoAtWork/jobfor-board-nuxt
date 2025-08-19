@@ -194,12 +194,130 @@
         </div>
       </div>
     </div>
+
+    <!-- Card Details Modal -->
+    <div
+      v-if="showCardDetails && selectedCard"
+      class="modal-overlay"
+      @click="showCardDetails = false"
+    >
+      <div class="modal-content max-w-2xl" @click.stop>
+        <div class="modal-header">
+          <div class="flex items-center justify-between w-full">
+            <h3 class="text-lg font-medium">{{ selectedCard.title }}</h3>
+            <div class="flex items-center gap-2">
+              <button
+                @click="emit('editcard', selectedCard)"
+                class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                Edit
+              </button>
+              <button
+                @click="emit('deletecard', selectedCard.id)"
+                class="text-red-600 hover:text-red-800 text-sm font-medium"
+              >
+                Delete
+              </button>
+              <button
+                @click="showCardDetails = false"
+                class="text-gray-500 hover:text-gray-700"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="space-y-4">
+            <!-- Company and Job Title -->
+            <div
+              v-if="selectedCard.company || selectedCard.jobTitle"
+              class="grid grid-cols-2 gap-4"
+            >
+              <div v-if="selectedCard.company">
+                <label class="form-label">Company</label>
+                <p class="text-gray-900">{{ selectedCard.company }}</p>
+              </div>
+              <div v-if="selectedCard.jobTitle">
+                <label class="form-label">Job Title</label>
+                <p class="text-gray-900">{{ selectedCard.jobTitle }}</p>
+              </div>
+            </div>
+
+            <!-- Via and Contact -->
+            <div
+              v-if="selectedCard.via || selectedCard.contact"
+              class="grid grid-cols-2 gap-4"
+            >
+              <div v-if="selectedCard.via">
+                <label class="form-label">Via</label>
+                <p class="text-gray-900">{{ selectedCard.via }}</p>
+              </div>
+              <div v-if="selectedCard.contact">
+                <label class="form-label">Contact</label>
+                <p class="text-gray-900">{{ selectedCard.contact }}</p>
+              </div>
+            </div>
+
+            <!-- Job Link -->
+            <div v-if="selectedCard.link">
+              <label class="form-label">Job Link</label>
+              <a
+                :href="selectedCard.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:text-blue-800 underline break-all"
+              >
+                {{ selectedCard.link }}
+              </a>
+            </div>
+
+            <!-- Description -->
+            <div v-if="selectedCard.description">
+              <label class="form-label">Description</label>
+              <p class="text-gray-900 whitespace-pre-wrap">
+                {{ selectedCard.description }}
+              </p>
+            </div>
+
+            <!-- Timestamps -->
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+              <div>
+                <label class="form-label">Created</label>
+                <p class="text-gray-600 text-sm">
+                  {{ formatTimeAgo(selectedCard.createdAt) }}
+                </p>
+              </div>
+              <div>
+                <label class="form-label">Last Moved</label>
+                <p class="text-gray-600 text-sm">
+                  {{ formatTimeAgo(selectedCard.lastMoved) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { IColumn, ICard } from '~/types'
 import { ref, computed } from 'vue'
+import { formatTimeAgo } from '~/utils/helpers'
 import BoardCard from './BoardCard.vue'
 
 interface Props {
@@ -225,6 +343,8 @@ interface Emits {
   (e: 'editcolumn', columnId: string, title: string): void
   (e: 'deletecolumn', columnId: string): void
   (e: 'cardclick', card: ICard): void
+  (e: 'editcard', card: ICard): void
+  (e: 'deletecard', cardId: string): void
   (e: 'columndragstart', column: IColumn): void
   (e: 'columndragend'): void
   (e: 'columndrop', targetIndex: number): void
@@ -236,6 +356,8 @@ const emit = defineEmits<Emits>()
 const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
 const showEditColumnForm = ref(false)
+const showCardDetails = ref(false)
+const selectedCard = ref<ICard | null>(null)
 const isDragOver = ref(false)
 const isColumnDragOver = ref(false)
 
@@ -311,7 +433,8 @@ const handleColumnDragEnd = () => {
 }
 
 const handleCardClick = (card: ICard) => {
-  emit('cardclick', card)
+  selectedCard.value = card
+  showCardDetails.value = true
 }
 
 const addCard = () => {

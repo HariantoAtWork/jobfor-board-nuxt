@@ -32,6 +32,12 @@ All notable changes to the Job Application Tracker project will be documented in
 - Modern, responsive UI design
 - Action buttons in footer (History, Export, Import File, Import from URL)
 
+### Added - 2025-08-19T16:30:25+0200
+- Added card details modal for viewing job application information
+- Card details modal with comprehensive information display
+- Edit and Delete buttons in card details header
+- Enhanced card management with detailed view capabilities
+
 ### Added - 2025-08-19T15:24:14+0200
 - Added column title editing functionality
 - Edit column modal with form validation
