@@ -321,7 +321,7 @@
               <div class="p-2 bg-amber-50">
                 <div
                   class="text-gray-700 overflow-y-auto"
-                  style="max-height: calc(20 * 1rem)"
+                  style="min-height: 200px; max-height: calc(50vh - 20rem)"
                 >
                   {{ selectedCard.description }}
                 </div>
