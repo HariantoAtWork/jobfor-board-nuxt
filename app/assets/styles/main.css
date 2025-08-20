@@ -101,7 +101,11 @@
     }
 
     .card-header {
-        @apply mb-2 px-3 pt-3;
+        @apply px-3 pt-3 pb-2 border-b border-gray-100;
+    }
+
+    .card-footer {
+        @apply mb-2 px-3 pt-2 border-gray-100;
     }
 
     .card-title {
@@ -121,7 +125,7 @@
     }
 
     .card-meta {
-        @apply mt-2 pt-2 border-t border-gray-100 px-3 pb-3;
+        @apply px-3 py-2 border-b border-gray-100;
     }
 
     .card-link {
@@ -129,7 +133,7 @@
     }
 
     .card-time {
-        @apply text-gray-500 text-xs;
+        @apply px-2 m-2 text-gray-500 text-xs;
     }
 
     .add-card-button {

@@ -8,35 +8,46 @@
   >
     <div class="card-header">
       <div class="card-title">{{ card.title }}</div>
-      <div v-if="card.company" class="card-company">{{ card.company }}</div>
-      <div v-if="card.jobTitle" class="card-job-title">{{ card.jobTitle }}</div>
-      <div v-if="card.location" class="card-location">{{ card.location }}</div>
-    </div>
-
-    <div v-if="card.via || card.contact" class="card-meta">
-      <div v-if="card.via" class="text-gray-500 text-xs mb-1">
-        Via: {{ card.via }}
-      </div>
-      <div v-if="card.contact" class="text-gray-500 text-xs">
-        Contact: {{ card.contact }}
-      </div>
     </div>
 
     <div class="card-meta">
-      <div v-if="card.link" class="mb-2">
+      <div v-if="card.company" class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:factory" />{{ card.company }}
+      </div>
+      <div v-if="card.jobTitle" class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:briefcase" />{{ card.jobTitle }}
+      </div>
+      <div v-if="card.location" class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:map-marker" />{{ card.location }}
+      </div>
+
+      <div v-if="card.contact" class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:account" />{{ card.contact }}
+      </div>
+
+      <div v-if="card.link" class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:link" />
         <a
           :href="formattedLink"
           target="_blank"
           rel="noopener noreferrer"
-          class="card-link"
+          class="text-blue-600 visited:text-purple-600 cursor-alias"
           @click.stop
         >
           View job
         </a>
       </div>
-      <div class="card-time">
-        {{ formatTimeAgo(card.lastMoved) }} in this stage
+    </div>
+
+    <div v-if="card.via" class="card-meta">
+      <div class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:share-variant" />{{ card.via }}
       </div>
+    </div>
+
+    <div class="card-footer flex items-center text-xs gap-1">
+      <Icon name="mdi-light:clock" class="inline-block" />
+      {{ formatTimeAgo(card.lastMoved) }} in this stage
     </div>
   </div>
 </template>
