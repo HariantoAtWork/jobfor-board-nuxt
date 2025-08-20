@@ -13,7 +13,7 @@ export interface ICardHistory {
 
 export interface INote {
   id: string;
-  createdAt: string;
+  createdAt: string; // ISO date string
   title: string;
   body: string;
 }
