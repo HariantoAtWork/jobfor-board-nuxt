@@ -46,6 +46,9 @@
           @editcard="handleEditCard"
           @deletecard="handleDeleteCard"
           @updatecard="handleUpdateCard"
+          @addnote="handleAddNote"
+          @updatenote="handleUpdateNote"
+          @deletenote="handleDeleteNote"
           @columndragstart="handleColumnDragStart"
           @columndragend="handleColumnDragEnd"
           @columndrop="handleColumnDrop"
@@ -206,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ICard, IColumn } from '~/types'
+import type { ICard, IColumn, INote } from '~/types'
 import { ref, onMounted } from 'vue'
 import { useBoard } from '~/composables/useBoard'
 import { exportBoardData, importBoardData } from '~/utils/storage'
@@ -232,6 +235,9 @@ const {
   startColumnDrag,
   endColumnDrag,
   reorderColumns,
+  addNoteToCard,
+  updateNoteInCard,
+  deleteNoteFromCard,
 } = useBoard()
 
 // UI state
@@ -270,6 +276,26 @@ const handleDeleteCard = (cardId: string) => {
 
 const handleUpdateCard = (cardId: string, cardData: Partial<ICard>) => {
   updateCard(cardId, cardData)
+}
+
+// Note management
+const handleAddNote = (
+  cardId: string,
+  noteData: { title: string; body: string }
+) => {
+  addNoteToCard(cardId, noteData)
+}
+
+const handleUpdateNote = (
+  cardId: string,
+  noteId: string,
+  noteData: Partial<INote>
+) => {
+  updateNoteInCard(cardId, noteId, noteData)
+}
+
+const handleDeleteNote = (cardId: string, noteId: string) => {
+  deleteNoteFromCard(cardId, noteId)
 }
 
 // Column management

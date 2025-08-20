@@ -20,6 +20,20 @@ All notable changes to the Job Application Tracker project will be documented in
   - Updated all CSS classes from `.card-place` to `.card-location`
   - Updated all data binding and references throughout components
 
+### Added - 2025-08-20T13:40:04+0200
+- **Complete Notes system** for job application cards
+  - Added `CardNotes.vue` component with full CRUD functionality
+  - Added note management functions to `useBoard` composable (`addNoteToCard`, `updateNoteInCard`, `deleteNoteFromCard`)
+  - Integrated notes into card details modal with edit mode support
+  - Added note count display in notes header
+  - Added note creation timestamps with relative time formatting
+  - Added edit and delete actions for individual notes
+  - Added form validation for note creation and editing
+  - Added keyboard shortcuts (Enter to save, Ctrl+Enter for textarea)
+  - Added confirmation dialog for note deletion
+  - Added proper TypeScript types and interfaces for note management
+  - Added comprehensive styling with amber theme for notes section
+
 ### Fixed - 2025-08-19T13:41:14+0200
 - Fixed Card component resolution issue in BoardColumn component
 - Renamed Card.vue to BoardCard.vue for consistency

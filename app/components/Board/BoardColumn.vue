@@ -246,21 +246,9 @@
               </button>
               <button
                 @click="showCardDetails = false"
-                class="text-gray-500 hover:text-gray-700"
+                class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
               >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <Icon name="mdi:close" />
               </button>
             </div>
           </div>
@@ -340,6 +328,13 @@
               </div>
             </div>
 
+            <CardNotes
+              :is-editing="isEditingCard"
+              :notes="selectedCard.notes"
+              @addnote="handleAddNote"
+              @updatenote="handleUpdateNote"
+              @deletenote="handleDeleteNote"
+            />
             <!-- ######################################################### -->
 
             <!-- Timestamps -->
@@ -438,6 +433,14 @@
                 placeholder="Additional notes or description"
               ></textarea>
             </div>
+
+            <CardNotes
+              :is-editing="isEditingCard"
+              :notes="selectedCard.notes"
+              @addnote="handleAddNote"
+              @updatenote="handleUpdateNote"
+              @deletenote="handleDeleteNote"
+            />
           </div>
         </div>
       </div>
@@ -446,10 +449,11 @@
 </template>
 
 <script setup lang="ts">
-import type { IColumn, ICard } from '~/types'
+import type { IColumn, ICard, INote } from '~/types'
 import { ref, computed } from 'vue'
 import { formatTimeAgo } from '~/utils/helpers'
 import BoardCard from './BoardCard.vue'
+import CardNotes from '../CardNotes.vue'
 
 interface Props {
   column: IColumn
@@ -477,6 +481,18 @@ interface Emits {
   (e: 'editcard', card: ICard): void
   (e: 'deletecard', cardId: string): void
   (e: 'updatecard', cardId: string, cardData: Partial<ICard>): void
+  (
+    e: 'addnote',
+    cardId: string,
+    noteData: { title: string; body: string }
+  ): void
+  (
+    e: 'updatenote',
+    cardId: string,
+    noteId: string,
+    noteData: Partial<INote>
+  ): void
+  (e: 'deletenote', cardId: string, noteId: string): void
   (e: 'columndragstart', column: IColumn): void
   (e: 'columndragend'): void
   (e: 'columndrop', targetIndex: number): void
@@ -672,5 +688,23 @@ const formattedCardLink = computed(() => {
 const deleteColumn = () => {
   showColumnMenu.value = false
   emit('deletecolumn', props.column.id)
+}
+
+const handleAddNote = (noteData: { title: string; body: string }) => {
+  if (selectedCard.value) {
+    emit('addnote', selectedCard.value.id, noteData)
+  }
+}
+
+const handleUpdateNote = (noteId: string, noteData: Partial<INote>) => {
+  if (selectedCard.value) {
+    emit('updatenote', selectedCard.value.id, noteId, noteData)
+  }
+}
+
+const handleDeleteNote = (noteId: string) => {
+  if (selectedCard.value) {
+    emit('deletenote', selectedCard.value.id, noteId)
+  }
 }
 </script>

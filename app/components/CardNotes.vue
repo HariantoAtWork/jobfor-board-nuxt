@@ -1,0 +1,274 @@
+<template>
+  <div class="card-notes">
+    <div class="card-note-header">
+      <h3 class="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Icon name="mdi-light:note-text" />
+        Notes ({{ notes.length }})
+      </h3>
+    </div>
+
+    <div class="card-note-content">
+      <!-- Existing Notes -->
+      <div v-for="note in notes" :key="note.id" class="card-note-item">
+        <div class="note-header">
+          <h4 class="note-title">{{ note.title }}</h4>
+          <div class="note-actions">
+            <button
+              v-if="isEditing"
+              @click="editNote(note)"
+              class="note-action-btn"
+              title="Edit note"
+            >
+              <Icon name="mdi-light:pencil" />
+            </button>
+            <button
+              v-if="isEditing"
+              @click="deleteNote(note.id)"
+              class="note-action-btn text-red-600 hover:text-red-800"
+              title="Delete note"
+            >
+              <Icon name="mdi-light:delete" />
+            </button>
+          </div>
+        </div>
+        <p class="note-body">{{ note.body }}</p>
+        <div class="note-meta">
+          <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+        </div>
+      </div>
+
+      <!-- Add Note Form -->
+      <div v-if="isEditing && showAddForm" class="add-note-form">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input
+            v-model="newNote.title"
+            type="text"
+            class="form-input"
+            placeholder="Note title"
+            @keyup.enter="addNote"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content</label>
+          <textarea
+            v-model="newNote.body"
+            class="form-textarea"
+            rows="3"
+            placeholder="Note content..."
+            @keyup.ctrl.enter="addNote"
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button
+            @click="addNote"
+            class="btn btn-primary"
+            :disabled="!canAddNote"
+          >
+            Add Note
+          </button>
+          <button @click="cancelAddNote" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- Edit Note Form -->
+      <div v-if="isEditing && editingNote" class="edit-note-form">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input
+            v-model="editingNote.title"
+            type="text"
+            class="form-input"
+            placeholder="Note title"
+            @keyup.enter="saveNoteEdit"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content</label>
+          <textarea
+            v-model="editingNote.body"
+            class="form-textarea"
+            rows="3"
+            placeholder="Note content..."
+            @keyup.ctrl.enter="saveNoteEdit"
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button
+            @click="saveNoteEdit"
+            class="btn btn-primary"
+            :disabled="!canSaveNote"
+          >
+            Save Changes
+          </button>
+          <button @click="cancelNoteEdit" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Note Button -->
+    <div
+      v-if="isEditing && !showAddForm && !editingNote"
+      class="card-note-footer"
+    >
+      <button @click="showAddForm = true" class="card-note-add-button">
+        <Icon name="mdi-light:plus" />
+        Add Note
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { INote } from '~/types'
+import { ref, computed } from 'vue'
+import { formatTimeAgo } from '~/utils/helpers'
+
+interface Props {
+  isEditing: boolean
+  notes: INote[]
+}
+
+interface Emits {
+  (e: 'addnote', note: Omit<INote, 'id' | 'createdAt'>): void
+  (e: 'updatenote', noteId: string, noteData: Partial<INote>): void
+  (e: 'deletenote', noteId: string): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const showAddForm = ref(false)
+const editingNote = ref<INote | null>(null)
+
+const newNote = ref({
+  title: '',
+  body: '',
+})
+
+const canAddNote = computed(() => {
+  return newNote.value.title.trim() && newNote.value.body.trim()
+})
+
+const canSaveNote = computed(() => {
+  return editingNote.value?.title.trim() && editingNote.value?.body.trim()
+})
+
+const addNote = () => {
+  if (canAddNote.value) {
+    emit('addnote', {
+      title: newNote.value.title.trim(),
+      body: newNote.value.body.trim(),
+    })
+    cancelAddNote()
+  }
+}
+
+const cancelAddNote = () => {
+  showAddForm.value = false
+  newNote.value = { title: '', body: '' }
+}
+
+const editNote = (note: INote) => {
+  editingNote.value = { ...note }
+}
+
+const saveNoteEdit = () => {
+  if (editingNote.value && canSaveNote.value) {
+    emit('updatenote', editingNote.value.id, {
+      title: editingNote.value.title.trim(),
+      body: editingNote.value.body.trim(),
+    })
+    cancelNoteEdit()
+  }
+}
+
+const cancelNoteEdit = () => {
+  editingNote.value = null
+}
+
+const deleteNote = (noteId: string) => {
+  if (confirm('Are you sure you want to delete this note?')) {
+    emit('deletenote', noteId)
+  }
+}
+</script>
+
+<style scoped>
+.card-notes {
+  @apply bg-amber-50 p-3 rounded-lg border border-amber-200;
+}
+
+.card-note-header {
+  @apply mb-3;
+}
+
+.card-note-content {
+  @apply space-y-3;
+}
+
+.card-note-item {
+  @apply bg-white p-3 rounded border border-amber-100 shadow-sm;
+}
+
+.note-header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.note-title {
+  @apply font-medium text-gray-900 text-sm;
+}
+
+.note-actions {
+  @apply flex items-center gap-1;
+}
+
+.note-action-btn {
+  @apply p-1 text-gray-400 hover:text-gray-600 transition-colors;
+}
+
+.note-body {
+  @apply text-gray-700 text-sm mb-2;
+}
+
+.note-meta {
+  @apply flex items-center justify-end;
+}
+
+.note-date {
+  @apply text-gray-500 text-xs;
+}
+
+.add-note-form,
+.edit-note-form {
+  @apply bg-white p-3 rounded border border-amber-200;
+}
+
+.form-actions {
+  @apply flex items-center gap-2 mt-3;
+}
+
+.card-note-footer {
+  @apply mt-3;
+}
+
+.card-note-add-button {
+  @apply w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 rounded-lg transition-colors;
+}
+
+.btn {
+  @apply px-3 py-2 text-sm font-medium rounded-lg transition-colors;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+}
+</style>

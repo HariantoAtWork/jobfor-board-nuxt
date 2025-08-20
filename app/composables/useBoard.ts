@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import type { IBoardData, ICard, IColumn, DragState } from '~/types'
+import type { IBoardData, ICard, IColumn, INote, DragState } from '~/types'
 import { getDefaultBoardData, generateId, moveCard } from '~/utils/helpers'
 import { saveBoardToStorage, loadBoardFromStorage } from '~/utils/storage'
 
@@ -204,6 +204,45 @@ export function useBoard() {
     endColumnDrag()
   }
 
+  // Note management functions
+  const addNoteToCard = (cardId: string, noteData: { title: string; body: string }) => {
+    const cardIndex = board.value.cards.findIndex(card => card.id === cardId)
+    if (cardIndex !== -1) {
+      const newNote: INote = {
+        id: generateId(),
+        title: noteData.title,
+        body: noteData.body,
+        createdAt: new Date().toISOString()
+      }
+      board.value.cards[cardIndex].notes.push(newNote)
+      saveBoard()
+    }
+  }
+
+  const updateNoteInCard = (cardId: string, noteId: string, noteData: Partial<INote>) => {
+    const cardIndex = board.value.cards.findIndex(card => card.id === cardId)
+    if (cardIndex !== -1) {
+      const noteIndex = board.value.cards[cardIndex].notes.findIndex(note => note.id === noteId)
+      if (noteIndex !== -1) {
+        board.value.cards[cardIndex].notes[noteIndex] = {
+          ...board.value.cards[cardIndex].notes[noteIndex],
+          ...noteData
+        }
+        saveBoard()
+      }
+    }
+  }
+
+  const deleteNoteFromCard = (cardId: string, noteId: string) => {
+    const cardIndex = board.value.cards.findIndex(card => card.id === cardId)
+    if (cardIndex !== -1) {
+      board.value.cards[cardIndex].notes = board.value.cards[cardIndex].notes.filter(
+        note => note.id !== noteId
+      )
+      saveBoard()
+    }
+  }
+
   return {
     // State
     board,
@@ -229,6 +268,11 @@ export function useBoard() {
     dropCard,
     startColumnDrag,
     endColumnDrag,
-    reorderColumns
+    reorderColumns,
+    
+    // Note management
+    addNoteToCard,
+    updateNoteInCard,
+    deleteNoteFromCard
   }
 }
