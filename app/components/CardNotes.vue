@@ -10,54 +10,93 @@
     <div class="card-note-content">
       <!-- Existing Notes -->
       <div v-for="note in notes" :key="note.id" class="card-note-item">
-        <div
-          v-if="!isEditing"
-          class="note-header clickable"
-          @click="toggleNoteExpansion(note.id)"
-          :title="isNoteExpanded(note.id) ? 'Collapse note' : 'Expand note'"
-        >
-          <div class="note-title-row">
-            <h4 class="note-title">{{ note.title }}</h4>
-            <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+        <!-- View Mode -->
+        <div v-if="!isEditingNote(note.id)">
+          <div
+            v-if="!isEditing"
+            class="note-header clickable"
+            @click="toggleNoteExpansion(note.id)"
+            :title="isNoteExpanded(note.id) ? 'Collapse note' : 'Expand note'"
+          >
+            <div class="note-title-row">
+              <h4 class="note-title">{{ note.title }}</h4>
+              <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+            </div>
+            <div class="note-actions">
+              <Icon
+                :name="
+                  isNoteExpanded(note.id)
+                    ? 'mdi-light:chevron-up'
+                    : 'mdi-light:chevron-down'
+                "
+                class="note-toggle-icon"
+              />
+            </div>
           </div>
-          <div class="note-actions">
-            <Icon
-              :name="
-                isNoteExpanded(note.id)
-                  ? 'mdi-light:chevron-up'
-                  : 'mdi-light:chevron-down'
-              "
-              class="note-toggle-icon"
+          <div v-else class="note-header">
+            <div class="note-title-row">
+              <h4 class="note-title note-title--edit">{{ note.title }}</h4>
+              <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+            </div>
+            <div class="note-actions">
+              <button
+                @click="editNote(note)"
+                class="note-action-btn"
+                title="Edit note"
+              >
+                <Icon name="mdi-light:pencil" />
+              </button>
+              <button
+                @click="deleteNote(note.id)"
+                class="note-action-btn text-red-600 hover:text-red-800"
+                title="Delete note"
+              >
+                <Icon name="mdi-light:delete" />
+              </button>
+            </div>
+          </div>
+          <div
+            v-if="isNoteExpanded(note.id) || isEditing"
+            class="note-body-container"
+          >
+            <div class="note-body">{{ note.body }}</div>
+          </div>
+        </div>
+
+        <!-- Edit Mode (Inline) -->
+        <div v-else class="edit-note-inline">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input
+              v-model="editingNote!.title"
+              type="text"
+              class="form-input"
+              placeholder="Note title"
+              @keyup.enter="saveNoteEdit"
             />
           </div>
-        </div>
-        <div v-else class="note-header">
-          <div class="note-title-row">
-            <h4 class="note-title">{{ note.title }}</h4>
-            <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+          <div class="form-group">
+            <label class="form-label">Content</label>
+            <textarea
+              v-model="editingNote!.body"
+              class="form-textarea"
+              rows="3"
+              placeholder="Note content..."
+              @keyup.ctrl.enter="saveNoteEdit"
+            ></textarea>
           </div>
-          <div class="note-actions">
+          <div class="form-actions">
             <button
-              @click="editNote(note)"
-              class="note-action-btn"
-              title="Edit note"
+              @click="saveNoteEdit"
+              class="btn btn-primary"
+              :disabled="!canSaveNote"
             >
-              <Icon name="mdi-light:pencil" />
+              Save Changes
             </button>
-            <button
-              @click="deleteNote(note.id)"
-              class="note-action-btn text-red-600 hover:text-red-800"
-              title="Delete note"
-            >
-              <Icon name="mdi-light:delete" />
+            <button @click="cancelNoteEdit" class="btn btn-secondary">
+              Cancel
             </button>
           </div>
-        </div>
-        <div
-          v-if="isNoteExpanded(note.id) || isEditing"
-          class="note-body-container"
-        >
-          <div class="note-body">{{ note.body }}</div>
         </div>
       </div>
 
@@ -92,42 +131,6 @@
             Add Note
           </button>
           <button @click="cancelAddNote" class="btn btn-secondary">
-            Cancel
-          </button>
-        </div>
-      </div>
-
-      <!-- Edit Note Form -->
-      <div v-if="isEditing && editingNote" class="edit-note-form">
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input
-            v-model="editingNote.title"
-            type="text"
-            class="form-input"
-            placeholder="Note title"
-            @keyup.enter="saveNoteEdit"
-          />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Content</label>
-          <textarea
-            v-model="editingNote.body"
-            class="form-textarea"
-            rows="3"
-            placeholder="Note content..."
-            @keyup.ctrl.enter="saveNoteEdit"
-          ></textarea>
-        </div>
-        <div class="form-actions">
-          <button
-            @click="saveNoteEdit"
-            class="btn btn-primary"
-            :disabled="!canSaveNote"
-          >
-            Save Changes
-          </button>
-          <button @click="cancelNoteEdit" class="btn btn-secondary">
             Cancel
           </button>
         </div>
@@ -233,6 +236,10 @@ const toggleNoteExpansion = (noteId: string) => {
 const isNoteExpanded = (noteId: string) => {
   return expandedNotes.value.has(noteId)
 }
+
+const isEditingNote = (noteId: string) => {
+  return editingNote.value?.id === noteId
+}
 </script>
 
 <style scoped>
@@ -262,6 +269,10 @@ const isNoteExpanded = (noteId: string) => {
 
 .note-title-row {
   @apply flex items-center gap-3 flex-1;
+}
+
+.note-title.note-title--edit {
+  @apply p-2;
 }
 
 .note-title {
@@ -296,9 +307,12 @@ const isNoteExpanded = (noteId: string) => {
   @apply flex items-center justify-end;
 }
 
-.add-note-form,
-.edit-note-form {
+.add-note-form {
   @apply bg-white p-3 rounded border border-amber-200;
+}
+
+.edit-note-inline {
+  @apply p-3;
 }
 
 .form-actions {
