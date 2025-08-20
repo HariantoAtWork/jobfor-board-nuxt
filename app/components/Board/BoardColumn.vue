@@ -269,61 +269,78 @@
           <!-- View Mode -->
           <div v-if="!isEditingCard" class="space-y-4">
             <!-- Company and Job Title -->
-            <div
-              v-if="selectedCard.company || selectedCard.jobTitle"
-              class="grid grid-cols-2 gap-4"
-            >
-              <div v-if="selectedCard.company">
-                <label class="form-label">Company</label>
-                <p class="text-gray-900">{{ selectedCard.company }}</p>
-              </div>
-              <div v-if="selectedCard.jobTitle">
-                <label class="form-label">Job Title</label>
-                <p class="text-gray-900">{{ selectedCard.jobTitle }}</p>
-              </div>
-            </div>
-
-            <!-- Location -->
-            <div v-if="selectedCard.location">
-              <label class="form-label">Location</label>
-              <p class="text-gray-900">{{ selectedCard.location }}</p>
-            </div>
-
-            <!-- Via and Contact -->
-            <div
-              v-if="selectedCard.via || selectedCard.contact"
-              class="grid grid-cols-2 gap-4"
-            >
-              <div v-if="selectedCard.via">
-                <label class="form-label">Via</label>
-                <p class="text-gray-900">{{ selectedCard.via }}</p>
-              </div>
-              <div v-if="selectedCard.contact">
-                <label class="form-label">Contact</label>
-                <p class="text-gray-900">{{ selectedCard.contact }}</p>
-              </div>
-            </div>
-
-            <!-- Job Link -->
-            <div v-if="selectedCard.link">
-              <label class="form-label">Job Link</label>
-              <a
-                :href="formattedCardLink"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 hover:text-blue-800 underline break-all"
+            <div class="grid grid-cols-2 gap-1">
+              <p
+                v-if="selectedCard.company"
+                class="text-gray-900 flex items-center gap-1"
+                title="Company"
               >
-                {{ selectedCard.link }}
-              </a>
-            </div>
-
-            <!-- Description -->
-            <div v-if="selectedCard.description">
-              <label class="form-label">Description</label>
-              <p class="text-gray-900 whitespace-pre-wrap">
-                {{ selectedCard.description }}
+                <Icon name="mdi-light:factory" />{{ selectedCard.company }}
+              </p>
+              <p
+                v-if="selectedCard.jobTitle"
+                class="text-gray-900 flex items-center gap-1"
+                title="Job Title"
+              >
+                <Icon name="mdi-light:briefcase" />{{ selectedCard.jobTitle }}
+              </p>
+              <!-- Location -->
+              <p
+                v-if="selectedCard.location"
+                class="text-gray-900 flex items-center gap-1"
+                title="Location"
+              >
+                <Icon name="mdi-light:map-marker" />{{ selectedCard.location }}
+              </p>
+              <!-- Via and Contact -->
+              <p
+                v-if="selectedCard.via"
+                class="text-gray-900 flex items-center gap-1"
+                title="Via"
+              >
+                <Icon name="mdi-light:share-variant" />{{ selectedCard.via }}
+              </p>
+              <p
+                v-if="selectedCard.contact"
+                class="text-gray-900 flex items-center gap-1"
+                title="Contact"
+              >
+                <Icon name="mdi-light:account" />{{ selectedCard.contact }}
+              </p>
+              <p
+                v-if="selectedCard.link"
+                class="text-gray-900 flex items-center gap-1"
+                title="Job Link"
+              >
+                <Icon name="mdi-light:link" />
+                <a
+                  :href="formattedCardLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 visited:text-purple-600 cursor-alias"
+                  @click.stop
+                >
+                  {{ formattedCardLink }}
+                </a>
               </p>
             </div>
+            <div
+              v-if="selectedCard.description"
+              class="text-gray-900 flex flex-col gap-1"
+              title="Description"
+            >
+              <Icon name="mdi-light:comment-text" />
+              <div class="p-2 bg-amber-50">
+                <div
+                  class="text-gray-700 overflow-y-auto"
+                  style="max-height: calc(20 * 1rem)"
+                >
+                  {{ selectedCard.description }}
+                </div>
+              </div>
+            </div>
+
+            <!-- ######################################################### -->
 
             <!-- Timestamps -->
             <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
