@@ -3,13 +3,13 @@
     <div class="card-note-header">
       <h3 class="text-sm font-medium text-gray-700 flex items-center gap-2">
         <Icon name="mdi-light:note-text" />
-        Notes ({{ notes.length }})
+        Notes ({{ sortedNotes.length }})
       </h3>
     </div>
 
     <div class="card-note-content">
       <!-- Existing Notes -->
-      <div v-for="note in notes" :key="note.id" class="card-note-item">
+      <div v-for="note in sortedNotes" :key="note.id" class="card-note-item">
         <!-- View Mode -->
         <div v-if="!isEditingNote(note.id)">
           <div
@@ -73,6 +73,15 @@
               class="form-input"
               placeholder="Note title"
               @keyup.enter="saveNoteEdit"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Created Date</label>
+            <input
+              v-model="editingNote!.createdAt"
+              type="datetime-local"
+              class="form-input"
+              step="1"
             />
           </div>
           <div class="form-group">
@@ -173,6 +182,13 @@ const showAddForm = ref(false)
 const editingNote = ref<INote | null>(null)
 const expandedNotes = ref<Set<string>>(new Set())
 
+// Sort notes by creation date (newest first)
+const sortedNotes = computed(() => {
+  return [...props.notes].sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  })
+})
+
 const newNote = ref({
   title: '',
   body: '',
@@ -202,15 +218,26 @@ const cancelAddNote = () => {
 }
 
 const editNote = (note: INote) => {
-  editingNote.value = { ...note }
+  // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:MM:SS)
+  const date = new Date(note.createdAt)
+  const localDateTime = date.toISOString().slice(0, 19)
+
+  editingNote.value = {
+    ...note,
+    createdAt: localDateTime,
+  }
 }
 
 const saveNoteEdit = () => {
   if (editingNote.value && canSaveNote.value) {
-    emit('updatenote', editingNote.value.id, {
+    // Convert datetime-local format back to ISO string
+    const updatedNote = {
       title: editingNote.value.title.trim(),
       body: editingNote.value.body.trim(),
-    })
+      createdAt: new Date(editingNote.value.createdAt).toISOString(),
+    }
+
+    emit('updatenote', editingNote.value.id, updatedNote)
     cancelNoteEdit()
   }
 }

@@ -43,6 +43,14 @@ All notable changes to the Job Application Tracker project will be documented in
   - Maintains individual expansion state for each note independently
   - Cleaner, more organized layout with better visual hierarchy
 
+### Added - 2025-08-20T15:01:57+0200
+- **Enhanced Notes editing capabilities**
+  - Added datetime picker for editing note creation date (`createdAt`)
+  - Notes now sorted by creation date with newest items on top
+  - Added proper date format conversion between ISO strings and datetime-local input
+  - Improved note management with chronological ordering
+  - Enhanced edit form with date/time selection for better note organization
+
 ### Fixed - 2025-08-19T13:41:14+0200
 - Fixed Card component resolution issue in BoardColumn component
 - Renamed Card.vue to BoardCard.vue for consistency
