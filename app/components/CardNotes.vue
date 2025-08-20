@@ -8,6 +8,56 @@
     </div>
 
     <div class="card-note-content">
+      <section>
+        <!-- Add Note Button -->
+        <div
+          v-if="isEditing && !showAddForm && !editingNote"
+          class="card-note-footer"
+        >
+          <button @click="showAddForm = true" class="card-note-add-button">
+            <Icon name="mdi-light:plus" />
+            Add Note
+          </button>
+        </div>
+
+        <!-- Add Note Form -->
+        <div v-if="isEditing && showAddForm" class="add-note-form bg-yellow-50">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input
+              v-model="newNote.title"
+              type="text"
+              class="form-input"
+              placeholder="Note title"
+              @keyup.enter="addNote"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Content</label>
+            <textarea
+              v-model="newNote.body"
+              class="form-textarea"
+              rows="3"
+              placeholder="Note content..."
+              @keyup.ctrl.enter="addNote"
+            ></textarea>
+          </div>
+          <div class="form-actions">
+            <button
+              @click="addNote"
+              class="btn btn-primary"
+              :disabled="!canAddNote"
+            >
+              Add Note
+            </button>
+            <button @click="cancelAddNote" class="btn btn-secondary">
+              Cancel
+            </button>
+          </div>
+        </div>
+        <!-- Add Note Form End -->
+      </section>
+
       <!-- Existing Notes -->
       <div v-for="note in sortedNotes" :key="note.id" class="card-note-item">
         <!-- View Mode -->
@@ -108,53 +158,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Add Note Form -->
-      <div v-if="isEditing && showAddForm" class="add-note-form">
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input
-            v-model="newNote.title"
-            type="text"
-            class="form-input"
-            placeholder="Note title"
-            @keyup.enter="addNote"
-          />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Content</label>
-          <textarea
-            v-model="newNote.body"
-            class="form-textarea"
-            rows="3"
-            placeholder="Note content..."
-            @keyup.ctrl.enter="addNote"
-          ></textarea>
-        </div>
-        <div class="form-actions">
-          <button
-            @click="addNote"
-            class="btn btn-primary"
-            :disabled="!canAddNote"
-          >
-            Add Note
-          </button>
-          <button @click="cancelAddNote" class="btn btn-secondary">
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Note Button -->
-    <div
-      v-if="isEditing && !showAddForm && !editingNote"
-      class="card-note-footer"
-    >
-      <button @click="showAddForm = true" class="card-note-add-button">
-        <Icon name="mdi-light:plus" />
-        Add Note
-      </button>
     </div>
   </div>
 </template>
@@ -325,7 +328,7 @@ const isEditingNote = (noteId: string) => {
 }
 
 .note-body {
-  @apply text-gray-700 text-sm;
+  @apply text-gray-700 text-xs;
 }
 
 .note-body-container {
@@ -337,7 +340,7 @@ const isEditingNote = (noteId: string) => {
 }
 
 .add-note-form {
-  @apply bg-white p-3 rounded border border-amber-200;
+  @apply bg-amber-100 p-3 rounded border border-amber-200;
 }
 
 .edit-note-inline {
