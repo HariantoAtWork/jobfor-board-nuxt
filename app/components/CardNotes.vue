@@ -166,7 +166,7 @@
 import type { INote } from '~/types'
 import { ref, computed } from 'vue'
 import { formatTimeAgo } from '~/utils/helpers'
-import dayjs from 'dayjs'
+import dayjs from '~/utils/dayjs-extend'
 
 interface Props {
   isEditing: boolean

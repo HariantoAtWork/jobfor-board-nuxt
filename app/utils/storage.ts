@@ -1,4 +1,5 @@
 import type { IBoardData } from '~/types'
+import dayjs from '~/utils/dayjs-extend'
 
 const STORAGE_KEY = 'job-application-board'
 
@@ -34,7 +35,7 @@ export function exportBoardData(board: IBoardData): void {
       const url = URL.createObjectURL(dataBlob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `job-board-${new Date().toISOString().split('T')[0]}.json`
+      link.download = `job-board-${dayjs().format('YYYYMMDD-HHmmss-SSS')}.json`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
