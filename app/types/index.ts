@@ -15,7 +15,7 @@ export interface INote {
   id: string;
   createdAt: string; // ISO date string
   title: string;
-  body: string;
+  body?: string;
 }
 
 export interface ICard {
