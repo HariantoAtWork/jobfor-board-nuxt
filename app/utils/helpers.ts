@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import type { ICard, IColumn, ICardHistory } from '~/types'
+import type { ICard, IColumn, ICardHistory, IBoardData } from '~/types'
 import { v7 as uuidv7 } from 'uuid'
 
 export function generateId(): string {
