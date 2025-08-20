@@ -57,7 +57,7 @@
           v-if="isNoteExpanded(note.id) || isEditing"
           class="note-body-container"
         >
-          <p class="note-body">{{ note.body }}</p>
+          <div class="note-body">{{ note.body }}</div>
         </div>
       </div>
 
@@ -237,7 +237,7 @@ const isNoteExpanded = (noteId: string) => {
 
 <style scoped>
 .card-notes {
-  @apply bg-amber-50 p-3 rounded-lg border border-amber-200;
+  @apply rounded-lg;
 }
 
 .card-note-header {
@@ -249,11 +249,11 @@ const isNoteExpanded = (noteId: string) => {
 }
 
 .card-note-item {
-  @apply bg-white p-3 rounded border border-amber-100 shadow-sm;
+  @apply rounded bg-slate-100 shadow-sm border border-slate-200;
 }
 
 .note-header {
-  @apply flex items-center justify-between mb-2;
+  @apply flex items-center justify-between;
 }
 
 .note-header.clickable {
@@ -285,11 +285,11 @@ const isNoteExpanded = (noteId: string) => {
 }
 
 .note-body {
-  @apply text-gray-700 text-sm mb-2;
+  @apply text-gray-700 text-sm;
 }
 
 .note-body-container {
-  @apply mt-2;
+  @apply p-2;
 }
 
 .note-meta {
