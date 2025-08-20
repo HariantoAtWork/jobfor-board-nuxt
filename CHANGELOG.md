@@ -34,6 +34,15 @@ All notable changes to the Job Application Tracker project will be documented in
   - Added proper TypeScript types and interfaces for note management
   - Added comprehensive styling with amber theme for notes section
 
+### Added - 2025-08-20T13:54:09+0200
+- **Improved Notes view mode** with compact toggle design
+  - Notes now display title and timestamp on one line for better space efficiency
+  - Added expand/collapse toggle button (chevron up/down) next to each note
+  - Note body is hidden by default in view mode and can be toggled to show/hide
+  - In edit mode, all note bodies are always visible for editing
+  - Maintains individual expansion state for each note independently
+  - Cleaner, more organized layout with better visual hierarchy
+
 ### Fixed - 2025-08-19T13:41:14+0200
 - Fixed Card component resolution issue in BoardColumn component
 - Renamed Card.vue to BoardCard.vue for consistency

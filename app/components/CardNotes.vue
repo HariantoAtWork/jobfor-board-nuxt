@@ -10,11 +10,34 @@
     <div class="card-note-content">
       <!-- Existing Notes -->
       <div v-for="note in notes" :key="note.id" class="card-note-item">
-        <div class="note-header">
-          <h4 class="note-title">{{ note.title }}</h4>
+        <div
+          v-if="!isEditing"
+          class="note-header clickable"
+          @click="toggleNoteExpansion(note.id)"
+          :title="isNoteExpanded(note.id) ? 'Collapse note' : 'Expand note'"
+        >
+          <div class="note-title-row">
+            <h4 class="note-title">{{ note.title }}</h4>
+            <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+          </div>
+          <div class="note-actions">
+            <Icon
+              :name="
+                isNoteExpanded(note.id)
+                  ? 'mdi-light:chevron-up'
+                  : 'mdi-light:chevron-down'
+              "
+              class="note-toggle-icon"
+            />
+          </div>
+        </div>
+        <div v-else class="note-header">
+          <div class="note-title-row">
+            <h4 class="note-title">{{ note.title }}</h4>
+            <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+          </div>
           <div class="note-actions">
             <button
-              v-if="isEditing"
               @click="editNote(note)"
               class="note-action-btn"
               title="Edit note"
@@ -22,7 +45,6 @@
               <Icon name="mdi-light:pencil" />
             </button>
             <button
-              v-if="isEditing"
               @click="deleteNote(note.id)"
               class="note-action-btn text-red-600 hover:text-red-800"
               title="Delete note"
@@ -31,9 +53,11 @@
             </button>
           </div>
         </div>
-        <p class="note-body">{{ note.body }}</p>
-        <div class="note-meta">
-          <span class="note-date">{{ formatTimeAgo(note.createdAt) }}</span>
+        <div
+          v-if="isNoteExpanded(note.id) || isEditing"
+          class="note-body-container"
+        >
+          <p class="note-body">{{ note.body }}</p>
         </div>
       </div>
 
@@ -144,6 +168,7 @@ const emit = defineEmits<Emits>()
 
 const showAddForm = ref(false)
 const editingNote = ref<INote | null>(null)
+const expandedNotes = ref<Set<string>>(new Set())
 
 const newNote = ref({
   title: '',
@@ -196,6 +221,18 @@ const deleteNote = (noteId: string) => {
     emit('deletenote', noteId)
   }
 }
+
+const toggleNoteExpansion = (noteId: string) => {
+  if (expandedNotes.value.has(noteId)) {
+    expandedNotes.value.delete(noteId)
+  } else {
+    expandedNotes.value.add(noteId)
+  }
+}
+
+const isNoteExpanded = (noteId: string) => {
+  return expandedNotes.value.has(noteId)
+}
 </script>
 
 <style scoped>
@@ -219,8 +256,20 @@ const deleteNote = (noteId: string) => {
   @apply flex items-center justify-between mb-2;
 }
 
+.note-header.clickable {
+  @apply cursor-pointer hover:bg-gray-50 rounded px-2 py-1 transition-colors;
+}
+
+.note-title-row {
+  @apply flex items-center gap-3 flex-1;
+}
+
 .note-title {
   @apply font-medium text-gray-900 text-sm;
+}
+
+.note-date {
+  @apply text-gray-500 text-xs;
 }
 
 .note-actions {
@@ -231,16 +280,20 @@ const deleteNote = (noteId: string) => {
   @apply p-1 text-gray-400 hover:text-gray-600 transition-colors;
 }
 
+.note-toggle-icon {
+  @apply text-gray-400 transition-colors;
+}
+
 .note-body {
   @apply text-gray-700 text-sm mb-2;
 }
 
-.note-meta {
-  @apply flex items-center justify-end;
+.note-body-container {
+  @apply mt-2;
 }
 
-.note-date {
-  @apply text-gray-500 text-xs;
+.note-meta {
+  @apply flex items-center justify-end;
 }
 
 .add-note-form,
