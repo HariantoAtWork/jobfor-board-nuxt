@@ -163,6 +163,7 @@
 import type { INote } from '~/types'
 import { ref, computed } from 'vue'
 import { formatTimeAgo } from '~/utils/helpers'
+import dayjs from 'dayjs'
 
 interface Props {
   isEditing: boolean
@@ -185,7 +186,7 @@ const expandedNotes = ref<Set<string>>(new Set())
 // Sort notes by creation date (newest first)
 const sortedNotes = computed(() => {
   return [...props.notes].sort((a, b) => {
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    return dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
   })
 })
 
@@ -218,9 +219,8 @@ const cancelAddNote = () => {
 }
 
 const editNote = (note: INote) => {
-  // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:MM:SS)
-  const date = new Date(note.createdAt)
-  const localDateTime = date.toISOString().slice(0, 19)
+  // Convert ISO string to user's local datetime format using dayjs
+  const localDateTime = dayjs(note.createdAt).format('YYYY-MM-DDTHH:mm:ss')
 
   editingNote.value = {
     ...note,
@@ -230,11 +230,13 @@ const editNote = (note: INote) => {
 
 const saveNoteEdit = () => {
   if (editingNote.value && canSaveNote.value) {
-    // Convert datetime-local format back to ISO string
+    // Convert local datetime to ISO string using dayjs
+    const isoString = dayjs(editingNote.value.createdAt).toISOString()
+
     const updatedNote = {
       title: editingNote.value.title.trim(),
       body: editingNote.value.body.trim(),
-      createdAt: new Date(editingNote.value.createdAt).toISOString(),
+      createdAt: isoString,
     }
 
     emit('updatenote', editingNote.value.id, updatedNote)
