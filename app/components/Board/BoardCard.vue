@@ -44,6 +44,16 @@
         <Icon name="mdi-light:share-variant" />{{ card.via }}
       </div>
     </div>
+    <div
+      v-if="Array.isArray(card.notes) && card.notes.length"
+      class="card-meta"
+    >
+      <div class="flex items-center text-xs gap-1">
+        <Icon name="mdi-light:note" />{{ card.notes.length }} Note{{
+          card.notes.length === 1 ? '' : 's'
+        }}
+      </div>
+    </div>
 
     <div class="card-footer flex items-center text-xs gap-1">
       <Icon name="mdi-light:clock" class="inline-block" />
