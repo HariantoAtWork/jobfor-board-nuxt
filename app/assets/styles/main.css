@@ -239,7 +239,7 @@
     }
 
     .activity-group-header {
-        @apply sticky top-0 z-10 bg-white py-3 px-2 border-b border-gray-200 shadow-sm;
+        @apply sticky top-0 z-10 bg-slate-100 py-3 px-2 border-b border-gray-200 shadow-sm;
         margin: 0 -1.5rem;
         padding-left: 1.5rem;
         padding-right: 1.5rem;
