@@ -232,6 +232,34 @@
     .btn-danger {
         @apply bg-red-600 text-white hover:bg-red-700;
     }
+
+    /* Activity History Modal */
+    .activity-group {
+        @apply relative;
+    }
+
+    .activity-group-header {
+        @apply sticky top-0 z-10 bg-white py-3 px-2 border-b border-gray-200 shadow-sm;
+        margin: 0 -1.5rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .activity-group-content {
+        @apply pt-2 pb-4;
+    }
+
+    .activity-item {
+        @apply p-2 rounded-lg hover:bg-gray-50 transition-colors;
+    }
+
+    .activity-icon {
+        @apply flex-shrink-0 mt-0.5;
+    }
+
+    .activity-content {
+        @apply flex-1 min-w-0;
+    }
 }
 
 @layer utilities {

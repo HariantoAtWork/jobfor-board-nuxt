@@ -223,15 +223,112 @@
         </div>
       </div>
     </div>
+
+    <!-- Activity History Modal -->
+    <div v-if="showHistory" class="modal-overlay" @click="showHistory = false">
+      <div class="modal-content max-w-2xl" @click.stop>
+        <div class="modal-header flex item-center justify-between">
+          <h3 class="text-lg font-medium">Activity History</h3>
+          <button
+            @click="showHistory = false"
+            class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body pt-0">
+          <div
+            v-if="activityHistory.length === 0"
+            class="text-center text-gray-500 py-8"
+          >
+            <svg
+              class="w-12 h-12 mx-auto mb-4 text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <p>No activity history yet</p>
+          </div>
+          <div v-else class="space-y-6">
+            <div
+              v-for="(group, monthYear) in groupedActivityHistory"
+              :key="monthYear"
+              class="activity-group"
+            >
+              <div class="activity-group-header">
+                <h4 class="text-sm font-semibold text-gray-700">
+                  {{ monthYear }}
+                </h4>
+              </div>
+              <div class="activity-group-content">
+                <div class="space-y-3">
+                  <div
+                    v-for="activity in group"
+                    :key="activity.id"
+                    class="activity-item"
+                  >
+                    <div class="flex items-start gap-3">
+                      <div class="activity-icon">
+                        <svg
+                          class="w-4 h-4 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"
+                          />
+                        </svg>
+                      </div>
+                      <div class="activity-content">
+                        <p class="text-gray-900 text-sm">
+                          {{ activity.description }}
+                        </p>
+                        <p class="text-gray-500 text-xs">
+                          {{ formatActivityTime(activity.timestamp) }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ICard, IColumn, INote } from '~/types'
-import { ref, onMounted } from 'vue'
+import type { ICard, IColumn, INote, ICardHistory } from '~/types'
+import { ref, onMounted, computed } from 'vue'
 import { useBoard } from '~/composables/useBoard'
 import { exportBoardData, importBoardData } from '~/utils/storage'
-import { getCardsForColumn } from '~/utils/helpers'
+import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
+import dayjs from '~/utils/dayjs-extend'
 
 // Board state
 const {
@@ -454,5 +551,60 @@ const importFromUrl = async () => {
   } catch (error) {
     alert('Failed to import from URL: ' + error)
   }
+}
+
+// Activity History
+const activityHistory = computed(() => {
+  const history: Array<{
+    id: string
+    description: string
+    timestamp: string
+  }> = []
+
+  // Collect all card movements from history
+  cards.value.forEach((card) => {
+    if (card.history && card.history.length > 0) {
+      card.history.forEach((entry) => {
+        history.push({
+          id: entry.id,
+          description: `${card.title} moved to ${entry.columnTitle}`,
+          timestamp: entry.timestamp,
+        })
+      })
+    }
+  })
+
+  // Sort by timestamp (newest first)
+  return history.sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  )
+})
+
+const groupedActivityHistory = computed(() => {
+  const groups: Record<
+    string,
+    Array<{
+      id: string
+      description: string
+      timestamp: string
+    }>
+  > = {}
+
+  activityHistory.value.forEach((activity) => {
+    const date = dayjs(activity.timestamp)
+    const monthYear = date.format('MMMM YYYY')
+
+    if (!groups[monthYear]) {
+      groups[monthYear] = []
+    }
+    groups[monthYear].push(activity)
+  })
+
+  return groups
+})
+
+const formatActivityTime = (timestamp: string) => {
+  const date = dayjs(timestamp)
+  return date.format('MMM D, h:mm A')
 }
 </script>

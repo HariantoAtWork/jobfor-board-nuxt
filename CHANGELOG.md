@@ -4,6 +4,16 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-08-25T16:39:31+0200
+- **Activity History Modal** - Complete implementation of the history tracking system
+- Added Activity History modal that displays when clicking the History button
+- Shows chronological log of all card movements grouped by month and year
+- Each activity entry displays card title, destination column, and timestamp
+- Activities are sorted with newest items on top
+- Empty state with icon when no activity history exists
+- Responsive design with proper scrolling for long history lists
+- Clean, professional UI matching the application's design system
+
 ### Fixed - 2025-08-25T14:20:00+0200
 - **Fixed import functionality** - imported data now properly updates the board state instead of just logging to console
 - Added `replaceBoard` method to `useBoard` composable for proper board replacement
