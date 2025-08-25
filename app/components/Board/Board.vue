@@ -329,6 +329,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useBoard } from '~/composables/useBoard'
 import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
+import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
 
 // Board state
@@ -570,6 +571,17 @@ const activityHistory = computed(() => {
           id: entry.id,
           description: `**${card.title}** moved to **${entry.columnTitle}**`,
           timestamp: entry.timestamp,
+        })
+      })
+    }
+
+    // Collect all notes from cards
+    if (card.notes && card.notes.length > 0) {
+      card.notes.forEach((note) => {
+        history.push({
+          id: note.id,
+          description: `**${card.title}** - Note: **${note.title}**`,
+          timestamp: note.createdAt,
         })
       })
     }

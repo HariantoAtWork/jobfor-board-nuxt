@@ -4,6 +4,14 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Enhanced - 2025-08-25T17:06:39+0200
+- **Enhanced Activity History** - Added notes to the activity timeline
+- Notes are now included in the activity history flow alongside card movements
+- Each note entry shows card title, note title, and creation timestamp
+- All activities (movements + notes) are sorted chronologically in a single timeline
+- Improved visual styling with sticky month/year headers and better contrast
+- Enhanced activity descriptions with bold formatting for better readability
+
 ### Added - 2025-08-25T16:39:31+0200
 - **Activity History Modal** - Complete implementation of the history tracking system
 - Added Activity History modal that displays when clicking the History button
