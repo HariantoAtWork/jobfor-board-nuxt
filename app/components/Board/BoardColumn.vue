@@ -320,8 +320,8 @@
               <Icon name="mdi-light:comment-text" />
               <div class="p-2 bg-amber-50">
                 <div
-                  class="text-gray-700 overflow-y-auto"
-                  style="min-height: 200px; max-height: calc(50vh - 20rem)"
+                  class="make-html text-gray-700 overflow-y-auto max-h-8"
+                  style="max-height: 8em"
                   v-html="makeHtml(selectedCard.description)"
                 />
               </div>

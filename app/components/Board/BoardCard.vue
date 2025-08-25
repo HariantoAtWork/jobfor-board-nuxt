@@ -44,6 +44,7 @@
         <Icon name="mdi-light:share-variant" />{{ card.via }}
       </div>
     </div>
+
     <div
       v-if="Array.isArray(card.notes) && card.notes.length"
       class="card-meta"
