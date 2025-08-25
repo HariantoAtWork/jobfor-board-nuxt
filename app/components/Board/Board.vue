@@ -526,7 +526,7 @@ const activityHistory = computed(() => {
       card.notes.forEach((note) => {
         history.push({
           id: note.id,
-          description: `**${card.title}** - Note: **${note.title}**`,
+          description: `**${card.title}** - 🗒️ Note: **${note.title}**`,
           timestamp: note.createdAt,
         })
       })
