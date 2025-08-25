@@ -6,8 +6,44 @@
     @dragend="handleDragEnd"
     @click="openCardDetails"
   >
-    <div class="card-header">
+    <div class="card-header flex items-center justify-between">
       <div class="card-title">{{ card.title }}</div>
+      <div class="card-menu relative">
+        <button
+          @click.stop="toggleMoveMenu"
+          class="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+        >
+          <Icon name="mdi:dots-vertical" />
+        </button>
+
+        <!-- Move to Column Context Menu -->
+        <div
+          v-if="showMoveMenu"
+          class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48"
+        >
+          <div class="p-2 border-b border-gray-100">
+            <h4 class="text-sm font-medium text-gray-700">Move to Column</h4>
+          </div>
+          <div class="max-h-60 overflow-y-auto">
+            <button
+              v-for="column in availableColumns"
+              :key="column.id"
+              @click="moveToColumn(column.id)"
+              class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between"
+              :class="{
+                'bg-blue-50 text-blue-700': column.id === card.columnId,
+              }"
+            >
+              <span>{{ column.title }}</span>
+              <Icon
+                v-if="column.id === card.columnId"
+                name="mdi:check"
+                class="text-blue-600"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card-meta">
@@ -64,18 +100,21 @@
 </template>
 
 <script setup lang="ts">
-import type { ICard } from '~/types'
+import type { ICard, IColumn } from '~/types'
 import { formatTimeAgo } from '~/utils/helpers'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 interface Props {
   card: ICard
   isDragging?: boolean
+  columns: IColumn[]
 }
 
 interface Emits {
   (e: 'dragstart', card: ICard): void
   (e: 'dragend'): void
   (e: 'click', card: ICard): void
+  (e: 'movecard', cardId: string, columnId: string): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -119,4 +158,34 @@ const handleDragEnd = () => {
 const openCardDetails = () => {
   emit('click', props.card)
 }
+
+// Move menu functionality
+const showMoveMenu = ref(false)
+
+const availableColumns = computed(() => {
+  return props.columns.filter((column) => column.id !== props.card.columnId)
+})
+
+const toggleMoveMenu = () => {
+  showMoveMenu.value = !showMoveMenu.value
+}
+
+const moveToColumn = (columnId: string) => {
+  emit('movecard', props.card.id, columnId)
+  showMoveMenu.value = false
+}
+
+// Close menu when clicking outside
+const closeMenu = () => {
+  showMoveMenu.value = false
+}
+
+// Add click outside listener
+onMounted(() => {
+  document.addEventListener('click', closeMenu)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeMenu)
+})
 </script>

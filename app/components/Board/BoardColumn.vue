@@ -29,11 +29,7 @@
           @click="showColumnMenu = !showColumnMenu"
           class="text-gray-400 hover:text-gray-600 relative"
         >
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-            />
-          </svg>
+          <Icon name="mdi:dots-vertical" />
 
           <!-- Column Menu Dropdown -->
           <div
@@ -64,10 +60,12 @@
         v-for="card in cards"
         :key="card.id"
         :card="card"
+        :columns="columns"
         :is-dragging="isCardDragging(card.id)"
         @dragstart="handleCardDragStart"
         @dragend="handleCardDragEnd"
         @click="handleCardClick"
+        @movecard="handleMoveCard"
       />
     </div>
 
@@ -461,6 +459,7 @@ import makeHtml from '~/utils/makeHtml'
 interface Props {
   column: IColumn
   cards: ICard[]
+  columns: IColumn[]
   dragState: {
     isDragging: boolean
     draggedCard: ICard | null
@@ -499,6 +498,7 @@ interface Emits {
   (e: 'columndragstart', column: IColumn): void
   (e: 'columndragend'): void
   (e: 'columndrop', targetIndex: number): void
+  (e: 'movecard', cardId: string, columnId: string): void
 }
 
 const props = defineProps<Props>()
@@ -600,6 +600,10 @@ const handleCardClick = (card: ICard) => {
   selectedCard.value = card
   showCardDetails.value = true
   isEditingCard.value = false
+}
+
+const handleMoveCard = (cardId: string, columnId: string) => {
+  emit('movecard', cardId, columnId)
 }
 
 const addCard = () => {

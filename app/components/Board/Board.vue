@@ -22,6 +22,7 @@
           :key="column.id"
           :column="column"
           :cards="getCardsForColumn(cards, column.id)"
+          :columns="columns"
           :drag-state="dragState"
           :column-drag-state="columnDragState"
           @dragstart="handleCardDragStart"
@@ -40,6 +41,7 @@
           @columndragstart="handleColumnDragStart"
           @columndragend="handleColumnDragEnd"
           @columndrop="handleColumnDrop"
+          @movecard="handleMoveCard"
         />
 
         <!-- Add Column Button -->
@@ -291,6 +293,7 @@ const {
   addCard,
   deleteCard,
   updateCard,
+  moveCardToColumn,
   addColumn: addColumnToBoard,
   updateColumn,
   deleteColumn: deleteColumnFromBoard,
@@ -499,6 +502,10 @@ const importFromUrl = async () => {
   } catch (error) {
     alert('Failed to import from URL: ' + error)
   }
+}
+
+const handleMoveCard = (cardId: string, columnId: string) => {
+  moveCardToColumn(cardId, columnId)
 }
 
 // Activity History

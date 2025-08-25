@@ -4,6 +4,15 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-08-25T21:36:14+0200
+- **Card Move Context Menu** - Quick column navigation for cards
+- Added three-dot menu button in card header for quick actions
+- Context menu shows all available columns to move the card to
+- Current column is highlighted with checkmark and blue background
+- Menu closes automatically when clicking outside or selecting a column
+- Perfect solution for moving cards when columns are far apart
+- Responsive design with proper z-index and positioning
+
 ### Enhanced - 2025-08-25T17:06:39+0200
 - **Enhanced Activity History** - Added notes to the activity timeline
 - Notes are now included in the activity history flow alongside card movements
