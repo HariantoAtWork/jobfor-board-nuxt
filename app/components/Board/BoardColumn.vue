@@ -289,13 +289,17 @@
               >
                 <Icon name="mdi-light:share-variant" />{{ selectedCard.via }}
               </p>
-              <p
-                v-if="selectedCard.contact"
-                class="text-gray-900 flex items-center gap-1"
-                title="Contact"
-              >
-                <Icon name="mdi-light:account" />{{ selectedCard.contact }}
-              </p>
+
+              <template v-if="selectedCard.contact">
+                <p
+                  v-for="(contact, index) in selectedCard.contact.split(',')"
+                  :key="index"
+                  class="text-gray-900 flex items-center gap-1"
+                  title="Contact"
+                >
+                  <Icon name="mdi-light:account" />{{ contact }}
+                </p>
+              </template>
               <p
                 v-if="selectedCard.link"
                 class="text-gray-900 flex items-start gap-1"
@@ -434,6 +438,26 @@
               ></textarea>
             </div>
 
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Created</label>
+                <input
+                  v-model="editCardData.createdAt"
+                  type="datetime-local"
+                  class="form-input"
+                  readonly
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Moved</label>
+                <input
+                  v-model="editCardData.lastMoved"
+                  type="datetime-local"
+                  class="form-input"
+                />
+              </div>
+            </div>
+
             <CardNotes
               :is-editing="isEditingCard"
               :notes="selectedCard.notes"
@@ -455,6 +479,7 @@ import { formatTimeAgo } from '~/utils/helpers'
 import BoardCard from './BoardCard.vue'
 import CardNotes from '../CardNotes.vue'
 import makeHtml from '~/utils/makeHtml'
+import dayjs from '~/utils/dayjs-extend'
 
 interface Props {
   column: IColumn
@@ -537,6 +562,8 @@ const editCardData = ref({
   contact: '',
   link: '',
   description: '',
+  createdAt: '',
+  lastMoved: '',
 })
 
 const isCardDragging = (cardId: string) => {
@@ -640,6 +667,14 @@ const saveColumnEdit = () => {
 
 const startEditCard = () => {
   if (selectedCard.value) {
+    // Convert ISO dates to datetime-local format
+    const createdAtLocal = dayjs(selectedCard.value.createdAt).format(
+      'YYYY-MM-DDTHH:mm:ss'
+    )
+    const lastMovedLocal = dayjs(selectedCard.value.lastMoved).format(
+      'YYYY-MM-DDTHH:mm:ss'
+    )
+
     editCardData.value = {
       title: selectedCard.value.title,
       company: selectedCard.value.company || '',
@@ -649,6 +684,8 @@ const startEditCard = () => {
       contact: selectedCard.value.contact || '',
       link: selectedCard.value.link || '',
       description: selectedCard.value.description || '',
+      createdAt: createdAtLocal,
+      lastMoved: lastMovedLocal,
     }
     isEditingCard.value = true
   }
@@ -656,12 +693,18 @@ const startEditCard = () => {
 
 const saveCardEdit = () => {
   if (editCardData.value.title.trim() && selectedCard.value) {
-    emit('updatecard', selectedCard.value.id, editCardData.value)
+    // Convert datetime-local format back to ISO format
+    const updatedCardData = {
+      ...editCardData.value,
+      lastMoved: dayjs(editCardData.value.lastMoved).toISOString(),
+    }
+
+    emit('updatecard', selectedCard.value.id, updatedCardData)
     // Update the selectedCard with the new data
     if (selectedCard.value) {
       selectedCard.value = {
         ...selectedCard.value,
-        ...editCardData.value,
+        ...updatedCardData,
       }
     }
     isEditingCard.value = false

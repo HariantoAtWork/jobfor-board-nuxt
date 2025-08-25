@@ -4,6 +4,14 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-08-25T21:51:05+0200
+- **Editable Last Moved Date** - Enhanced card editing capabilities
+- Added ability to edit the "Last Moved" date in Card Details Edit Mode
+- Date picker uses datetime-local input for precise date/time selection
+- Created date is displayed as read-only for reference
+- Proper date format conversion between ISO strings and datetime-local format
+- Uses dayjs for consistent date/time handling across the application
+
 ### Added - 2025-08-25T21:36:14+0200
 - **Card Move Context Menu** - Quick column navigation for cards
 - Added three-dot menu button in card header for quick actions

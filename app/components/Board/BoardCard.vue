@@ -57,9 +57,15 @@
         <Icon name="mdi-light:map-marker" />{{ card.location }}
       </div>
 
-      <div v-if="card.contact" class="flex items-center text-xs gap-1">
-        <Icon name="mdi-light:account" />{{ card.contact }}
-      </div>
+      <template v-if="card.contact">
+        <div
+          v-for="(contact, index) in card.contact.split(',')"
+          :key="index"
+          class="flex items-center text-xs gap-1"
+        >
+          <Icon name="mdi-light:account" />{{ contact }}
+        </div>
+      </template>
 
       <div v-if="card.link" class="flex items-center text-xs gap-1">
         <Icon name="mdi-light:link" />
