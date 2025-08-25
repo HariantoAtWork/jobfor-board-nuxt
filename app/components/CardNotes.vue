@@ -109,7 +109,10 @@
             v-if="isNoteExpanded(note.id) || isEditing"
             class="note-body-container"
           >
-            <div class="note-body">{{ note.body }}</div>
+            <div
+              class="note-body whitespace-pre-wrap make-html"
+              v-html="makeHtml(note.body)"
+            />
           </div>
         </div>
 
