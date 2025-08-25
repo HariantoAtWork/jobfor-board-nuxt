@@ -303,9 +303,10 @@
                         </svg>
                       </div>
                       <div class="activity-content">
-                        <p class="text-gray-900 text-sm">
-                          {{ activity.description }}
-                        </p>
+                        <div
+                          class="text-gray-900 text-sm"
+                          v-html="makeHtml(activity.description)"
+                        />
                         <p class="text-gray-500 text-xs">
                           {{ formatActivityTime(activity.timestamp) }}
                         </p>
@@ -567,7 +568,7 @@ const activityHistory = computed(() => {
       card.history.forEach((entry) => {
         history.push({
           id: entry.id,
-          description: `${card.title} moved to ${entry.columnTitle}`,
+          description: `**${card.title}** moved to **${entry.columnTitle}**`,
           timestamp: entry.timestamp,
         })
       })
