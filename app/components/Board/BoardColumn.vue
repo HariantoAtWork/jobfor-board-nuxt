@@ -72,8 +72,11 @@
     </div>
 
     <div class="column-footer">
-      <button @click="showAddCardForm = true" class="add-card-button">
-        + Add card
+      <button
+        @click="showAddCardForm = true"
+        class="add-card-button flex items-center justify-center"
+      >
+        <Icon name="mdi:plus" />&nbsp;Add card
       </button>
     </div>
 
