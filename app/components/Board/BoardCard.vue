@@ -31,7 +31,7 @@
           :href="formattedLink"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-blue-600 visited:text-purple-600 cursor-alias"
+          class="text-blue-600 visited:text-purple-600 cursor-alias break-all"
           @click.stop
         >
           View job

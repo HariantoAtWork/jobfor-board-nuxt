@@ -297,15 +297,15 @@
               </p>
               <p
                 v-if="selectedCard.link"
-                class="text-gray-900 flex items-center gap-1"
+                class="text-gray-900 flex items-start gap-1"
                 title="Job Link"
               >
-                <Icon name="mdi-light:link" />
+                <Icon name="mdi-light:link" class="flex-shrink-0 mt-1" />
                 <a
                   :href="formattedCardLink"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-blue-600 visited:text-purple-600 cursor-alias"
+                  class="text-blue-600 visited:text-purple-600 cursor-alias break-all"
                   @click.stop
                 >
                   {{ formattedCardLink }}
