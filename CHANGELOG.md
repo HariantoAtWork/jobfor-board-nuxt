@@ -4,6 +4,13 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-08-25T14:20:00+0200
+- **Fixed import functionality** - imported data now properly updates the board state instead of just logging to console
+- Added `replaceBoard` method to `useBoard` composable for proper board replacement
+- Added validation for imported JSON data structure to ensure required fields are present
+- Updated both file import and URL import handlers to use the new `replaceBoard` method
+- Added success alerts to confirm successful imports
+
 ### Added - 2025-08-20T01:45:37+0200
 - **Location field support** for job applications
   - Added `location?: string` to `ICard` interface

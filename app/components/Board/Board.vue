@@ -10,11 +10,29 @@
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
+            <!-- Main briefcase -->
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
               d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6"
+            />
+            <!-- Document/application icon inside briefcase -->
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 12h6m-6 4h4m-4-8h2"
+              opacity="0.7"
+            />
+            <!-- Checkmark for success/tracking -->
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+              class="text-green-500"
+              opacity="0.8"
             />
           </svg>
           <h1 class="text-xl font-semibold">Job Application Tracker</h1>
@@ -223,6 +241,8 @@ const {
   dragState,
   columnDragState,
   loadBoard,
+  saveBoard,
+  replaceBoard,
   addCard,
   deleteCard,
   updateCard,
@@ -410,8 +430,8 @@ const handleFileImport = async (event: Event) => {
   if (file) {
     try {
       const importedBoard = await importBoardData(file)
-      // TODO: Implement board replacement logic
-      console.log('Imported board:', importedBoard)
+      replaceBoard(importedBoard)
+      alert('Board imported successfully!')
     } catch (error) {
       alert('Failed to import file: ' + error)
     }
@@ -427,8 +447,8 @@ const importFromUrl = async () => {
   try {
     const response = await fetch(importUrl.value)
     const data = await response.json()
-    // TODO: Implement board replacement logic
-    console.log('Imported from URL:', data)
+    replaceBoard(data)
+    alert('Board imported successfully from URL!')
     showImportUrlForm.value = false
     importUrl.value = ''
   } catch (error) {

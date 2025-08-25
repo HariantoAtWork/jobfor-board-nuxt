@@ -54,6 +54,23 @@ export function importBoardData(file: File): Promise<IBoardData> {
         try {
           const content = e.target?.result as string
           const board = JSON.parse(content)
+          
+          // Basic validation of board structure
+          if (!board || typeof board !== 'object') {
+            reject(new Error('Invalid board data structure'))
+            return
+          }
+          
+          if (!Array.isArray(board.columns) || !Array.isArray(board.cards)) {
+            reject(new Error('Board must contain columns and cards arrays'))
+            return
+          }
+          
+          if (!board.id || typeof board.id !== 'string') {
+            reject(new Error('Board must have a valid ID'))
+            return
+          }
+          
           resolve(board)
         } catch (error) {
           reject(new Error('Invalid file format'))

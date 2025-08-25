@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* @layer base {
     html {
         font-family: "Inter", system-ui, sans-serif;
     }
@@ -17,7 +17,7 @@
     #__nuxt {
         height: 100vh;
     }
-}
+} */
 
 @layer components {
     .board-container {
@@ -44,13 +44,13 @@
     }
 
     .board-columns {
-        @apply flex gap-4 p-4;
+        @apply flex gap-3 p-4;
         min-height: fit-content;
         align-items: flex-start; /* Align columns to top instead of stretching */
     }
 
     .column {
-        @apply bg-gray-100 rounded-lg min-w-80 max-w-80 flex flex-col;
+        @apply bg-gray-100 rounded-lg min-w-60 max-w-60 flex flex-col;
         height: fit-content; /* Allow natural height based on content */
     }
 
@@ -88,7 +88,7 @@
     }
 
     .cards-container {
-        @apply space-y-3 pt-2 px-2;
+        @apply space-y-1 pt-1 px-1;
         min-height: 0;
     }
 

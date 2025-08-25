@@ -322,9 +322,8 @@
                 <div
                   class="text-gray-700 overflow-y-auto"
                   style="min-height: 200px; max-height: calc(50vh - 20rem)"
-                >
-                  {{ selectedCard.description }}
-                </div>
+                  v-html="makeHtml(selectedCard.description)"
+                />
               </div>
             </div>
 
@@ -454,6 +453,7 @@ import { ref, computed } from 'vue'
 import { formatTimeAgo } from '~/utils/helpers'
 import BoardCard from './BoardCard.vue'
 import CardNotes from '../CardNotes.vue'
+import makeHtml from '~/utils/makeHtml'
 
 interface Props {
   column: IColumn

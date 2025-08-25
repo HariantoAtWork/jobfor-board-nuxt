@@ -50,6 +50,18 @@ export function useBoard() {
     }
   }
 
+  // Replace entire board (for imports)
+  const replaceBoard = (newBoard: IBoardData) => {
+    try {
+      board.value = newBoard
+      saveBoard()
+      error.value = null
+    } catch (err) {
+      error.value = 'Failed to replace board data'
+      console.error(err)
+    }
+  }
+
   // Add new card
   const addCard = (cardData: Partial<ICard>, columnId: string) => {
     const newCard: ICard = {
@@ -256,6 +268,7 @@ export function useBoard() {
     // Actions
     loadBoard,
     saveBoard,
+    replaceBoard,
     addCard,
     updateCard,
     deleteCard,
