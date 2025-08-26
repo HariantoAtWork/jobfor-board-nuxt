@@ -26,7 +26,7 @@
       </div>
       <div class="column-menu">
         <button
-          @click="showColumnMenu = !showColumnMenu"
+          @click.stop="showColumnMenu = !showColumnMenu"
           class="text-gray-400 hover:text-gray-600 relative"
         >
           <Icon name="mdi:dots-vertical" />
@@ -474,7 +474,7 @@
 
 <script setup lang="ts">
 import type { IColumn, ICard, INote } from '~/types'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { formatTimeAgo } from '~/utils/helpers'
 import BoardCard from './BoardCard.vue'
 import CardNotes from '../CardNotes.vue'
@@ -757,4 +757,24 @@ const handleDeleteNote = (noteId: string) => {
     emit('deletenote', selectedCard.value.id, noteId)
   }
 }
+
+// Click outside functionality for column menu
+const closeColumnMenu = () => {
+  showColumnMenu.value = false
+}
+
+const handleClickOutside = (event: Event) => {
+  const target = event.target as Element
+  if (!target.closest('.column-menu')) {
+    closeColumnMenu()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>

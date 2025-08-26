@@ -4,6 +4,14 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-08-26T13:15:27+0200
+- **Column Context Menu Click-Outside** - Improved menu behavior
+- Fixed column context menu not hiding when clicking outside
+- Added click-outside event listener with proper cleanup
+- Menu now closes automatically when clicking anywhere outside
+- Consistent behavior with other context menus in the application
+- Added proper event handling with onMounted/onUnmounted lifecycle hooks
+
 ### Added - 2025-08-25T21:51:05+0200
 - **Editable Last Moved Date** - Enhanced card editing capabilities
 - Added ability to edit the "Last Moved" date in Card Details Edit Mode
