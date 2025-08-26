@@ -11,7 +11,7 @@
       <div class="card-menu relative">
         <button
           @click.stop="toggleMoveMenu"
-          class="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+          class="text-gray-400 hover:text-gray-600 p-1 rounded"
         >
           <Icon name="mdi:dots-vertical" />
         </button>
@@ -19,12 +19,14 @@
         <!-- Move to Column Context Menu -->
         <div
           v-if="showMoveMenu"
-          class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48"
+          class="contextmenu absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48"
         >
-          <div class="p-2 border-b border-gray-100">
-            <h4 class="text-sm font-medium text-gray-700">Move to Column</h4>
+          <div
+            class="contextmenu-header p-2 border-b border-gray-100 rounded-t-lg bg-purple-800 text-white"
+          >
+            <h4 class="text-sm font-medium">Move to Column</h4>
           </div>
-          <div class="max-h-60 overflow-y-auto">
+          <div class="contextmenu-body max-h-60 overflow-y-auto">
             <button
               v-for="column in availableColumns"
               :key="column.id"

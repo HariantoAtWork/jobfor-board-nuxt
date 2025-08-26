@@ -101,7 +101,7 @@
     }
 
     .card-header {
-        @apply px-3 pt-3 pb-2 border-b border-gray-100;
+        @apply px-3 pt-1 pb-0 border-b border-gray-100 bg-indigo-100 rounded-t-lg;
     }
 
     .card-footer {
