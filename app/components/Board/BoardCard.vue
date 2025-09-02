@@ -102,15 +102,16 @@
 
     <div class="card-footer flex items-center text-xs gap-1">
       <Icon name="mdi-light:clock" class="inline-block" />
-      {{ formatTimeAgo(card.lastMoved) }} in this stage
+      {{ formatTime(card.lastMoved, nowStore.now) }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { ICard, IColumn } from '~/types'
-import { formatTimeAgo } from '~/utils/helpers'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import nowStore from '~/store/now'
+import { formatTime } from '~/utils/dayjs-extend'
 
 interface Props {
   card: ICard
