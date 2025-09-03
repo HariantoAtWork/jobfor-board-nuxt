@@ -74,6 +74,14 @@
             <Icon name="mdi:link" />
             Import from URL
           </button>
+          <button @click="onLoadBoard" class="action-button load">
+            <Icon name="mdi:download" />
+            Load Board
+          </button>
+          <button @click="onSaveBoard" class="action-button backup">
+            <Icon name="mdi:backup" />
+            Save Board
+          </button>
         </div>
       </div>
     </footer>
@@ -446,13 +454,37 @@ const importFromUrl = async () => {
 
   try {
     const response = await fetch(importUrl.value)
-    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const { data } = await response.json()
+
+    // Validate the imported data structure (same as importBoardData)
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid board data structure')
+    }
+
+    if (!Array.isArray(data.columns) || !Array.isArray(data.cards)) {
+      throw new Error('Board must contain columns and cards arrays')
+    }
+
+    if (!data.id || typeof data.id !== 'string') {
+      throw new Error('Board must have a valid ID')
+    }
+
+    // Process the data consistently with file import
     replaceBoard(data)
+
     alert('Board imported successfully from URL!')
     showImportUrlForm.value = false
     importUrl.value = ''
   } catch (error) {
-    alert('Failed to import from URL: ' + error)
+    console.error('Failed to import from URL:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to import from URL: ' + errorMessage)
   }
 }
 
@@ -497,6 +529,88 @@ const activityHistory = computed(() => {
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   )
 })
+
+const onSaveBoard = async () => {
+  try {
+    // Prepare board data for saving
+    const boardData = board.value
+
+    // Save to API
+    const response = await fetch('/api/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(boardData),
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success) {
+      // alert('Board saved successfully!')
+      console.log('Board saved:', result)
+    } else {
+      throw new Error(result.message || 'Failed to save board')
+    }
+  } catch (error) {
+    console.error('Error saving board:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to save board: ' + errorMessage)
+  }
+}
+
+const onLoadBoard = async () => {
+  try {
+    // Load board data from API
+    const response = await fetch('/api/data', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success && result.data) {
+      // Validate the loaded data structure
+      if (!result.data || typeof result.data !== 'object') {
+        throw new Error('Invalid board data structure')
+      }
+
+      if (
+        !Array.isArray(result.data.columns) ||
+        !Array.isArray(result.data.cards)
+      ) {
+        throw new Error('Board must contain columns and cards arrays')
+      }
+
+      if (!result.data.id || typeof result.data.id !== 'string') {
+        throw new Error('Board must have a valid ID')
+      }
+
+      // Replace the current board with loaded data
+      replaceBoard(result.data)
+      alert('Board loaded successfully!')
+      console.log('Board loaded:', result.data)
+    } else {
+      throw new Error(result.message || 'Failed to load board')
+    }
+  } catch (error) {
+    console.error('Error loading board:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to load board: ' + errorMessage)
+  }
+}
 
 const groupedActivityHistory = computed(() => {
   const groups: Record<

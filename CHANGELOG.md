@@ -14,6 +14,45 @@ All notable changes to the Job Application Tracker project will be documented in
 - Development commands and package management with pnpm
 - TypeScript best practices and Vue 3 Composition API guidelines
 
+### Added - 2025-09-03T12:32:42+0200
+- **Full RESTful API for JSON Data Management** - Complete API system for managing data.json files
+- Created comprehensive REST API endpoints in `server/api/data/` directory
+- **Core CRUD Operations**: GET, POST, PUT, DELETE for `/api/data`
+- **Utility Endpoints**: File existence check, metadata info, backup creation, search functionality
+- **Advanced Features**: Automatic directory creation, data validation, error handling
+- **Search Capabilities**: Full-text search with path-based filtering and result limiting
+- **Backup System**: Timestamped backups with automatic directory management
+- **File Management**: Automatic `.data/json/` directory structure creation
+- **Comprehensive Documentation**: Complete API reference with examples and usage patterns
+- **Error Handling**: Consistent error responses with proper HTTP status codes
+- **Security Features**: Path validation and restricted file operations
+
+### Added - 2025-09-03T12:32:42+0200
+- **Board Save Functionality** - Integrated board saving with REST API
+- Implemented `onSaveBoard` function in Board.vue component
+- Saves complete board state (board, columns, cards) to `/api/data` endpoint
+- Includes timestamp for last saved data
+- Proper error handling with user-friendly alerts
+- Fixed UI.Logo component reference issue
+
+### Fixed - 2025-09-03T12:32:42+0200
+- **Import from URL Functionality** - Fixed inconsistent behavior and sort errors
+- Enhanced `importFromUrl` function with proper data validation
+- Added HTTP response status checking for better error handling
+- Implemented same validation logic as file import for consistency
+- Added proper error logging and user-friendly error messages
+- Fixed data structure validation to prevent sort errors
+- Ensured imported data has required columns and cards arrays
+
+### Added - 2025-09-03T12:32:42+0200
+- **Load Board Functionality** - New button to load saved board data from API
+- Added "Load Board" button before "Save Board" in footer actions
+- Implemented `onLoadBoard` function to fetch data from `/api/data` endpoint
+- Added comprehensive data validation for loaded board data
+- Includes proper error handling and user feedback
+- Styled with orange theme to distinguish from other action buttons
+- Provides seamless board restoration from saved JSON data
+
 ### Added - 2025-01-27T11:45:00+0000
 - **Better-Auth API Test Script** - Comprehensive testing suite for central auth server
 - Created `test-login.sh` script for testing all better-auth endpoints
