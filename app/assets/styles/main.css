@@ -177,6 +177,46 @@
         @apply bg-orange-100 text-orange-700 hover:bg-orange-200;
     }
 
+    .action-button.board-menu {
+        @apply bg-purple-100 text-purple-700 hover:bg-purple-200;
+    }
+
+    .action-button.file-menu {
+        @apply bg-green-100 text-green-700 hover:bg-green-200;
+    }
+
+    .board-context-menu {
+        @apply absolute left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[160px];
+    }
+
+    .board-context-menu-bottom {
+        @apply top-full mt-1;
+    }
+
+    .board-context-menu-top {
+        @apply bottom-full mb-1;
+    }
+
+    .file-context-menu {
+        @apply absolute left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[160px];
+    }
+
+    .file-context-menu-bottom {
+        @apply top-full mt-1;
+    }
+
+    .file-context-menu-top {
+        @apply bottom-full mb-1;
+    }
+
+    .context-menu-item {
+        @apply w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors;
+    }
+
+    .context-menu-item:hover {
+        @apply bg-gray-50;
+    }
+
     .modal-overlay {
         @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
     }

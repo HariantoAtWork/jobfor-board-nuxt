@@ -59,28 +59,68 @@
             <Icon name="mdi:history" />
             History
           </button>
-          <button @click="exportBoard" class="action-button export">
-            <Icon name="mdi:file-export" />
-            Export
-          </button>
-          <button @click="triggerFileImport" class="action-button import">
-            <Icon name="mdi:file-import" />
-            Import File
-          </button>
+          <div class="relative file-menu-container">
+            <button @click="toggleFileMenu" class="action-button file-menu">
+              <Icon name="mdi:file-multiple" />
+              File
+              <Icon name="mdi:chevron-down" class="w-4 h-4" />
+            </button>
+
+            <!-- File Context Menu -->
+            <div
+              v-if="showFileMenu"
+              :class="[
+                'file-context-menu',
+                fileMenuPosition === 'top'
+                  ? 'file-context-menu-top'
+                  : 'file-context-menu-bottom',
+              ]"
+            >
+              <button @click="triggerFileImport" class="context-menu-item">
+                <Icon name="mdi:file-import" class="w-4 h-4" />
+                Import File
+              </button>
+              <button @click="exportBoard" class="context-menu-item">
+                <Icon name="mdi:file-export" class="w-4 h-4" />
+                Export File
+              </button>
+            </div>
+          </div>
+
+          <div class="relative board-menu-container">
+            <button @click="toggleBoardMenu" class="action-button board-menu">
+              <Icon name="mdi:database" />
+              Board
+              <Icon name="mdi:chevron-down" class="w-4 h-4" />
+            </button>
+
+            <!-- Board Context Menu -->
+            <div
+              v-if="showBoardMenu"
+              :class="[
+                'board-context-menu',
+                menuPosition === 'top'
+                  ? 'board-context-menu-top'
+                  : 'board-context-menu-bottom',
+              ]"
+            >
+              <button @click="onLoadBoard" class="context-menu-item">
+                <Icon name="mdi:cloud-download" class="w-4 h-4" />
+                Load Board
+              </button>
+              <button @click="onSaveBoard" class="context-menu-item">
+                <Icon name="mdi:cloud-upload" class="w-4 h-4" />
+                Save Board
+              </button>
+            </div>
+          </div>
+
           <button
             @click="showImportUrlForm = true"
             class="action-button import-url"
           >
             <Icon name="mdi:link" />
             Import from URL
-          </button>
-          <button @click="onLoadBoard" class="action-button load">
-            <Icon name="mdi:download" />
-            Load Board
-          </button>
-          <button @click="onSaveBoard" class="action-button backup">
-            <Icon name="mdi:backup" />
-            Save Board
           </button>
         </div>
       </div>
@@ -272,13 +312,28 @@ const {
 const showAddColumnForm = ref(false)
 const showImportUrlForm = ref(false)
 const showHistory = ref(false)
+const showBoardMenu = ref(false)
+const showFileMenu = ref(false)
 const newColumnTitle = ref('')
 const importUrl = ref('')
 const fileInput = ref<HTMLInputElement>()
+const menuPosition = ref<'top' | 'bottom'>('bottom')
+const fileMenuPosition = ref<'top' | 'bottom'>('bottom')
 
 // Load board on mount
 onMounted(() => {
   loadBoard()
+
+  // Add click-outside handler for menus
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement
+    if (!target.closest('.board-menu-container')) {
+      showBoardMenu.value = false
+    }
+    if (!target.closest('.file-menu-container')) {
+      showFileMenu.value = false
+    }
+  })
 })
 
 // Card management
@@ -492,6 +547,50 @@ const handleMoveCard = (cardId: string, columnId: string) => {
   moveCardToColumn(cardId, columnId)
 }
 
+const toggleBoardMenu = () => {
+  if (showBoardMenu.value) {
+    showBoardMenu.value = false
+  } else {
+    // Calculate if menu should appear above or below
+    const button = document.querySelector('.board-menu-container button')
+    if (button) {
+      const rect = button.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const menuHeight = 80 // Approximate height of the context menu
+
+      // If there's not enough space below, show above
+      if (rect.bottom + menuHeight > viewportHeight) {
+        menuPosition.value = 'top'
+      } else {
+        menuPosition.value = 'bottom'
+      }
+    }
+    showBoardMenu.value = true
+  }
+}
+
+const toggleFileMenu = () => {
+  if (showFileMenu.value) {
+    showFileMenu.value = false
+  } else {
+    // Calculate if menu should appear above or below
+    const button = document.querySelector('.file-menu-container button')
+    if (button) {
+      const rect = button.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const menuHeight = 80 // Approximate height of the context menu
+
+      // If there's not enough space below, show above
+      if (rect.bottom + menuHeight > viewportHeight) {
+        fileMenuPosition.value = 'top'
+      } else {
+        fileMenuPosition.value = 'bottom'
+      }
+    }
+    showFileMenu.value = true
+  }
+}
+
 // Activity History
 const activityHistory = computed(() => {
   const history: Array<{
@@ -601,6 +700,9 @@ const onLoadBoard = async () => {
       replaceBoard(result.data)
       alert('Board loaded successfully!')
       console.log('Board loaded:', result.data)
+
+      // Close the board menu
+      showBoardMenu.value = false
     } else {
       throw new Error(result.message || 'Failed to load board')
     }

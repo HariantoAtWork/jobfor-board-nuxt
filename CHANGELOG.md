@@ -53,6 +53,32 @@ All notable changes to the Job Application Tracker project will be documented in
 - Styled with orange theme to distinguish from other action buttons
 - Provides seamless board restoration from saved JSON data
 
+### Enhanced - 2025-09-03T12:32:42+0200
+- **Board Operations UI** - Combined Load and Save Board into context menu
+- Replaced separate Load/Save buttons with unified "Board" dropdown menu
+- Added purple-themed Board button with database icon and chevron
+- Implemented click-outside functionality to close context menu
+- Added smooth hover effects and transitions for context menu items
+- Improved footer layout with cleaner, more organized action grouping
+- Context menu automatically closes after successful board operations
+
+### Fixed - 2025-09-03T12:32:42+0200
+- **Context Menu Positioning** - Ensured menu visibility at screen edges
+- Added smart positioning logic to detect available space
+- Menu automatically appears above button when insufficient space below
+- Implemented dynamic positioning calculation based on viewport height
+- Added CSS classes for top and bottom menu positioning
+- Prevents context menu from being cut off at bottom of screen
+
+### Enhanced - 2025-09-03T12:32:42+0200
+- **File Operations UI** - Combined Import and Export File into context menu
+- Replaced separate Import/Export buttons with unified "Files" dropdown menu
+- Added green-themed Files button with file-multiple icon and chevron
+- Implemented same smart positioning logic for file context menu
+- Added click-outside functionality for file menu
+- Improved footer organization with grouped file operations
+- Both context menus now use consistent styling and behavior
+
 ### Added - 2025-01-27T11:45:00+0000
 - **Better-Auth API Test Script** - Comprehensive testing suite for central auth server
 - Created `test-login.sh` script for testing all better-auth endpoints
