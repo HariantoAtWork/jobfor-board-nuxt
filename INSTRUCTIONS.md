@@ -27,9 +27,9 @@ export interface ICardHistory {
 
 export interface INote {
   id: string;
-  createdAt: string;
+  createdAt: string; // ISO date string
   title: string;
-  body: string;
+  body?: string;
 }
 
 export interface ICard {
@@ -38,6 +38,7 @@ export interface ICard {
   via?: string;
   company?: string;
   jobTitle?: string;
+  location?: string;
   link?: string;
   contact?: string;
   description?: string;
@@ -52,5 +53,19 @@ export interface IBoardData {
   id: string;
   columns: IColumn[];
   cards: ICard[];
+}
+
+// Additional utility types
+export interface DragState {
+  isDragging: boolean;
+  draggedCard: ICard | null;
+  sourceColumnId: string | null;
+}
+
+export interface BoardState {
+  board: IBoardData;
+  dragState: DragState;
+  isLoading: boolean;
+  error: string | null;
 }
 ```
