@@ -100,9 +100,14 @@
       </div>
     </div>
 
-    <div class="card-footer flex items-center text-xs gap-1">
+    <div
+      class="card-footer flex items-center text-xs gap-1"
+      :class="{
+        'text-purple-600': ageInThisStage.includes('in'),
+      }"
+    >
       <Icon name="mdi-light:clock" class="inline-block" />
-      {{ formatTime(card.lastMoved, nowStore.now) }}
+      {{ ageInThisStage }}
     </div>
   </div>
 </template>
@@ -131,6 +136,10 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+
+const ageInThisStage = computed(() => {
+  return formatTime(props.card.lastMoved, nowStore.now)
+})
 
 // Computed property to format the link with protocol
 const formattedLink = computed(() => {
