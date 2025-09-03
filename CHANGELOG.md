@@ -4,6 +4,28 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-09-03T12:32:42+0200
+- **AI Development Rules** - Comprehensive guidelines for Nuxt 4 + Nuxt Iconify development
+- Created `AI_RULES.md` with detailed development conventions and best practices
+- Includes Nuxt 4 conventions, Composition API usage, and file structure guidelines
+- Comprehensive icon usage patterns with Nuxt Iconify integration
+- Performance considerations and optimization guidelines
+- Common icon names reference and naming conventions
+- Development commands and package management with pnpm
+- TypeScript best practices and Vue 3 Composition API guidelines
+
+### Added - 2025-01-27T11:45:00+0000
+- **Better-Auth API Test Script** - Comprehensive testing suite for central auth server
+- Created `test-login.sh` script for testing all better-auth endpoints
+- Script tests user registration, login, session management, and logout
+- Includes proper error handling and colored output for better readability
+- Tests both valid and invalid credentials scenarios
+- Extracts and uses session cookies for authenticated endpoint testing
+- Provides detailed response information including HTTP status codes
+- Supports testing against https://accounts.harianto.dev/
+- Includes health check endpoint testing
+- Script is executable and ready for immediate use
+
 ### Fixed - 2025-08-26T13:15:27+0200
 - **Column Context Menu Click-Outside** - Improved menu behavior
 - Fixed column context menu not hiding when clicking outside
