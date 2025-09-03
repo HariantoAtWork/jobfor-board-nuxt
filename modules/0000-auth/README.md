@@ -290,3 +290,13 @@ Enable debug mode by setting `NODE_ENV=development` in your `.env` file.
 ## License
 
 This module is part of the Better Auth Nuxt project.
+
+
+```package.json
+}
+  "scripts": {
+    "auth-generate": "npx @better-auth/cli generate --config ./modules/0000-auth/lib/auth.server.js",
+    "auth-migrate": "npx @better-auth/cli migrate -y --config ./modules/0000-auth/lib/auth.server.js"
+  }
+}
+```
