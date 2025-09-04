@@ -6,8 +6,8 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "build-preview": "nuxt build && nuxt preview",
+    "postinstall": "nuxt prepare && pnpm run auth-generate && pnpm run auth-migrate",
     "deploy": "rm -rf .output && pnpm run build && npx wrangler pages deploy dist",
     "auth-generate": "npx @better-auth/cli generate --config ./modules/0000-auth/lib/auth.server.js",
     "auth-migrate": "npx @better-auth/cli migrate -y --config ./modules/0000-auth/lib/auth.server.js"
