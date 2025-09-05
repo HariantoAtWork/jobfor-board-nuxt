@@ -12,6 +12,21 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    // Basic validation for board data structure
+    if (!body.id || typeof body.id !== 'string') {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Board data must have a valid ID field.',
+      })
+    }
+
+    if (!Array.isArray(body.columns) || !Array.isArray(body.cards)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Board data must contain columns and cards arrays.',
+      })
+    }
+
     // Ensure directory exists
     const fs = await import('fs/promises')
     const path = await import('path')

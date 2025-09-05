@@ -280,6 +280,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useBoard } from '~/composables/useBoard'
 import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
+import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
 import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
 import user from '~/utils/user'
@@ -518,27 +519,27 @@ const importFromUrl = async () => {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    const { data } = await response.json()
+    const responseData = await response.json()
 
-    // Validate the imported data structure (same as importBoardData)
-    if (!data || typeof data !== 'object') {
-      throw new Error('Invalid board data structure')
+    // Handle different response formats
+    let data = responseData
+    if (responseData.data) {
+      data = responseData.data
     }
 
-    if (!Array.isArray(data.columns) || !Array.isArray(data.cards)) {
-      throw new Error('Board must contain columns and cards arrays')
+    // Use the same validation as file import
+    const validated = validateAndSanitizeBoardData(data)
+
+    if (validated) {
+      replaceBoard(validated)
+      alert('Board imported successfully from URL!')
+      showImportUrlForm.value = false
+      importUrl.value = ''
+    } else {
+      throw new Error(
+        'Invalid board data structure - data could not be sanitized'
+      )
     }
-
-    if (!data.id || typeof data.id !== 'string') {
-      throw new Error('Board must have a valid ID')
-    }
-
-    // Process the data consistently with file import
-    replaceBoard(data)
-
-    alert('Board imported successfully from URL!')
-    showImportUrlForm.value = false
-    importUrl.value = ''
   } catch (error) {
     console.error('Failed to import from URL:', error)
     const errorMessage =
@@ -604,9 +605,9 @@ const activityHistory = computed(() => {
   }> = []
 
   // Collect all card movements from history
-  cards.value.forEach((card) => {
+  cards.value.forEach((card: any) => {
     if (card.history && card.history.length > 0) {
-      card.history.forEach((entry) => {
+      card.history.forEach((entry: any) => {
         history.push({
           id: entry.id,
           description: `**${card.title}** moved to **${entry.columnTitle}**`,
@@ -617,7 +618,7 @@ const activityHistory = computed(() => {
 
     // Collect all notes from cards
     if (card.notes && card.notes.length > 0) {
-      card.notes.forEach((note) => {
+      card.notes.forEach((note: any) => {
         history.push({
           id: note.id,
           description: `**${card.title}** - 🗒️ Note: **${note.title}**`,
@@ -689,29 +690,21 @@ const onLoadBoard = async () => {
     const result = await response.json()
 
     if (result.success && result.data) {
-      // Validate the loaded data structure
-      if (!result.data || typeof result.data !== 'object') {
-        throw new Error('Invalid board data structure')
+      // Use the same validation as file and URL import
+      const validated = validateAndSanitizeBoardData(result.data)
+
+      if (validated) {
+        replaceBoard(validated)
+        alert('Board loaded successfully!')
+        console.log('Board loaded:', validated)
+
+        // Close the board menu
+        showBoardMenu.value = false
+      } else {
+        throw new Error(
+          'Invalid board data structure - data could not be sanitized'
+        )
       }
-
-      if (
-        !Array.isArray(result.data.columns) ||
-        !Array.isArray(result.data.cards)
-      ) {
-        throw new Error('Board must contain columns and cards arrays')
-      }
-
-      if (!result.data.id || typeof result.data.id !== 'string') {
-        throw new Error('Board must have a valid ID')
-      }
-
-      // Replace the current board with loaded data
-      replaceBoard(result.data)
-      alert('Board loaded successfully!')
-      console.log('Board loaded:', result.data)
-
-      // Close the board menu
-      showBoardMenu.value = false
     } else {
       throw new Error(result.message || 'Failed to load board')
     }
@@ -733,7 +726,7 @@ const groupedActivityHistory = computed(() => {
     }>
   > = {}
 
-  activityHistory.value.forEach((activity) => {
+  activityHistory.value.forEach((activity: any) => {
     const date = dayjs(activity.timestamp)
     const monthYear = date.format('MMMM YYYY')
 
