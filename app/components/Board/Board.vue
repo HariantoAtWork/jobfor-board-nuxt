@@ -634,6 +634,11 @@ const activityHistory = computed(() => {
 })
 
 const onSaveBoard = async () => {
+  if (!user.value) {
+    alert('Please login to save the board')
+    return
+  }
+
   try {
     // Prepare board data for saving
     const boardData = board.value
