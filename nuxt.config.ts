@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -7,7 +9,7 @@ export default defineNuxtConfig({
     cssPath: '~/assets/styles/main.css',
     configPath: 'tailwind.config.js',
   },
-  // nitro: {
-  //   preset: 'cloudflare-pages',
-  // }
+  alias: {
+    '@modules': fileURLToPath(new URL('./modules', import.meta.url)),
+  },
 })
