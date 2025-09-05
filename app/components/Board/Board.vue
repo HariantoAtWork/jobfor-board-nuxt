@@ -90,7 +90,7 @@
             </div>
           </div>
 
-          <div class="relative board-menu-container">
+          <div v-if="user" class="relative board-menu-container">
             <button @click="toggleBoardMenu" class="action-button board-menu">
               <Icon name="mdi:database" />
               Board
@@ -282,6 +282,7 @@ import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
 import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
+import user from '~/utils/user'
 
 // Board state
 const {
