@@ -107,14 +107,14 @@
 
           <div v-if="user" class="relative board-menu-container">
             <button @click="toggleBoardMenu" class="action-button board-menu">
-              <Icon name="mdi:database" />
-              Board
+              <Icon name="mdi:alpha-d-box" />
+              Data
               <Icon name="mdi:chevron-down" class="w-4 h-4" />
             </button>
 
-            <!-- Board Context Menu -->
+            <!-- Data Context Menu -->
             <div
-              v-if="showBoardMenu"
+              v-if="showDataMenu"
               :class="[
                 'board-context-menu',
                 menuPosition === 'top'
@@ -122,13 +122,13 @@
                   : 'board-context-menu-bottom',
               ]"
             >
-              <button @click="onLoadBoard" class="context-menu-item">
+              <button @click="onLoadData" class="context-menu-item">
                 <Icon name="mdi:cloud-download" class="w-4 h-4" />
-                Load Board
+                Load Data
               </button>
-              <button @click="onSaveBoard" class="context-menu-item">
+              <button @click="onSaveData" class="context-menu-item">
                 <Icon name="mdi:cloud-upload" class="w-4 h-4" />
-                Save Board
+                Save Data
               </button>
             </div>
           </div>
@@ -334,7 +334,7 @@ const {
 const showAddColumnForm = ref(false)
 const showImportUrlForm = ref(false)
 const showHistory = ref(false)
-const showBoardMenu = ref(false)
+const showDataMenu = ref(false)
 const showFileMenu = ref(false)
 const newColumnTitle = ref('')
 const importUrl = ref('')
@@ -350,7 +350,7 @@ onMounted(() => {
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement
     if (!target.closest('.board-menu-container')) {
-      showBoardMenu.value = false
+      showDataMenu.value = false
     }
     if (!target.closest('.file-menu-container')) {
       showFileMenu.value = false
@@ -570,8 +570,8 @@ const handleMoveCard = (cardId: string, columnId: string) => {
 }
 
 const toggleBoardMenu = () => {
-  if (showBoardMenu.value) {
-    showBoardMenu.value = false
+  if (showDataMenu.value) {
+    showDataMenu.value = false
   } else {
     // Calculate if menu should appear above or below
     const button = document.querySelector('.board-menu-container button')
@@ -587,7 +587,7 @@ const toggleBoardMenu = () => {
         menuPosition.value = 'bottom'
       }
     }
-    showBoardMenu.value = true
+    showDataMenu.value = true
   }
 }
 
@@ -676,7 +676,7 @@ const activityHistory = computed(() => {
   )
 })
 
-const onSaveBoard = async () => {
+const onSaveData = async () => {
   if (!user.value) {
     alert('Please login to save the board')
     return
@@ -715,7 +715,7 @@ const onSaveBoard = async () => {
   }
 }
 
-const onLoadBoard = async () => {
+const onLoadData = async () => {
   try {
     // Load board data from API
     const response = await fetch('/api/data', {
@@ -741,7 +741,7 @@ const onLoadBoard = async () => {
         console.log('Board loaded:', validated)
 
         // Close the board menu
-        showBoardMenu.value = false
+        showDataMenu.value = false
       } else {
         throw new Error(
           'Invalid board data structure - data could not be sanitized'
