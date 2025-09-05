@@ -93,6 +93,33 @@ export function useBoard() {
     }
   }
 
+  // Clear board - remove all cards and columns
+  const clearBoard = () => {
+    try {
+      board.value.cards = []
+      board.value.columns = []
+      saveBoard()
+      error.value = null
+      console.log('Board cleared - all cards and columns removed')
+    } catch (err) {
+      error.value = 'Failed to clear board'
+      console.error(err)
+    }
+  }
+
+  // Reset to default board
+  const defaultBoard = () => {
+    try {
+      board.value = getDefaultBoardData()
+      saveBoard()
+      error.value = null
+      console.log('Board reset to default')
+    } catch (err) {
+      error.value = 'Failed to reset to default board'
+      console.error(err)
+    }
+  }
+
   // Add new card
   const addCard = (cardData: Partial<ICard>, columnId: string) => {
     const newCard: ICard = {
@@ -318,6 +345,10 @@ export function useBoard() {
     // Note management
     addNoteToCard,
     updateNoteInCard,
-    deleteNoteFromCard
+    deleteNoteFromCard,
+    
+    // Board management
+    clearBoard,
+    defaultBoard
   }
 }

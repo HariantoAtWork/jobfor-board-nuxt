@@ -4,6 +4,23 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-05T19:24:31+0200
+- **Clear Board Function** - Fixed to remove both cards and columns completely
+- Updated `clearBoard()` function to clear both `board.value.cards = []` and `board.value.columns = []`
+- Updated confirmation dialog to accurately describe the action
+- Fixed duplicate key error in useBoard composable return statement
+
+### Added - 2025-09-05T19:07:53+0200
+- **File Context Menu Enhancements** - Added new board management options
+- Added "Clear Board" button to File context menu (removes all cards and columns)
+- Added "Default Board" button to File context menu (resets to default board data)
+- Implemented `clearBoard()` function in useBoard composable
+- Implemented `defaultBoard()` function in useBoard composable
+- Added confirmation dialogs for destructive actions
+- Enhanced File menu with visual separator and color-coded buttons
+- Clear Board button uses red styling with delete-sweep icon
+- Default Board button uses blue styling with refresh icon
+
 ### Enhanced - 2025-09-05T18:57:42+0200
 - **Import Functions Refactoring** - Unified data validation across all import methods
 - Updated URL import (`importFromUrl`) to use the new `dataValidator` system

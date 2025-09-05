@@ -87,6 +87,21 @@
                 <Icon name="mdi:file-export" class="w-4 h-4" />
                 Export File
               </button>
+              <div class="border-t border-gray-200 my-1"></div>
+              <button
+                @click="handleClearBoard"
+                class="context-menu-item text-red-600 hover:bg-red-50"
+              >
+                <Icon name="mdi:delete-sweep" class="w-4 h-4" />
+                Clear Board
+              </button>
+              <button
+                @click="handleDefaultBoard"
+                class="context-menu-item text-blue-600 hover:bg-blue-50"
+              >
+                <Icon name="mdi:refresh" class="w-4 h-4" />
+                Default Board
+              </button>
             </div>
           </div>
 
@@ -311,6 +326,8 @@ const {
   addNoteToCard,
   updateNoteInCard,
   deleteNoteFromCard,
+  clearBoard,
+  defaultBoard,
 } = useBoard()
 
 // UI state
@@ -593,6 +610,31 @@ const toggleFileMenu = () => {
       }
     }
     showFileMenu.value = true
+  }
+}
+
+// File menu actions
+const handleClearBoard = () => {
+  if (
+    confirm(
+      'Are you sure you want to clear the entire board? This will remove all cards and columns. This action cannot be undone.'
+    )
+  ) {
+    clearBoard()
+    showFileMenu.value = false
+    alert('Board cleared successfully!')
+  }
+}
+
+const handleDefaultBoard = () => {
+  if (
+    confirm(
+      'Are you sure you want to reset the board to default? This will remove all your current data and cannot be undone.'
+    )
+  ) {
+    defaultBoard()
+    showFileMenu.value = false
+    alert('Board reset to default successfully!')
   }
 }
 
