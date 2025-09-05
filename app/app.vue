@@ -1,5 +1,7 @@
 <template>
-  <Board />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -7,7 +9,3 @@
 // This ensures the auth client is properly initialized
 import '@modules/0000-auth/lib/auth.client'
 </script>
-
-<style>
-@import '~/assets/styles/main.css';
-</style>

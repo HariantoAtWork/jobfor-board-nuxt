@@ -1,10 +1,13 @@
 <template>
   <div class="board-container">
+    <!-- Menu Bar -->
+    <UIMenuBar />
+
     <!-- Header -->
     <header class="board-header">
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2">
-          <UI.Logo />
+          <UILogo />
           <h1 class="text-xl font-semibold">Job Application Tracker</h1>
         </div>
       </div>

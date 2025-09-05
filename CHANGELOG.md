@@ -4,6 +4,35 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-05T09:29:29+0200
+- **MenuBar SSR Error** - Fixed server-side rendering error with useSession composable
+- Wrapped MenuBar component in ClientOnly to prevent SSR issues
+- Fixed session data structure access with proper destructuring
+- Resolved "Cannot read properties of undefined" error during SSR
+- Component now renders properly on both server and client
+
+### Fixed - 2025-09-05T09:25:38+0200
+- **MenuBar Component Error** - Fixed undefined session value error in MenuBar component
+- Added missing `computed` import from Vue
+- Added defensive programming with optional chaining for user properties
+- Fixed server-side rendering error with session data handling
+- Component now handles undefined session gracefully
+
+### Added - 2025-09-05T09:20:59+0200
+- **Menu Bar with Authentication** - Pill-shaped menu bar with account icon and context menu
+- Created `UI.MenuBar.vue` component with modern pill design and backdrop blur effect
+- Integrated `mdi-light:account` icon as requested with proper styling
+- Implemented context menu with login form for email/password authentication
+- Added sign-up form with name, email, and password fields
+- Integrated with better-auth for seamless login/logout functionality
+- Added user session management with proper state handling
+- Implemented smooth transitions and animations for menu interactions
+- Added keyboard support (Escape key to close menu)
+- Responsive design with proper z-index and positioning
+- Menu automatically closes after successful authentication
+- Added loading states and error handling for auth operations
+- Updated Board component to include the new MenuBar
+
 ### Added - 2025-09-03T12:32:42+0200
 - **AI Development Rules** - Comprehensive guidelines for Nuxt 4 + Nuxt Iconify development
 - Created `AI_RULES.md` with detailed development conventions and best practices
