@@ -14,7 +14,9 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const { boardDb } = await import('@modules/0000-auth/lib/boards.server.js')
+    const { boardDb } = await import(
+      '@modules/0001-boards/lib/boards.server.js'
+    )
 
     // Get query parameters
     const query = getQuery(event)

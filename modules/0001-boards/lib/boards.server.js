@@ -1,5 +1,5 @@
 import process from 'node:process'
-import { db } from './db.server.js'
+import { db } from '@modules/0000-auth/lib/db.server.js'
 
 const DB_TYPE = process.env.DB_TYPE || 'sqlite'
 

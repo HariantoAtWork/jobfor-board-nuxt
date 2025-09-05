@@ -185,6 +185,10 @@
         @apply bg-green-100 text-green-700 hover:bg-green-200;
     }
 
+    .action-button.database-menu {
+        @apply bg-indigo-100 text-indigo-700 hover:bg-indigo-200;
+    }
+
     .board-context-menu {
         @apply absolute left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[160px];
     }
@@ -206,6 +210,18 @@
     }
 
     .file-context-menu-top {
+        @apply bottom-full mb-1;
+    }
+
+    .database-context-menu {
+        @apply absolute left-0 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[160px];
+    }
+
+    .database-context-menu-bottom {
+        @apply top-full mt-1;
+    }
+
+    .database-context-menu-top {
         @apply bottom-full mb-1;
     }
 

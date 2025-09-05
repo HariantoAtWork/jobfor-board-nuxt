@@ -133,6 +133,42 @@
             </div>
           </div>
 
+          <div v-if="user" class="relative database-menu-container">
+            <button
+              @click="toggleDatabaseMenu"
+              class="action-button database-menu"
+            >
+              <Icon name="mdi:database" />
+              Database
+              <Icon name="mdi:chevron-down" class="w-4 h-4" />
+            </button>
+
+            <!-- Database Context Menu -->
+            <div
+              v-if="showDatabaseMenu"
+              :class="[
+                'database-context-menu',
+                databaseMenuPosition === 'top'
+                  ? 'database-context-menu-top'
+                  : 'database-context-menu-bottom',
+              ]"
+            >
+              <button @click="onLoadBoard" class="context-menu-item">
+                <Icon name="mdi:database-import" class="w-4 h-4" />
+                Load Board
+              </button>
+              <button @click="onSaveBoard" class="context-menu-item">
+                <Icon name="mdi:database-export" class="w-4 h-4" />
+                Save Board
+              </button>
+              <div class="border-t border-gray-200 my-1"></div>
+              <button @click="onManageBoards" class="context-menu-item">
+                <Icon name="mdi:database-cog" class="w-4 h-4" />
+                Manage Boards
+              </button>
+            </div>
+          </div>
+
           <button
             @click="showImportUrlForm = true"
             class="action-button import-url"
@@ -286,12 +322,176 @@
         </div>
       </div>
     </div>
+
+    <!-- Board Selection Modal -->
+    <div
+      v-if="showBoardSelectionModal"
+      class="modal-overlay"
+      @click="showBoardSelectionModal = false"
+    >
+      <div class="modal-content max-w-2xl" @click.stop>
+        <div class="modal-header flex items-center justify-between">
+          <h3 class="text-lg font-medium">Load Board from Database</h3>
+          <button
+            @click="showBoardSelectionModal = false"
+            class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
+          >
+            <Icon name="mdi:close" />
+          </button>
+        </div>
+        <div class="modal-body pt-0">
+          <div
+            v-if="userBoards.length === 0"
+            class="text-center text-gray-500 py-8"
+          >
+            <Icon
+              name="mdi:database-off"
+              class="w-12 h-12 mx-auto mb-4 text-gray-300"
+            />
+            <p>No boards found in database</p>
+            <p class="text-sm mt-2">
+              Create a board by saving your current board first.
+            </p>
+          </div>
+          <div v-else class="space-y-3">
+            <div
+              v-for="board in userBoards"
+              :key="board.id"
+              class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+              @click="loadSelectedBoard(board.id)"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
+                  <p class="text-sm text-gray-500">
+                    Created:
+                    {{ new Date(board.created_at).toLocaleDateString() }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Cards: {{ board.data.cards?.length || 0 }} | Columns:
+                    {{ board.data.columns?.length || 0 }}
+                  </p>
+                </div>
+                <Icon name="mdi:chevron-right" class="text-gray-400" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Board Management Modal -->
+    <div
+      v-if="showBoardManagementModal"
+      class="modal-overlay"
+      @click="showBoardManagementModal = false"
+    >
+      <div class="modal-content max-w-4xl" @click.stop>
+        <div class="modal-header flex items-center justify-between">
+          <h3 class="text-lg font-medium">Manage Database Boards</h3>
+          <button
+            @click="showBoardManagementModal = false"
+            class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
+          >
+            <Icon name="mdi:close" />
+          </button>
+        </div>
+        <div class="modal-body pt-0">
+          <div
+            v-if="userBoards.length === 0"
+            class="text-center text-gray-500 py-8"
+          >
+            <Icon
+              name="mdi:database-off"
+              class="w-12 h-12 mx-auto mb-4 text-gray-300"
+            />
+            <p>No boards found in database</p>
+            <p class="text-sm mt-2">
+              Create a board by saving your current board first.
+            </p>
+          </div>
+          <div v-else class="space-y-3">
+            <div
+              v-for="board in userBoards"
+              :key="board.id"
+              class="border border-gray-200 rounded-lg p-4"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
+                  <p class="text-sm text-gray-500">
+                    Created:
+                    {{ new Date(board.created_at).toLocaleDateString() }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Last updated:
+                    {{ new Date(board.updated_at).toLocaleDateString() }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Cards: {{ board.data.cards?.length || 0 }} | Columns:
+                    {{ board.data.columns?.length || 0 }}
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    @click="loadSelectedBoard(board.id)"
+                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                  >
+                    Load
+                  </button>
+                  <button
+                    @click="deleteBoard(board.id)"
+                    class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Board Modal -->
+    <div
+      v-if="showSaveBoardModal"
+      class="modal-overlay"
+      @click="showSaveBoardModal = false"
+    >
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3 class="text-lg font-medium">Save Board to Database</h3>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Board Title</label>
+            <input
+              v-model="newBoardTitle"
+              type="text"
+              class="form-input"
+              :placeholder="new Date().toISOString()"
+            />
+            <p class="text-sm text-gray-500 mt-1">
+              Leave empty to use creation date as title
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click="showSaveBoardModal = false" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button @click="saveBoardToDatabase" class="btn btn-primary">
+            Save Board
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { ICard, IColumn, INote, ICardHistory } from '~/types'
-import { ref, onMounted, computed } from 'vue'
 import { useBoard } from '~/composables/useBoard'
 import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
@@ -336,11 +536,19 @@ const showImportUrlForm = ref(false)
 const showHistory = ref(false)
 const showDataMenu = ref(false)
 const showFileMenu = ref(false)
+const showDatabaseMenu = ref(false)
+const showBoardSelectionModal = ref(false)
+const showBoardManagementModal = ref(false)
+const showSaveBoardModal = ref(false)
 const newColumnTitle = ref('')
 const importUrl = ref('')
 const fileInput = ref<HTMLInputElement>()
 const menuPosition = ref<'top' | 'bottom'>('bottom')
 const fileMenuPosition = ref<'top' | 'bottom'>('bottom')
+const databaseMenuPosition = ref<'top' | 'bottom'>('bottom')
+const userBoards = ref<any[]>([])
+const selectedBoardId = ref('')
+const newBoardTitle = ref('')
 
 // Load board on mount
 onMounted(() => {
@@ -354,6 +562,9 @@ onMounted(() => {
     }
     if (!target.closest('.file-menu-container')) {
       showFileMenu.value = false
+    }
+    if (!target.closest('.database-menu-container')) {
+      showDatabaseMenu.value = false
     }
   })
 })
@@ -613,6 +824,28 @@ const toggleFileMenu = () => {
   }
 }
 
+const toggleDatabaseMenu = () => {
+  if (showDatabaseMenu.value) {
+    showDatabaseMenu.value = false
+  } else {
+    // Calculate if menu should appear above or below
+    const button = document.querySelector('.database-menu-container button')
+    if (button) {
+      const rect = button.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const menuHeight = 120 // Approximate height of the context menu
+
+      // If there's not enough space below, show above
+      if (rect.bottom + menuHeight > viewportHeight) {
+        databaseMenuPosition.value = 'top'
+      } else {
+        databaseMenuPosition.value = 'bottom'
+      }
+    }
+    showDatabaseMenu.value = true
+  }
+}
+
 // File menu actions
 const handleClearBoard = () => {
   if (
@@ -755,6 +988,194 @@ const onLoadData = async () => {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to load board: ' + errorMessage)
+  }
+}
+
+// Database menu actions
+const onLoadBoard = async () => {
+  try {
+    // Fetch user's boards
+    const response = await fetch('/api/boards', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success && result.data) {
+      userBoards.value = result.data
+      showBoardSelectionModal.value = true
+      showDatabaseMenu.value = false
+    } else {
+      throw new Error(result.message || 'Failed to load boards')
+    }
+  } catch (error) {
+    console.error('Error loading boards:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to load boards: ' + errorMessage)
+  }
+}
+
+const onSaveBoard = () => {
+  showSaveBoardModal.value = true
+  showDatabaseMenu.value = false
+}
+
+const saveBoardToDatabase = async () => {
+  try {
+    // Get current board title (default to creation date if not set)
+    const boardTitle = newBoardTitle.value || new Date().toISOString()
+
+    // Prepare board data for saving
+    const boardData = board.value
+
+    // Save to database API
+    const response = await fetch('/api/boards', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: boardTitle,
+        data: boardData,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success) {
+      alert('Board saved to database successfully!')
+      console.log('Board saved:', result)
+      showSaveBoardModal.value = false
+      newBoardTitle.value = ''
+    } else {
+      throw new Error(result.message || 'Failed to save board')
+    }
+  } catch (error) {
+    console.error('Error saving board:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to save board: ' + errorMessage)
+  }
+}
+
+const onManageBoards = async () => {
+  try {
+    // Fetch user's boards
+    const response = await fetch('/api/boards', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success && result.data) {
+      userBoards.value = result.data
+      showBoardManagementModal.value = true
+      showDatabaseMenu.value = false
+    } else {
+      throw new Error(result.message || 'Failed to load boards')
+    }
+  } catch (error) {
+    console.error('Error loading boards:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to load boards: ' + errorMessage)
+  }
+}
+
+const loadSelectedBoard = async (boardId: string) => {
+  try {
+    const response = await fetch(`/api/boards/${boardId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success && result.data) {
+      // Use the same validation as file and URL import
+      const validated = validateAndSanitizeBoardData(result.data.data)
+
+      if (validated) {
+        replaceBoard(validated)
+        alert('Board loaded successfully!')
+        console.log('Board loaded:', validated)
+        showBoardSelectionModal.value = false
+      } else {
+        throw new Error(
+          'Invalid board data structure - data could not be sanitized'
+        )
+      }
+    } else {
+      throw new Error(result.message || 'Failed to load board')
+    }
+  } catch (error) {
+    console.error('Error loading board:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to load board: ' + errorMessage)
+  }
+}
+
+const deleteBoard = async (boardId: string) => {
+  if (
+    !confirm(
+      'Are you sure you want to delete this board? This action cannot be undone.'
+    )
+  ) {
+    return
+  }
+
+  try {
+    const response = await fetch(`/api/boards/${boardId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success) {
+      alert('Board deleted successfully!')
+      // Refresh the boards list
+      await onManageBoards()
+    } else {
+      throw new Error(result.message || 'Failed to delete board')
+    }
+  } catch (error) {
+    console.error('Error deleting board:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to delete board: ' + errorMessage)
   }
 }
 

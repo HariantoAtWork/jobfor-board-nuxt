@@ -4,6 +4,33 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Simplified - 2025-09-06T00:36:59+0200
+- **Migration Script Cleanup** - Simplified migrate.sh by removing redundant environment variable handling
+- Removed duplicate environment variable loading logic from shell script
+- Environment variables are now handled exclusively by knexfile.js with dotenv
+- Cleaned up commented code and simplified script structure
+- Migration script is now more maintainable and focused on its core purpose
+
+### Fixed - 2025-09-06T00:25:15+0200
+- **Knex Environment Variables** - Fixed knexfile.js not reading .env file
+- Added `dotenv` package dependency for proper environment variable loading
+- Updated knexfile.js to import and configure dotenv before reading process.env
+- Added MySQL support to knexfile.js with proper environment variable handling
+- Enhanced migration script to show correct PostgreSQL and MySQL environment variables
+- Added debugging output to knexfile.js to show loaded environment configuration
+- Fixed port parsing to use parseInt() for proper numeric conversion
+- Migration system now properly reads all environment variables from .env file
+
+### Refactored - 2025-09-05T23:37:18+0200
+- **Module Structure Reorganization** - Moved boards functionality to dedicated module
+- Created separate `modules/0001-boards/` module for board database functionality
+- Moved `boards.server.js` from auth module to dedicated boards module
+- Updated all API route imports to reference new boards module location
+- Added boards module to Nuxt configuration
+- Created comprehensive README for boards module with usage examples
+- Improved separation of concerns between authentication and board management
+- Maintained all existing functionality while improving code organization
+
 ### Added - 2025-09-05T20:18:53+0200
 - **Database-Backed Board Management** - Complete RESTful API for multi-user board storage
 - Created comprehensive database schema with boards table supporting SQLite, MySQL, and PostgreSQL
@@ -24,6 +51,30 @@ All notable changes to the Job Application Tracker project will be documented in
 - **Search Functionality**: Full-text search across board titles with case-insensitive matching
 - **User Isolation**: All board operations are scoped to authenticated user
 - **Database Indexes**: Optimized queries with indexes on user_id, title, and created_at
+
+### Added - 2025-09-05T20:18:53+0200
+- **Database UI Integration** - Complete user interface for database board management
+- **Database Button**: Added new indigo-themed Database button with context menu (only visible when user is logged in)
+- **Database Context Menu**: Three main actions with proper icons and styling
+  - Load Board: Browse and load saved boards from database
+  - Save Board: Save current board to database with custom title
+  - Manage Boards: Full board management interface
+- **Board Selection Modal**: Interactive modal for loading boards with board previews
+  - Shows board title, creation date, and card/column counts
+  - Click-to-load functionality with hover effects
+  - Empty state with helpful messaging
+- **Board Management Modal**: Comprehensive board management interface
+  - List all user boards with detailed information
+  - Load and delete actions for each board
+  - Shows creation date, last updated, and board statistics
+- **Save Board Modal**: Title input for saving boards to database
+  - Custom title input with placeholder showing creation date
+  - Automatic fallback to ISO timestamp if no title provided
+- **Smart Menu Positioning**: Database context menu automatically positions above/below based on available space
+- **Click-Outside Handling**: Proper menu closure when clicking outside database menu
+- **Consistent Styling**: Database UI matches existing design system with indigo theme
+- **Error Handling**: Comprehensive error handling with user-friendly alerts
+- **API Integration**: Full integration with database API endpoints for seamless user experience
 
 ### Fixed - 2025-09-05T19:24:31+0200
 - **Clear Board Function** - Fixed to remove both cards and columns completely

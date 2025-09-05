@@ -36,7 +36,9 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const { boardDb } = await import('@modules/0000-auth/lib/boards.server.js')
+    const { boardDb } = await import(
+      '@modules/0001-boards/lib/boards.server.js'
+    )
 
     // Create the board
     const board = await boardDb.createBoard(

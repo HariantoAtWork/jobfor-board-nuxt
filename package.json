@@ -9,8 +9,15 @@
     "build-preview": "nuxt build && nuxt preview",
     "postinstall": "nuxt prepare",
     "deploy": "rm -rf .output && pnpm run build && npx wrangler pages deploy dist",
-    "auth-generate": "npx @better-auth/cli generate -y --config ./modules/0000-auth/lib/auth.server.js",
-    "auth-migrate": "npx @better-auth/cli migrate -y --config ./modules/0000-auth/lib/auth.server.js"
+    "auth:generate": "npx @better-auth/cli generate -y --config ./modules/0000-auth/lib/auth.server.js",
+    "auth:migrate": "npx @better-auth/cli migrate -y --config ./modules/0000-auth/lib/auth.server.js",
+    "db:migrate": "npx knex migrate:latest --knexfile knexfile.js",
+    "db:migrate:rollback": "npx knex migrate:rollback --knexfile knexfile.js",
+    "db:migrate:status": "npx knex migrate:status --knexfile knexfile.js",
+    "db:seed": "npx knex seed:run --knexfile knexfile.js",
+    "db:make-migration": "npx knex migrate:make --knexfile knexfile.js",
+    "db:make-seed": "npx knex seed:make --knexfile knexfile.js",
+    "migrate": "./scripts/migrate.sh"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
@@ -21,10 +28,13 @@
     "better-sqlite3": "^12.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "dotenv": "^17.2.2",
+    "knex": "^3.1.0",
     "marked": "^16.2.0",
     "nodemailer": "^7.0.6",
     "nuxt": "^4.0.3",
     "pg": "^8.16.3",
+    "sqlite3": "^5.1.7",
     "uuid": "^11.1.0",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"

@@ -1,0 +1,82 @@
+name: Deploy with Database Migrations
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Run migrations
+        run: pnpm run migrate
+        
+      - name: Build application
+        run: pnpm run build
+        
+      - name: Run tests (if you have them)
+        run: echo "Add your test commands here"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Run database migrations
+        run: pnpm run migrate
+        env:
+          # Set your production database environment variables here
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          SQLITE_PATH: ${{ secrets.SQLITE_PATH }}
+          # PostgreSQL variables (using standard PG* format)
+          PGHOST: ${{ secrets.PGHOST }}
+          PGPORT: ${{ secrets.PGPORT }}
+          PGUSER: ${{ secrets.PGUSER }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          # Better Auth variables
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+          
+      - name: Build application
+        run: pnpm run build
+        
+      - name: Deploy
+        run: pnpm run deploy
+        # Add your deployment commands here
