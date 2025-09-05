@@ -41,6 +41,25 @@ export interface IBoardData {
   cards: ICard[];
 }
 
+export interface IBoard {
+  id: string;
+  user_id: string;
+  title: string;
+  data: IBoardData;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+}
+
+export interface ICreateBoardRequest {
+  title: string;
+  data: IBoardData;
+}
+
+export interface IUpdateBoardRequest {
+  title?: string;
+  data?: IBoardData;
+}
+
 // Additional utility types
 export interface DragState {
   isDragging: boolean;

@@ -4,6 +4,27 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-09-05T20:18:53+0200
+- **Database-Backed Board Management** - Complete RESTful API for multi-user board storage
+- Created comprehensive database schema with boards table supporting SQLite, MySQL, and PostgreSQL
+- **Database Migration**: Added `2025-09-05T20-18-53.000Z.sql` with boards table and indexes
+- **Database Layer**: Created `boards.server.js` with full CRUD operations and multi-database support
+- **RESTful API Endpoints**: Complete `/api/boards` API with authentication
+  - `GET /api/boards` - List all user boards with optional search
+  - `POST /api/boards` - Create new board with title and data
+  - `GET /api/boards/[id]` - Get specific board by ID
+  - `PUT /api/boards/[id]` - Update board title and/or data
+  - `DELETE /api/boards/[id]` - Delete board
+- **Authentication Integration**: All endpoints require user authentication via better-auth
+- **Session Management**: Created `session.server.js` for secure session handling
+- **Type Definitions**: Extended types with `IBoard`, `ICreateBoardRequest`, `IUpdateBoardRequest`
+- **Multi-Database Support**: Automatic database type detection via `DB_TYPE` environment variable
+- **Data Validation**: Comprehensive validation for board data structure and user permissions
+- **Error Handling**: Consistent error responses with proper HTTP status codes
+- **Search Functionality**: Full-text search across board titles with case-insensitive matching
+- **User Isolation**: All board operations are scoped to authenticated user
+- **Database Indexes**: Optimized queries with indexes on user_id, title, and created_at
+
 ### Fixed - 2025-09-05T19:24:31+0200
 - **Clear Board Function** - Fixed to remove both cards and columns completely
 - Updated `clearBoard()` function to clear both `board.value.cards = []` and `board.value.columns = []`
