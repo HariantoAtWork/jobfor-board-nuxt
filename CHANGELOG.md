@@ -4,6 +4,20 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-05T18:41:03+0200
+- **localStorage Crash Prevention** - Comprehensive data validation and error handling system
+- Created `dataValidator.ts` with complete data structure validation and sanitization
+- Enhanced `storage.ts` with backup system, error recovery, and fallback mechanisms
+- Added `dataMigration.ts` for handling old data formats and version tracking
+- Updated `useBoard.ts` composable with graceful error handling and recovery functions
+- Implemented automatic backup creation before saving data
+- Added data corruption recovery with automatic fallback to default values
+- Enhanced import/export functions with proper validation and sanitization
+- App now handles malformed localStorage data without crashing
+- Automatic data migration for old data formats (e.g., `place` → `location`, `job_title` → `jobTitle`)
+- Comprehensive error logging for debugging data issues
+- Graceful degradation when localStorage is unavailable or corrupted
+
 ### Fixed - 2025-09-05T10:11:16+0200
 - **MenuBar Context Menu Click Issue** - Fixed context menu closing when clicking anywhere inside the menu
 - Removed problematic backdrop overlay that was interfering with menu interactions

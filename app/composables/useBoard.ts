@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import type { IBoardData, ICard, IColumn, INote, DragState } from '~/types'
 import { getDefaultBoardData, generateId, moveCard } from '~/utils/helpers'
-import { saveBoardToStorage, loadBoardFromStorage } from '~/utils/storage'
+import { saveBoardToStorage, loadBoardFromStorage, resetToDefault, clearCorruptedData } from '~/utils/storage'
 
 export function useBoard() {
   const board = ref<IBoardData>(getDefaultBoardData())
@@ -27,14 +27,30 @@ export function useBoard() {
   // Load board from storage on mount
   const loadBoard = () => {
     isLoading.value = true
+    error.value = null
+    
     try {
       const stored = loadBoardFromStorage()
       if (stored) {
         board.value = stored
+        console.log('Successfully loaded board data from storage')
+      } else {
+        // No stored data or data was invalid, use default
+        board.value = getDefaultBoardData()
+        console.log('Using default board data')
       }
     } catch (err) {
-      error.value = 'Failed to load board data'
-      console.error(err)
+      console.error('Critical error loading board data:', err)
+      error.value = 'Failed to load board data - using default'
+      
+      // Try to reset to default as a last resort
+      try {
+        board.value = resetToDefault()
+        console.log('Reset to default board data due to critical error')
+      } catch (resetError) {
+        console.error('Failed to reset to default:', resetError)
+        board.value = getDefaultBoardData()
+      }
     } finally {
       isLoading.value = false
     }
@@ -59,6 +75,21 @@ export function useBoard() {
     } catch (err) {
       error.value = 'Failed to replace board data'
       console.error(err)
+    }
+  }
+
+  // Handle data corruption recovery
+  const recoverFromCorruption = () => {
+    try {
+      console.log('Attempting to recover from data corruption...')
+      clearCorruptedData()
+      board.value = resetToDefault()
+      error.value = null
+      console.log('Successfully recovered from data corruption')
+    } catch (err) {
+      console.error('Failed to recover from corruption:', err)
+      error.value = 'Failed to recover from data corruption'
+      board.value = getDefaultBoardData()
     }
   }
 
@@ -269,6 +300,7 @@ export function useBoard() {
     loadBoard,
     saveBoard,
     replaceBoard,
+    recoverFromCorruption,
     addCard,
     updateCard,
     deleteCard,
