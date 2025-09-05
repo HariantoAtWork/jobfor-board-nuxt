@@ -4,6 +4,21 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-05T10:11:16+0200
+- **MenuBar Context Menu Click Issue** - Fixed context menu closing when clicking anywhere inside the menu
+- Removed problematic backdrop overlay that was interfering with menu interactions
+- Implemented proper click-outside detection using container reference
+- Added higher z-index to menu to ensure it stays above other elements
+- Menu now only closes when clicking outside the entire menu container
+- Form interactions now work properly without unexpected menu closure
+
+### Fixed - 2025-09-05T10:06:58+0200
+- **MenuBar Form Interaction Issue** - Fixed context menu closing when trying to fill form fields
+- Added `@click.stop` to menu container to prevent event bubbling to backdrop
+- Implemented proper backdrop click handling with event target checking
+- Users can now interact with login/signup form fields without menu closing
+- Enhanced click-outside functionality for better form usability
+
 ### Fixed - 2025-09-05T09:29:29+0200
 - **MenuBar SSR Error** - Fixed server-side rendering error with useSession composable
 - Wrapped MenuBar component in ClientOnly to prevent SSR issues

@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <div class="fixed top-4 right-4 z-50">
+    <div ref="menuContainer" class="fixed top-4 right-4 z-50">
       <!-- Menu Bar (Pill Shape) -->
       <div class="relative">
         <button
@@ -35,7 +35,8 @@
         >
           <div
             v-if="isMenuOpen"
-            class="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+            @click.stop
+            class="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50"
           >
             <!-- User Info Section (when logged in) -->
             <div v-if="user" class="p-4 border-b border-gray-100">
@@ -208,13 +209,6 @@
           </div>
         </Transition>
       </div>
-
-      <!-- Backdrop -->
-      <div
-        v-if="isMenuOpen"
-        @click="closeMenu"
-        class="fixed inset-0 z-40"
-      ></div>
     </div>
   </ClientOnly>
 </template>
@@ -237,6 +231,7 @@ const isPending = computed(() => sessionData.value?.isPending || false)
 const isMenuOpen = ref(false)
 const showSignUp = ref(false)
 const isLoading = ref(false)
+const menuContainer = ref<HTMLElement | null>(null)
 
 // Form data
 const loginForm = reactive({
@@ -261,6 +256,15 @@ const toggleMenu = () => {
 const closeMenu = () => {
   isMenuOpen.value = false
   showSignUp.value = false
+}
+
+const handleClickOutside = (event: Event) => {
+  if (
+    menuContainer.value &&
+    !menuContainer.value.contains(event.target as Node)
+  ) {
+    closeMenu()
+  }
 }
 
 // Auth functions
@@ -323,9 +327,11 @@ const handleEscape = (event: KeyboardEvent) => {
 
 onMounted(() => {
   document.addEventListener('keydown', handleEscape)
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleEscape)
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
