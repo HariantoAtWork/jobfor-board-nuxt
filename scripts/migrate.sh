@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Database Migration Script for CI/CD
 # This script handles both auth and custom table migrations
