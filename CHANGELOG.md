@@ -41,6 +41,13 @@ All notable changes to the Job Application Tracker project will be documented in
     - Displays public status with visual indicator
     - Clean, organized context menu design
     - Click-outside functionality to close menu
+  - **Fixed Layout Structure**: Improved shared page layout
+    - Full viewport layout (100vh, 100vw) for shared pages
+    - Fixed header always at top of screen
+    - Scrollable main content area in the middle
+    - Fixed footer always at bottom of screen
+    - CSS Grid layout for proper header/body/footer structure
+    - Matches default layout behavior for consistency
 - **Enhanced Board Management UI**:
   - Visual indicators for public/private boards (eye icons)
   - Share button with clipboard integration

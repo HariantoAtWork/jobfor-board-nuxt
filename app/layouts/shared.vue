@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <div class="min-h-screen bg-gray-50">
+    <div class="shared-container">
       <!-- Shared Layout - Clean, minimal design for public sharing -->
       <slot />
     </div>
@@ -14,6 +14,14 @@
 
 <style scoped>
 /* Shared layout specific styles */
+.shared-container {
+  @apply bg-gray-50;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
 
 /* Modal styles */
 .modal-overlay {

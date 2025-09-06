@@ -22,39 +22,41 @@
     </div>
   </header>
 
-  <!-- Loading State -->
-  <div v-if="loading" class="flex items-center justify-center min-h-96">
-    <div class="text-center">
-      <Icon
-        name="mdi:loading"
-        class="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4"
-      />
-      <p class="text-gray-600">Loading shared board...</p>
+  <!-- Main Content Area -->
+  <main class="overflow-y-auto">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex items-center justify-center h-full">
+      <div class="text-center">
+        <Icon
+          name="mdi:loading"
+          class="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4"
+        />
+        <p class="text-gray-600">Loading shared board...</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Error State -->
-  <div v-else-if="error" class="flex items-center justify-center min-h-96">
-    <div class="text-center">
-      <Icon
-        name="mdi:alert-circle"
-        class="w-12 h-12 text-red-500 mx-auto mb-4"
-      />
-      <h2 class="text-xl font-semibold text-gray-900 mb-2">Board Not Found</h2>
-      <p class="text-gray-600 mb-4">{{ error }}</p>
-      <button
-        @click="goHome"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Go to Home
-      </button>
+    <!-- Error State -->
+    <div v-else-if="error" class="flex items-center justify-center h-full">
+      <div class="text-center">
+        <Icon
+          name="mdi:alert-circle"
+          class="w-12 h-12 text-red-500 mx-auto mb-4"
+        />
+        <h2 class="text-xl font-semibold text-gray-900 mb-2">
+          Board Not Found
+        </h2>
+        <p class="text-gray-600 mb-4">{{ error }}</p>
+        <button
+          @click="goHome"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Go to Home
+        </button>
+      </div>
     </div>
-  </div>
 
-  <!-- Board Content -->
-  <main v-else-if="board" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Board Content -->
-    <div class="bg-white rounded-lg shadow-sm border">
+    <div v-else-if="board" class="bg-white rounded-lg shadow-sm border">
       <div
         v-if="!board.data.columns || board.data.columns.length === 0"
         class="p-8 text-center"
@@ -126,6 +128,81 @@
       </div>
     </div>
   </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex justify-center gap-4">
+        <div class="relative board-info-menu-container">
+          <button
+            @click="toggleBoardInfoMenu"
+            class="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+          >
+            <Icon name="mdi:information" class="w-5 h-5" />
+            Board Info
+            <Icon name="mdi:chevron-down" class="w-4 h-4" />
+          </button>
+
+          <!-- Board Info Context Menu -->
+          <div
+            v-if="showBoardInfoMenu"
+            class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 min-w-[280px]"
+          >
+            <div class="px-4 py-2 border-b border-gray-100">
+              <h4 class="font-medium text-gray-900">Board Information</h4>
+            </div>
+            <div class="px-4 py-2 space-y-2">
+              <div v-if="board">
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Title:</span>
+                  <span class="text-gray-900 ml-2">{{ board.title }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Created:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    formatDate(board.created_at)
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Last Updated:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    formatDate(board.updated_at)
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Cards:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    board.data.cards?.length || 0
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Columns:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    board.data.columns?.length || 0
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Status:</span>
+                  <span class="text-green-600 ml-2 flex items-center gap-1">
+                    <Icon name="mdi:eye" class="w-4 h-4" />
+                    Public
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          @click="showHistory = true"
+          class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+        >
+          <Icon name="mdi:history" class="w-5 h-5" />
+          History
+        </button>
+      </div>
+    </div>
+  </footer>
 
   <!-- Card Detail Modal -->
   <div v-if="selectedCard" class="modal-overlay" @click="selectedCard = null">
@@ -204,81 +281,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 mt-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex justify-center gap-4">
-        <div class="relative board-info-menu-container">
-          <button
-            @click="toggleBoardInfoMenu"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-          >
-            <Icon name="mdi:information" class="w-5 h-5" />
-            Board Info
-            <Icon name="mdi:chevron-down" class="w-4 h-4" />
-          </button>
-
-          <!-- Board Info Context Menu -->
-          <div
-            v-if="showBoardInfoMenu"
-            class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 min-w-[280px]"
-          >
-            <div class="px-4 py-2 border-b border-gray-100">
-              <h4 class="font-medium text-gray-900">Board Information</h4>
-            </div>
-            <div class="px-4 py-2 space-y-2">
-              <div v-if="board">
-                <div class="text-sm">
-                  <span class="font-medium text-gray-700">Title:</span>
-                  <span class="text-gray-900 ml-2">{{ board.title }}</span>
-                </div>
-                <div class="text-sm">
-                  <span class="font-medium text-gray-700">Created:</span>
-                  <span class="text-gray-900 ml-2">{{
-                    formatDate(board.created_at)
-                  }}</span>
-                </div>
-                <div class="text-sm">
-                  <span class="font-medium text-gray-700">Last Updated:</span>
-                  <span class="text-gray-900 ml-2">{{
-                    formatDate(board.updated_at)
-                  }}</span>
-                </div>
-                <div class="text-sm">
-                  <span class="font-medium text-gray-700">Cards:</span>
-                  <span class="text-gray-900 ml-2">{{
-                    board.data.cards?.length || 0
-                  }}</span>
-                </div>
-                <div class="text-sm">
-                  <span class="font-medium text-gray-700">Columns:</span>
-                  <span class="text-gray-900 ml-2">{{
-                    board.data.columns?.length || 0
-                  }}</span>
-                </div>
-                <div class="text-sm">
-                  <span class="font-medium text-gray-700">Status:</span>
-                  <span class="text-green-600 ml-2 flex items-center gap-1">
-                    <Icon name="mdi:eye" class="w-4 h-4" />
-                    Public
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button
-          @click="showHistory = true"
-          class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-        >
-          <Icon name="mdi:history" class="w-5 h-5" />
-          History
-        </button>
-      </div>
-    </div>
-  </footer>
 
   <!-- Activity History Modal -->
   <div v-if="showHistory" class="modal-overlay" @click="showHistory = false">
