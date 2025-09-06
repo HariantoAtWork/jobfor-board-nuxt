@@ -105,34 +105,6 @@
             </div>
           </div>
 
-          <div v-if="user" class="relative board-menu-container">
-            <button @click="toggleBoardMenu" class="action-button board-menu">
-              <Icon name="mdi:alpha-d-box" />
-              Data
-              <Icon name="mdi:chevron-down" class="w-4 h-4" />
-            </button>
-
-            <!-- Data Context Menu -->
-            <div
-              v-if="showDataMenu"
-              :class="[
-                'board-context-menu',
-                menuPosition === 'top'
-                  ? 'board-context-menu-top'
-                  : 'board-context-menu-bottom',
-              ]"
-            >
-              <button @click="onLoadData" class="context-menu-item">
-                <Icon name="mdi:cloud-download" class="w-4 h-4" />
-                Load Data
-              </button>
-              <button @click="onSaveData" class="context-menu-item">
-                <Icon name="mdi:cloud-upload" class="w-4 h-4" />
-                Save Data
-              </button>
-            </div>
-          </div>
-
           <div v-if="user" class="relative database-menu-container">
             <button
               @click="toggleDatabaseMenu"
@@ -600,7 +572,6 @@ const {
 const showAddColumnForm = ref(false)
 const showImportUrlForm = ref(false)
 const showHistory = ref(false)
-const showDataMenu = ref(false)
 const showFileMenu = ref(false)
 const showDatabaseMenu = ref(false)
 const showBoardSelectionModal = ref(false)
@@ -624,9 +595,6 @@ onMounted(() => {
   // Add click-outside handler for menus
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement
-    if (!target.closest('.board-menu-container')) {
-      showDataMenu.value = false
-    }
     if (!target.closest('.file-menu-container')) {
       showFileMenu.value = false
     }
@@ -847,28 +815,6 @@ const handleMoveCard = (cardId: string, columnId: string) => {
   moveCardToColumn(cardId, columnId)
 }
 
-const toggleBoardMenu = () => {
-  if (showDataMenu.value) {
-    showDataMenu.value = false
-  } else {
-    // Calculate if menu should appear above or below
-    const button = document.querySelector('.board-menu-container button')
-    if (button) {
-      const rect = button.getBoundingClientRect()
-      const viewportHeight = window.innerHeight
-      const menuHeight = 80 // Approximate height of the context menu
-
-      // If there's not enough space below, show above
-      if (rect.bottom + menuHeight > viewportHeight) {
-        menuPosition.value = 'top'
-      } else {
-        menuPosition.value = 'bottom'
-      }
-    }
-    showDataMenu.value = true
-  }
-}
-
 const toggleFileMenu = () => {
   if (showFileMenu.value) {
     showFileMenu.value = false
@@ -975,88 +921,6 @@ const activityHistory = computed(() => {
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   )
 })
-
-const onSaveData = async () => {
-  if (!user.value) {
-    alert('Please login to save the board')
-    return
-  }
-
-  try {
-    // Prepare board data for saving
-    const boardData = board.value
-
-    // Save to API
-    const response = await fetch('/api/data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(boardData),
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const result = await response.json()
-
-    if (result.success) {
-      // alert('Board saved successfully!')
-      console.log('Board saved:', result)
-    } else {
-      throw new Error(result.message || 'Failed to save board')
-    }
-  } catch (error) {
-    console.error('Error saving board:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
-    alert('Failed to save board: ' + errorMessage)
-  }
-}
-
-const onLoadData = async () => {
-  try {
-    // Load board data from API
-    const response = await fetch('/api/data', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const result = await response.json()
-
-    if (result.success && result.data) {
-      // Use the same validation as file and URL import
-      const validated = validateAndSanitizeBoardData(result.data)
-
-      if (validated) {
-        replaceBoard(validated)
-        alert('Board loaded successfully!')
-        console.log('Board loaded:', validated)
-
-        // Close the board menu
-        showDataMenu.value = false
-      } else {
-        throw new Error(
-          'Invalid board data structure - data could not be sanitized'
-        )
-      }
-    } else {
-      throw new Error(result.message || 'Failed to load board')
-    }
-  } catch (error) {
-    console.error('Error loading board:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
-    alert('Failed to load board: ' + errorMessage)
-  }
-}
 
 // Database menu actions
 const onLoadBoard = async () => {

@@ -4,6 +4,22 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Cleaned Up - 2025-09-06T14:00:52+0200
+- **Data Button Removal** - Removed redundant "Data" button and context menu from UI
+- **UI Cleanup**: Removed Data button with "Load Data" and "Save Data" options from footer
+- **Code Cleanup**: Removed all Data-related reactive variables and functions
+  - Removed `showDataMenu` reactive variable
+  - Removed `toggleBoardMenu()` function
+  - Removed `onLoadData()` and `onSaveData()` functions
+  - Removed Data-related click-outside handling
+- **API Cleanup**: Completely removed `/api/data` endpoints and server files
+  - Deleted entire `server/api/data/` directory
+  - Removed all Data API endpoints (GET, POST, PUT, DELETE, etc.)
+  - Removed backup, exists, info, and search endpoints
+- **Simplified Architecture**: App now uses only Database functionality for server-side operations
+- **Maintained Functionality**: All Data operations now handled through comprehensive Database system
+- **Cleaner UI**: Footer now shows only File and Database buttons for better user experience
+
 ### Enhanced - 2025-09-06T02:21:14+0200
 - **Save Board Modal Enhancement** - Added choice between creating new board or overwriting existing
 - **Save Type Selection**: Added radio buttons for "Create New Board" vs "Overwrite Existing Board"
