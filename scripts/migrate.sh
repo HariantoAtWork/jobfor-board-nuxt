@@ -10,14 +10,14 @@ echo "🚀 Starting database migrations..."
 
 # Run Better-Auth migrations (for user, session, account tables)
 echo "🔐 Running Better-Auth migrations..."
-pnpm run auth:migrate
+bun run auth:migrate
 
 # Run Knex migrations (for custom tables like boards)
 echo "🗄️ Running Knex migrations..."
-pnpm run db:migrate
+bun run db:migrate
 
 # Check migration status
 echo "📊 Migration status:"
-pnpm run db:migrate:status
+bun run db:migrate:status
 
 echo "✅ All migrations completed successfully!"
