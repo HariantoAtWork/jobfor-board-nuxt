@@ -35,6 +35,12 @@ All notable changes to the Job Application Tracker project will be documented in
     - Groups activities by date for better organization
     - Same functionality as main app history modal
     - Clean modal design with proper scrolling and responsive layout
+  - **Board Info Context Menu**: Improved footer with Board Info button
+    - Moved board information from main content to footer context menu
+    - Shows board title, creation date, last updated, card count, column count
+    - Displays public status with visual indicator
+    - Clean, organized context menu design
+    - Click-outside functionality to close menu
 - **Enhanced Board Management UI**:
   - Visual indicators for public/private boards (eye icons)
   - Share button with clipboard integration

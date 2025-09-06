@@ -53,17 +53,6 @@
 
   <!-- Board Content -->
   <main v-else-if="board" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Board Header -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ board.title }}</h1>
-      <div class="flex items-center gap-4 text-sm text-gray-500">
-        <span>Created: {{ formatDate(board.created_at) }}</span>
-        <span>Last updated: {{ formatDate(board.updated_at) }}</span>
-        <span>Cards: {{ board.data.cards?.length || 0 }}</span>
-        <span>Columns: {{ board.data.columns?.length || 0 }}</span>
-      </div>
-    </div>
-
     <!-- Board Content -->
     <div class="bg-white rounded-lg shadow-sm border">
       <div
@@ -219,7 +208,67 @@
   <!-- Footer -->
   <footer class="bg-white border-t border-gray-200 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex justify-center">
+      <div class="flex justify-center gap-4">
+        <div class="relative board-info-menu-container">
+          <button
+            @click="toggleBoardInfoMenu"
+            class="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+          >
+            <Icon name="mdi:information" class="w-5 h-5" />
+            Board Info
+            <Icon name="mdi:chevron-down" class="w-4 h-4" />
+          </button>
+
+          <!-- Board Info Context Menu -->
+          <div
+            v-if="showBoardInfoMenu"
+            class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 min-w-[280px]"
+          >
+            <div class="px-4 py-2 border-b border-gray-100">
+              <h4 class="font-medium text-gray-900">Board Information</h4>
+            </div>
+            <div class="px-4 py-2 space-y-2">
+              <div v-if="board">
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Title:</span>
+                  <span class="text-gray-900 ml-2">{{ board.title }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Created:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    formatDate(board.created_at)
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Last Updated:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    formatDate(board.updated_at)
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Cards:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    board.data.cards?.length || 0
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Columns:</span>
+                  <span class="text-gray-900 ml-2">{{
+                    board.data.columns?.length || 0
+                  }}</span>
+                </div>
+                <div class="text-sm">
+                  <span class="font-medium text-gray-700">Status:</span>
+                  <span class="text-green-600 ml-2 flex items-center gap-1">
+                    <Icon name="mdi:eye" class="w-4 h-4" />
+                    Public
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button
           @click="showHistory = true"
           class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
@@ -302,7 +351,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { IBoard, IColumn, ICard } from '~/types'
 
@@ -322,6 +371,7 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const selectedCard = ref<ICard | null>(null)
 const showHistory = ref(false)
+const showBoardInfoMenu = ref(false)
 
 // Computed
 const sortedColumns = computed(() => {
@@ -426,6 +476,27 @@ const formatTime = (dateString: string) => {
 const goHome = () => {
   router.push('/')
 }
+
+const toggleBoardInfoMenu = () => {
+  showBoardInfoMenu.value = !showBoardInfoMenu.value
+}
+
+// Click outside handler for board info menu
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.board-info-menu-container')) {
+    showBoardInfoMenu.value = false
+  }
+}
+
+// Add click outside listener
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 // Load shared board
 const loadSharedBoard = async () => {
