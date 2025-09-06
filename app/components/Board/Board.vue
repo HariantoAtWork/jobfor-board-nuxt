@@ -87,6 +87,13 @@
                 <Icon name="mdi:file-export" class="w-4 h-4" />
                 Export File
               </button>
+              <button
+                @click="showImportUrlForm = true"
+                class="context-menu-item"
+              >
+                <Icon name="mdi:link" class="w-4 h-4" />
+                Import from URL
+              </button>
               <div class="border-t border-gray-200 my-1"></div>
               <button
                 @click="handleClearBoard"
@@ -140,14 +147,6 @@
               </button>
             </div>
           </div>
-
-          <button
-            @click="showImportUrlForm = true"
-            class="action-button import-url"
-          >
-            <Icon name="mdi:link" />
-            Import from URL
-          </button>
         </div>
       </div>
     </footer>
@@ -824,7 +823,7 @@ const toggleFileMenu = () => {
     if (button) {
       const rect = button.getBoundingClientRect()
       const viewportHeight = window.innerHeight
-      const menuHeight = 80 // Approximate height of the context menu
+      const menuHeight = 100 // Approximate height of the context menu
 
       // If there's not enough space below, show above
       if (rect.bottom + menuHeight > viewportHeight) {

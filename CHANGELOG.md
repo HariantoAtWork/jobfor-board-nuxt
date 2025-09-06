@@ -4,6 +4,18 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Improved - 2025-09-06T14:19:18+0200
+- **Import from URL Reorganization** - Moved Import from URL functionality to File context menu
+- **UI Consolidation**: Removed standalone "Import from URL" button from main footer
+- **File Menu Enhancement**: Added "Import from URL" option to File context menu with proper icon
+- **Better Organization**: All import/export functionality now grouped under File menu
+  - Import File
+  - Export File  
+  - Import from URL (newly added)
+- **Menu Positioning**: Updated File context menu height calculation for new menu item
+- **Consistent UX**: Import from URL now follows same pattern as other file operations
+- **Cleaner Footer**: Reduced footer clutter by consolidating related functionality
+
 ### Cleaned Up - 2025-09-06T14:00:52+0200
 - **Data Button Removal** - Removed redundant "Data" button and context menu from UI
 - **UI Cleanup**: Removed Data button with "Load Data" and "Save Data" options from footer
