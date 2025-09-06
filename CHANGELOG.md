@@ -4,6 +4,22 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Enhanced - 2025-09-06T02:21:14+0200
+- **Save Board Modal Enhancement** - Added choice between creating new board or overwriting existing
+- **Save Type Selection**: Added radio buttons for "Create New Board" vs "Overwrite Existing Board"
+- **Dynamic Form Fields**: Form adapts based on selected save type
+  - Create New: Shows title input field with placeholder
+  - Overwrite: Shows dropdown to select existing board
+- **Board Loading**: Automatically loads existing boards when save modal opens
+- **Smart Validation**: Save button is disabled when overwrite is selected but no board is chosen
+- **Enhanced UX**: 
+  - Empty state message when no existing boards are found
+  - Board titles show creation dates in dropdown
+  - Different button text based on save type ("Create Board" vs "Overwrite Board")
+- **API Integration**: Uses POST for new boards, PUT for overwriting existing boards
+- **Form Reset**: Properly resets form state when modal closes
+- **Error Handling**: Comprehensive error handling for both create and update operations
+
 ### Simplified - 2025-09-06T00:36:59+0200
 - **Migration Script Cleanup** - Simplified migrate.sh by removing redundant environment variable handling
 - Removed duplicate environment variable loading logic from shell script

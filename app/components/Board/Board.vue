@@ -459,12 +459,38 @@
       class="modal-overlay"
       @click="showSaveBoardModal = false"
     >
-      <div class="modal-content" @click.stop>
+      <div class="modal-content max-w-lg" @click.stop>
         <div class="modal-header">
           <h3 class="text-lg font-medium">Save Board to Database</h3>
         </div>
         <div class="modal-body">
+          <!-- Save Type Selection -->
           <div class="form-group">
+            <label class="form-label">Save Type</label>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input
+                  v-model="saveType"
+                  type="radio"
+                  value="new"
+                  class="mr-2"
+                />
+                <span>Create New Board</span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  v-model="saveType"
+                  type="radio"
+                  value="overwrite"
+                  class="mr-2"
+                />
+                <span>Overwrite Existing Board</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- New Board Title (only show when creating new) -->
+          <div v-if="saveType === 'new'" class="form-group">
             <label class="form-label">Board Title</label>
             <input
               v-model="newBoardTitle"
@@ -476,13 +502,53 @@
               Leave empty to use creation date as title
             </p>
           </div>
+
+          <!-- Existing Board Selection (only show when overwriting) -->
+          <div v-if="saveType === 'overwrite'" class="form-group">
+            <label class="form-label">Select Board to Overwrite</label>
+            <div
+              v-if="userBoards.length === 0"
+              class="text-center text-gray-500 py-4"
+            >
+              <Icon
+                name="mdi:database-off"
+                class="w-8 h-8 mx-auto mb-2 text-gray-300"
+              />
+              <p class="text-sm">No existing boards found</p>
+              <p class="text-xs mt-1">Create a new board instead</p>
+            </div>
+            <select
+              v-else
+              v-model="selectedBoardId"
+              class="form-input"
+              required
+            >
+              <option value="">Select a board to overwrite...</option>
+              <option
+                v-for="board in userBoards"
+                :key="board.id"
+                :value="board.id"
+              >
+                {{ board.title }} ({{
+                  new Date(board.created_at).toLocaleDateString()
+                }})
+              </option>
+            </select>
+          </div>
         </div>
         <div class="modal-footer">
           <button @click="showSaveBoardModal = false" class="btn btn-secondary">
             Cancel
           </button>
-          <button @click="saveBoardToDatabase" class="btn btn-primary">
-            Save Board
+          <button
+            @click="saveBoardToDatabase"
+            class="btn btn-primary"
+            :disabled="
+              saveType === 'overwrite' &&
+              (!selectedBoardId || userBoards.length === 0)
+            "
+          >
+            {{ saveType === 'new' ? 'Create Board' : 'Overwrite Board' }}
           </button>
         </div>
       </div>
@@ -549,6 +615,7 @@ const databaseMenuPosition = ref<'top' | 'bottom'>('bottom')
 const userBoards = ref<any[]>([])
 const selectedBoardId = ref('')
 const newBoardTitle = ref('')
+const saveType = ref<'new' | 'overwrite'>('new')
 
 // Load board on mount
 onMounted(() => {
@@ -1023,45 +1090,110 @@ const onLoadBoard = async () => {
   }
 }
 
-const onSaveBoard = () => {
-  showSaveBoardModal.value = true
-  showDatabaseMenu.value = false
+const onSaveBoard = async () => {
+  try {
+    // Load existing boards for overwrite option
+    const response = await fetch('/api/boards', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (response.ok) {
+      const result = await response.json()
+      if (result.success && result.data) {
+        userBoards.value = result.data
+      }
+    }
+
+    // Reset form state
+    saveType.value = 'new'
+    newBoardTitle.value = ''
+    selectedBoardId.value = ''
+
+    showSaveBoardModal.value = true
+    showDatabaseMenu.value = false
+  } catch (error) {
+    console.error('Error loading boards for save:', error)
+    // Still show modal even if loading boards fails
+    showSaveBoardModal.value = true
+    showDatabaseMenu.value = false
+  }
 }
 
 const saveBoardToDatabase = async () => {
   try {
-    // Get current board title (default to creation date if not set)
-    const boardTitle = newBoardTitle.value || new Date().toISOString()
-
     // Prepare board data for saving
     const boardData = board.value
+    let response: Response
+    let result: any
 
-    // Save to database API
-    const response = await fetch('/api/boards', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: boardTitle,
-        data: boardData,
-      }),
-    })
+    if (saveType.value === 'new') {
+      // Create new board
+      const boardTitle = newBoardTitle.value || new Date().toISOString()
+
+      response = await fetch('/api/boards', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: boardTitle,
+          data: boardData,
+        }),
+      })
+
+      result = await response.json()
+
+      if (result.success) {
+        alert('New board created successfully!')
+        console.log('Board created:', result)
+      } else {
+        throw new Error(result.message || 'Failed to create board')
+      }
+    } else {
+      // Overwrite existing board
+      if (!selectedBoardId.value) {
+        throw new Error('Please select a board to overwrite')
+      }
+
+      // Get the selected board to preserve its title
+      const selectedBoard = userBoards.value.find(
+        (b) => b.id === selectedBoardId.value
+      )
+      const boardTitle = selectedBoard?.title || new Date().toISOString()
+
+      response = await fetch(`/api/boards/${selectedBoardId.value}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: boardTitle,
+          data: boardData,
+        }),
+      })
+
+      result = await response.json()
+
+      if (result.success) {
+        alert('Board overwritten successfully!')
+        console.log('Board overwritten:', result)
+      } else {
+        throw new Error(result.message || 'Failed to overwrite board')
+      }
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    const result = await response.json()
-
-    if (result.success) {
-      alert('Board saved to database successfully!')
-      console.log('Board saved:', result)
-      showSaveBoardModal.value = false
-      newBoardTitle.value = ''
-    } else {
-      throw new Error(result.message || 'Failed to save board')
-    }
+    // Close modal and reset form
+    showSaveBoardModal.value = false
+    newBoardTitle.value = ''
+    selectedBoardId.value = ''
+    saveType.value = 'new'
   } catch (error) {
     console.error('Error saving board:', error)
     const errorMessage =
