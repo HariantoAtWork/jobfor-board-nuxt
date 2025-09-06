@@ -19,33 +19,39 @@ export class BoardDatabase {
       user_id: userId,
       title,
       data: JSON.stringify(boardData),
+      share_token: null,
+      is_public: 0, // SQLite uses 0/1 for boolean
       created_at: now,
       updated_at: now,
     }
 
     if (this.dbType === 'sqlite') {
       const stmt = this.database.prepare(`
-        INSERT INTO boards (id, user_id, title, data, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO boards (id, user_id, title, data, share_token, is_public, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `)
       stmt.run(
         board.id,
         board.user_id,
         board.title,
         board.data,
+        board.share_token,
+        board.is_public,
         board.created_at,
         board.updated_at
       )
     } else if (this.dbType === 'postgres') {
       const query = `
-        INSERT INTO boards (id, user_id, title, data, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO boards (id, user_id, title, data, share_token, is_public, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       `
       await this.database.query(query, [
         board.id,
         board.user_id,
         board.title,
         board.data,
+        board.share_token,
+        board.is_public,
         board.created_at,
         board.updated_at,
       ])
@@ -60,7 +66,7 @@ export class BoardDatabase {
 
     if (this.dbType === 'sqlite') {
       const stmt = this.database.prepare(`
-        SELECT id, user_id, title, data, created_at, updated_at
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
         FROM boards
         WHERE user_id = ?
         ORDER BY created_at DESC
@@ -68,7 +74,7 @@ export class BoardDatabase {
       rows = stmt.all(userId)
     } else if (this.dbType === 'postgres') {
       const query = `
-        SELECT id, user_id, title, data, created_at, updated_at
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
         FROM boards
         WHERE user_id = $1
         ORDER BY created_at DESC
@@ -82,6 +88,8 @@ export class BoardDatabase {
       user_id: row.user_id,
       title: row.title,
       data: JSON.parse(row.data),
+      share_token: row.share_token,
+      is_public: Boolean(row.is_public), // Convert 0/1 to true/false
       created_at: row.created_at,
       updated_at: row.updated_at,
     }))
@@ -93,14 +101,14 @@ export class BoardDatabase {
 
     if (this.dbType === 'sqlite') {
       const stmt = this.database.prepare(`
-        SELECT id, user_id, title, data, created_at, updated_at
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
         FROM boards
         WHERE id = ? AND user_id = ?
       `)
       row = stmt.get(boardId, userId)
     } else if (this.dbType === 'postgres') {
       const query = `
-        SELECT id, user_id, title, data, created_at, updated_at
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
         FROM boards
         WHERE id = $1 AND user_id = $2
       `
@@ -115,6 +123,43 @@ export class BoardDatabase {
       user_id: row.user_id,
       title: row.title,
       data: JSON.parse(row.data),
+      share_token: row.share_token,
+      is_public: Boolean(row.is_public), // Convert 0/1 to true/false
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+    }
+  }
+
+  // Get a board by share token (for public access)
+  async getBoardByShareToken(shareToken) {
+    let row
+
+    if (this.dbType === 'sqlite') {
+      const stmt = this.database.prepare(`
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
+        FROM boards
+        WHERE share_token = ? AND is_public = 1
+      `)
+      row = stmt.get(shareToken)
+    } else if (this.dbType === 'postgres') {
+      const query = `
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
+        FROM boards
+        WHERE share_token = $1 AND is_public = true
+      `
+      const result = await this.database.query(query, [shareToken])
+      row = result.rows[0]
+    }
+
+    if (!row) return null
+
+    return {
+      id: row.id,
+      user_id: row.user_id,
+      title: row.title,
+      data: JSON.parse(row.data),
+      share_token: row.share_token,
+      is_public: Boolean(row.is_public), // Convert 0/1 to true/false
       created_at: row.created_at,
       updated_at: row.updated_at,
     }
@@ -134,6 +179,11 @@ export class BoardDatabase {
     if (updates.data !== undefined) {
       updateFields.push('data = ?')
       values.push(JSON.stringify(updates.data))
+    }
+
+    if (updates.is_public !== undefined) {
+      updateFields.push('is_public = ?')
+      values.push(updates.is_public ? 1 : 0)
     }
 
     updateFields.push('updated_at = ?')
@@ -169,6 +219,62 @@ export class BoardDatabase {
     return false
   }
 
+  // Generate share token for a board
+  async generateShareToken(boardId, userId) {
+    const shareToken = crypto.randomUUID()
+    const now = new Date().toISOString()
+
+    if (this.dbType === 'sqlite') {
+      const stmt = this.database.prepare(`
+        UPDATE boards
+        SET share_token = ?, updated_at = ?
+        WHERE id = ? AND user_id = ?
+      `)
+      const result = stmt.run(shareToken, now, boardId, userId)
+      return result.changes > 0 ? shareToken : null
+    } else if (this.dbType === 'postgres') {
+      const query = `
+        UPDATE boards
+        SET share_token = $1, updated_at = $2
+        WHERE id = $3 AND user_id = $4
+      `
+      const result = await this.database.query(query, [
+        shareToken,
+        now,
+        boardId,
+        userId,
+      ])
+      return result.rowCount > 0 ? shareToken : null
+    }
+
+    return null
+  }
+
+  // Revoke share token for a board
+  async revokeShareToken(boardId, userId) {
+    const now = new Date().toISOString()
+
+    if (this.dbType === 'sqlite') {
+      const stmt = this.database.prepare(`
+        UPDATE boards
+        SET share_token = NULL, is_public = 0, updated_at = ?
+        WHERE id = ? AND user_id = ?
+      `)
+      const result = stmt.run(now, boardId, userId)
+      return result.changes > 0
+    } else if (this.dbType === 'postgres') {
+      const query = `
+        UPDATE boards
+        SET share_token = NULL, is_public = false, updated_at = $1
+        WHERE id = $2 AND user_id = $3
+      `
+      const result = await this.database.query(query, [now, boardId, userId])
+      return result.rowCount > 0
+    }
+
+    return false
+  }
+
   // Delete a board
   async deleteBoard(boardId, userId) {
     if (this.dbType === 'sqlite') {
@@ -196,7 +302,7 @@ export class BoardDatabase {
 
     if (this.dbType === 'sqlite') {
       const stmt = this.database.prepare(`
-        SELECT id, user_id, title, data, created_at, updated_at
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
         FROM boards
         WHERE user_id = ? AND title LIKE ?
         ORDER BY created_at DESC
@@ -204,7 +310,7 @@ export class BoardDatabase {
       rows = stmt.all(userId, `%${searchTerm}%`)
     } else if (this.dbType === 'postgres') {
       const query = `
-        SELECT id, user_id, title, data, created_at, updated_at
+        SELECT id, user_id, title, data, share_token, is_public, created_at, updated_at
         FROM boards
         WHERE user_id = $1 AND title ILIKE $2
         ORDER BY created_at DESC
@@ -221,6 +327,8 @@ export class BoardDatabase {
       user_id: row.user_id,
       title: row.title,
       data: JSON.parse(row.data),
+      share_token: row.share_token,
+      is_public: Boolean(row.is_public), // Convert 0/1 to true/false
       created_at: row.created_at,
       updated_at: row.updated_at,
     }))

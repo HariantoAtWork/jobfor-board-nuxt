@@ -4,6 +4,50 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-09-06T16:06:59+0200
+- **Board Sharing System** - Complete sharing functionality for database boards
+- **Share Button**: Generate shareable links for any board in the Database/Manage Boards modal
+- **Allow View Share Toggle**: Toggle button to control public access to boards (default: private)
+- **Public Board Access**: Anyone with the share link can view the board without authentication
+- **Share Token Management**: 
+  - Automatic share token generation when making boards public
+  - Revoke share tokens to make boards private again
+  - Unique share tokens for each board
+- **Database Schema Updates**:
+  - Added `share_token` field (unique) to boards table
+  - Added `is_public` field (boolean) to boards table
+  - Added database indexes for efficient share token and public board queries
+- **API Endpoints**:
+  - `POST /api/boards/[id]/share` - Generate share token for a board
+  - `DELETE /api/boards/[id]/share` - Revoke share token for a board
+  - `PUT /api/boards/[id]/public` - Toggle public access for a board
+  - `GET /api/shared/[token]` - Get shared board by token (public access)
+- **Shared Board View Page**: 
+  - New page at `/shared/[token]` for viewing shared boards
+  - Read-only view with all board content (cards, columns, notes)
+  - Responsive design with proper loading and error states
+  - Card detail modal for viewing full card information
+  - Clean, professional interface for public sharing
+  - **History Footer**: Added footer with History button to shared pages
+  - **Activity History Modal**: Complete history functionality for shared boards
+    - Shows card movements between columns with timestamps
+    - Displays notes added to cards with creation dates
+    - Groups activities by date for better organization
+    - Same functionality as main app history modal
+    - Clean modal design with proper scrolling and responsive layout
+- **Enhanced Board Management UI**:
+  - Visual indicators for public/private boards (eye icons)
+  - Share button with clipboard integration
+  - Revoke button for removing share access
+  - Toggle switch for enabling/disabling public access
+  - Improved board layout with sharing controls section
+- **User Experience Improvements**:
+  - Automatic clipboard copying of share URLs
+  - Confirmation dialogs for destructive actions
+  - Real-time UI updates when toggling sharing settings
+  - Clear visual feedback for sharing status
+  - Error handling with user-friendly messages
+
 ### Improved - 2025-09-06T14:51:53+0200
 - **Bulk Links Usability Enhancement** - Improved bulk links import to accept full text instead of URL-per-line format
 - **Smart URL Extraction**: Automatically extracts all URLs from pasted text using regex pattern matching

@@ -387,9 +387,25 @@
               :key="board.id"
               class="border border-gray-200 rounded-lg p-4"
             >
-              <div class="flex items-center justify-between">
+              <div class="flex items-start justify-between">
                 <div class="flex-1">
-                  <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
+                  <div class="flex items-center gap-2 mb-2">
+                    <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
+                    <div class="flex items-center gap-1">
+                      <Icon
+                        v-if="board.is_public"
+                        name="mdi:eye"
+                        class="w-4 h-4 text-green-600"
+                        title="Publicly shared"
+                      />
+                      <Icon
+                        v-else
+                        name="mdi:eye-off"
+                        class="w-4 h-4 text-gray-400"
+                        title="Private"
+                      />
+                    </div>
+                  </div>
                   <p class="text-sm text-gray-500">
                     Created:
                     {{ new Date(board.created_at).toLocaleDateString() }}
@@ -402,8 +418,51 @@
                     Cards: {{ board.data.cards?.length || 0 }} | Columns:
                     {{ board.data.columns?.length || 0 }}
                   </p>
+
+                  <!-- Sharing Controls -->
+                  <div class="mt-3 space-y-2">
+                    <!-- Allow View Share Toggle -->
+                    <div class="flex items-center gap-2">
+                      <label class="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          :checked="board.is_public"
+                          @change="
+                            toggleBoardPublicAccess(
+                              board.id,
+                              ($event.target as HTMLInputElement)?.checked ||
+                                false
+                            )
+                          "
+                          class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span class="text-gray-700">Allow View Share</span>
+                      </label>
+                    </div>
+
+                    <!-- Share Button -->
+                    <div class="flex items-center gap-2">
+                      <button
+                        @click="shareBoard(board)"
+                        class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors flex items-center gap-1"
+                      >
+                        <Icon name="mdi:share" class="w-4 h-4" />
+                        Share
+                      </button>
+                      <button
+                        v-if="board.is_public && board.share_token"
+                        @click="revokeShareToken(board.id)"
+                        class="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors flex items-center gap-1"
+                      >
+                        <Icon name="mdi:link-off" class="w-4 h-4" />
+                        Revoke
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2">
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 ml-4">
                   <button
                     @click="loadSelectedBoard(board.id)"
                     class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
@@ -1171,6 +1230,125 @@ const deleteBoard = async (boardId: string) => {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to delete board: ' + errorMessage)
+  }
+}
+
+// Sharing functions
+const shareBoard = async (board: any) => {
+  try {
+    // If board is not public, make it public first
+    if (!board.is_public) {
+      await toggleBoardPublicAccess(board.id, true)
+    }
+
+    // Generate share token
+    const response = await fetch(`/api/boards/${board.id}/share`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success && result.data) {
+      // Copy share URL to clipboard
+      await navigator.clipboard.writeText(result.data.share_url)
+      alert(`Share link copied to clipboard!\n\n${result.data.share_url}`)
+
+      // Refresh the boards list to show updated sharing status
+      await onManageBoards()
+    } else {
+      throw new Error(result.message || 'Failed to generate share link')
+    }
+  } catch (error) {
+    console.error('Error sharing board:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to share board: ' + errorMessage)
+  }
+}
+
+const toggleBoardPublicAccess = async (boardId: string, isPublic: boolean) => {
+  try {
+    const response = await fetch(`/api/boards/${boardId}/public`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        is_public: isPublic,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success) {
+      // Update the board in the local list
+      const boardIndex = userBoards.value.findIndex((b) => b.id === boardId)
+      if (boardIndex !== -1) {
+        userBoards.value[boardIndex].is_public = isPublic
+      }
+
+      if (isPublic) {
+        alert('Board is now publicly accessible!')
+      } else {
+        alert('Board is now private!')
+      }
+    } else {
+      throw new Error(result.message || 'Failed to update board access')
+    }
+  } catch (error) {
+    console.error('Error toggling board public access:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to update board access: ' + errorMessage)
+  }
+}
+
+const revokeShareToken = async (boardId: string) => {
+  if (
+    !confirm(
+      'Are you sure you want to revoke the share link? This will make the board private and invalidate the current share link.'
+    )
+  ) {
+    return
+  }
+
+  try {
+    const response = await fetch(`/api/boards/${boardId}/share`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    if (result.success) {
+      alert('Share link revoked successfully!')
+      // Refresh the boards list
+      await onManageBoards()
+    } else {
+      throw new Error(result.message || 'Failed to revoke share link')
+    }
+  } catch (error) {
+    console.error('Error revoking share token:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    alert('Failed to revoke share link: ' + errorMessage)
   }
 }
 
