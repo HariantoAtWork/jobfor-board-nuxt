@@ -44,6 +44,12 @@
                 Edit Column
               </button>
               <button
+                @click="showBulkLinksModal = true"
+                class="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+              >
+                Add Bulk Links
+              </button>
+              <button
                 @click="deleteColumn"
                 class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               >
@@ -469,6 +475,92 @@
         </div>
       </div>
     </div>
+
+    <!-- Bulk Links Modal -->
+    <div
+      v-if="showBulkLinksModal"
+      class="modal-overlay"
+      @click="showBulkLinksModal = false"
+    >
+      <div class="modal-content max-w-2xl" @click.stop>
+        <div class="modal-header">
+          <h3 class="text-lg font-medium">Add Bulk Links</h3>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Paste Text with Job Links</label>
+            <textarea
+              v-model="bulkLinksData.links"
+              class="form-textarea"
+              rows="8"
+              placeholder="Paste any text containing job links (from emails, job boards, documents, etc.)&#10;&#10;Example:&#10;Check out these great opportunities:&#10;https://company.com/job1&#10;https://linkedin.com/jobs/view/123&#10;Also see: https://indeed.com/viewjob?jk=456"
+            ></textarea>
+            <p class="text-sm text-gray-500 mt-1">
+              Paste any text containing job links. The system will automatically
+              extract all URLs and fetch their page titles.
+            </p>
+          </div>
+
+          <!-- Processing Status -->
+          <div v-if="bulkLinksData.isLoading" class="mt-4">
+            <div class="flex items-center gap-2 text-blue-600">
+              <Icon name="mdi:loading" class="animate-spin" />
+              <span>Extracting URLs and fetching page titles...</span>
+            </div>
+          </div>
+
+          <!-- Processed Links Preview -->
+          <div v-if="bulkLinksData.processedLinks.length > 0" class="mt-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">Preview:</h4>
+            <div class="max-h-40 overflow-y-auto space-y-2">
+              <div
+                v-for="(link, index) in bulkLinksData.processedLinks"
+                :key="index"
+                class="flex items-center gap-2 p-2 border rounded"
+                :class="{
+                  'border-green-200 bg-green-50': link.status === 'success',
+                  'border-red-200 bg-red-50': link.status === 'error',
+                  'border-yellow-200 bg-yellow-50': link.status === 'pending',
+                }"
+              >
+                <Icon
+                  :name="
+                    link.status === 'success'
+                      ? 'mdi:check-circle'
+                      : link.status === 'error'
+                      ? 'mdi:alert-circle'
+                      : 'mdi:loading'
+                  "
+                  :class="{
+                    'text-green-600': link.status === 'success',
+                    'text-red-600': link.status === 'error',
+                    'text-yellow-600 animate-spin': link.status === 'pending',
+                  }"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium truncate">
+                    {{ link.title || link.url }}
+                  </p>
+                  <p class="text-xs text-gray-500 truncate">{{ link.url }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click="showBulkLinksModal = false" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button
+            @click="processBulkLinks"
+            class="btn btn-primary"
+            :disabled="!bulkLinksData.links.trim() || bulkLinksData.isLoading"
+          >
+            {{ bulkLinksData.isLoading ? 'Processing...' : 'Process Links' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -533,6 +625,7 @@ const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
 const showEditColumnForm = ref(false)
 const showCardDetails = ref(false)
+const showBulkLinksModal = ref(false)
 const isEditingCard = ref(false)
 const selectedCard = ref<ICard | null>(null)
 const isDragOver = ref(false)
@@ -564,6 +657,16 @@ const editCardData = ref({
   description: '',
   createdAt: '',
   lastMoved: '',
+})
+
+const bulkLinksData = ref({
+  links: '',
+  isLoading: false,
+  processedLinks: [] as Array<{
+    url: string
+    title: string
+    status: 'pending' | 'success' | 'error'
+  }>,
 })
 
 const isCardDragging = (cardId: string) => {
@@ -755,6 +858,144 @@ const handleUpdateNote = (noteId: string, noteData: Partial<INote>) => {
 const handleDeleteNote = (noteId: string) => {
   if (selectedCard.value) {
     emit('deletenote', selectedCard.value.id, noteId)
+  }
+}
+
+// Bulk Links functionality
+const processBulkLinks = async () => {
+  if (!bulkLinksData.value.links.trim()) return
+
+  bulkLinksData.value.isLoading = true
+  bulkLinksData.value.processedLinks = []
+
+  // Extract URLs from the full text
+  const links = extractUrlsFromText(bulkLinksData.value.links)
+
+  if (links.length === 0) {
+    alert(
+      'No valid URLs found in the text. Please paste text containing job links.'
+    )
+    bulkLinksData.value.isLoading = false
+    return
+  }
+
+  // Initialize processed links with pending status
+  bulkLinksData.value.processedLinks = links.map((url) => ({
+    url,
+    title: '',
+    status: 'pending' as const,
+  }))
+
+  // Process each link
+  for (let i = 0; i < links.length; i++) {
+    const link = links[i]
+    try {
+      const title = await fetchPageTitle(link)
+      bulkLinksData.value.processedLinks[i] = {
+        url: link,
+        title: title || 'Untitled',
+        status: 'success' as const,
+      }
+    } catch (error) {
+      console.error(`Failed to fetch title for ${link}:`, error)
+      bulkLinksData.value.processedLinks[i] = {
+        url: link,
+        title: 'Failed to fetch title',
+        status: 'error' as const,
+      }
+    }
+  }
+
+  bulkLinksData.value.isLoading = false
+
+  // Create cards for successful links
+  const successfulLinks = bulkLinksData.value.processedLinks.filter(
+    (link) => link.status === 'success'
+  )
+
+  if (successfulLinks.length > 0) {
+    for (const link of successfulLinks) {
+      emit(
+        'addcard',
+        {
+          title: link.title,
+          link: link.url,
+          company: extractCompanyFromUrl(link.url),
+          jobTitle: link.title,
+          description: `Imported from: ${link.url}`,
+        },
+        props.column.id
+      )
+    }
+
+    showBulkLinksModal.value = false
+    bulkLinksData.value.links = ''
+    bulkLinksData.value.processedLinks = []
+
+    alert(`Successfully added ${successfulLinks.length} cards to the column!`)
+  } else {
+    alert('No links could be processed successfully.')
+  }
+}
+
+// Helper function to extract URLs from text
+const extractUrlsFromText = (text: string): string[] => {
+  // Regular expression to match URLs
+  const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`[\]]+)/gi
+  const urls = text.match(urlRegex) || []
+
+  // Remove duplicates and validate URLs
+  const uniqueUrls = [...new Set(urls)].filter((url) => isValidUrl(url))
+
+  return uniqueUrls
+}
+
+// Helper function to validate URLs
+const isValidUrl = (string: string): boolean => {
+  try {
+    new URL(string)
+    return true
+  } catch (_) {
+    return false
+  }
+}
+
+// Helper function to fetch page title
+const fetchPageTitle = async (url: string): Promise<string | null> => {
+  try {
+    // Use a CORS proxy or server-side endpoint to fetch the page
+    const response = await fetch(
+      `/api/fetch-title?url=${encodeURIComponent(url)}`
+    )
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data.title || null
+  } catch (error) {
+    console.error('Error fetching page title:', error)
+    throw error
+  }
+}
+
+// Helper function to extract company name from URL
+const extractCompanyFromUrl = (url: string): string => {
+  try {
+    const urlObj = new URL(url)
+    const hostname = urlObj.hostname
+
+    // Remove common prefixes and suffixes
+    let company = hostname
+      .replace(/^www\./, '')
+      .replace(/\.(com|co\.uk|org|net|io|dev)$/, '')
+      .split('.')[0]
+
+    // Capitalize first letter
+    return company.charAt(0).toUpperCase() + company.slice(1)
+  } catch (_) {
+    return 'Unknown Company'
   }
 }
 

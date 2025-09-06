@@ -4,6 +4,43 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Improved - 2025-09-06T14:51:53+0200
+- **Bulk Links Usability Enhancement** - Improved bulk links import to accept full text instead of URL-per-line format
+- **Smart URL Extraction**: Automatically extracts all URLs from pasted text using regex pattern matching
+- **Flexible Input**: Users can now paste any text containing job links (emails, job board pages, documents, etc.)
+- **Enhanced User Experience**: 
+  - Updated modal label to "Paste Text with Job Links"
+  - New placeholder with realistic example showing mixed text and URLs
+  - Updated help text to explain automatic URL extraction
+  - Improved processing status message: "Extracting URLs and fetching page titles..."
+- **Robust URL Detection**: Uses comprehensive regex pattern to find all HTTP/HTTPS URLs in text
+- **Duplicate Removal**: Automatically removes duplicate URLs found in the text
+- **Better Error Messages**: Updated error message for when no URLs are found in the text
+- **Maintained Functionality**: All existing features (title fetching, card creation, status tracking) work unchanged
+
+### Added - 2025-09-06T14:27:00+0200
+- **Bulk Links Import** - Added ability to import multiple job links at once with automatic title fetching
+- **Column Context Menu Enhancement**: Added "Add Bulk Links" button to column context menu
+- **Bulk Links Modal**: Comprehensive modal for processing multiple URLs
+  - Large textarea for pasting multiple links (one per line)
+  - Real-time processing status with loading indicators
+  - Live preview of processed links with success/error status
+  - Color-coded status indicators (green for success, red for error, yellow for pending)
+- **Automatic Title Fetching**: Server-side API endpoint to fetch page titles from URLs
+  - `/api/fetch-title` endpoint with proper error handling and timeouts
+  - Intelligent title cleaning (removes job board suffixes like "LinkedIn", "Indeed", etc.)
+  - 10-second timeout to prevent hanging requests
+  - Proper User-Agent headers for better compatibility
+- **Smart Card Creation**: Automatically creates cards with fetched data
+  - Uses fetched page title as card title and job title
+  - Extracts company name from URL domain
+  - Adds source URL as job link
+  - Includes import metadata in description
+- **URL Validation**: Validates URLs before processing
+- **Error Handling**: Comprehensive error handling for failed title fetches
+- **User Feedback**: Clear success/error messages and processing status
+- **Batch Processing**: Processes multiple links sequentially with individual status tracking
+
 ### Improved - 2025-09-06T14:19:18+0200
 - **Import from URL Reorganization** - Moved Import from URL functionality to File context menu
 - **UI Consolidation**: Removed standalone "Import from URL" button from main footer
