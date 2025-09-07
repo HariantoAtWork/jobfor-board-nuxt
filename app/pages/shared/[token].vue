@@ -355,7 +355,7 @@
                         v-html="makeHtml(activity.description)"
                       ></div>
                       <div class="text-xs text-gray-500 mt-1">
-                        {{ formatTime(activity.timestamp) }}
+                        {{ formatDate(activity.timestamp) }}
                       </div>
                     </div>
                   </div>
