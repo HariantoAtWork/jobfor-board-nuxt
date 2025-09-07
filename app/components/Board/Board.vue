@@ -273,7 +273,14 @@
                   >
                     <div class="flex items-start gap-3">
                       <div class="activity-icon">
-                        <Icon name="mdi:arrow-down-left" class="-rotate-90" />
+                        <Icon
+                          :name="
+                            activity.type === 'note'
+                              ? 'mdi:note-text'
+                              : 'mdi:arrow-right'
+                          "
+                          class="w-4 h-4 text-gray-400"
+                        />
                       </div>
                       <div class="activity-content">
                         <div
@@ -948,6 +955,7 @@ const activityHistory = computed(() => {
     id: string
     description: string
     timestamp: string
+    type: 'movement' | 'note'
   }> = []
 
   // Collect all card movements from history
@@ -958,6 +966,7 @@ const activityHistory = computed(() => {
           id: entry.id,
           description: `**${card.title}** moved to **${entry.columnTitle}**`,
           timestamp: entry.timestamp,
+          type: 'movement',
         })
       })
     }
@@ -969,6 +978,7 @@ const activityHistory = computed(() => {
           id: note.id,
           description: `**${card.title}** - 🗒️ Note: **${note.title}**`,
           timestamp: note.createdAt,
+          type: 'note',
         })
       })
     }
