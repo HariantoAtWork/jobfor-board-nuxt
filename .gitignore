@@ -31,3 +31,6 @@ logs
 !pnpm-lock.yaml
 !tailwind.config.js
 !nuxt.config.ts
+
+# App Folders
+data/
