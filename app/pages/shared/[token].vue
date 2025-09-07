@@ -121,7 +121,15 @@
                   </div>
 
                   <div class="mt-3">
-                    <div class="card-label">
+                    <div
+                      class="card-label"
+                      :class="{
+                        'text-purple-600': cardFormatTime(
+                          card.lastMoved,
+                          nowStore.now
+                        ).includes('in'),
+                      }"
+                    >
                       <Icon name="mdi:clock-outline" />{{
                         cardFormatTime(card.lastMoved, nowStore.now)
                       }}
@@ -266,7 +274,15 @@
             </a>
           </div>
           <div class="mt-3">
-            <div class="card-label">
+            <div
+              class="card-label"
+              :class="{
+                'text-purple-600': cardFormatTime(
+                  selectedCard.lastMoved,
+                  nowStore.now
+                ).includes('in'),
+              }"
+            >
               <Icon name="mdi:clock-outline" />{{
                 cardFormatTime(selectedCard.lastMoved, nowStore.now)
               }}
@@ -286,7 +302,15 @@
                   class="text-sm text-gray-900 whitespace-pre-wrap"
                   v-html="makeHtml(note.body || '')"
                 />
-                <div class="text-xs text-gray-500 mt-2">
+                <div
+                  class="text-xs text-gray-500 mt-2"
+                  :class="{
+                    'text-purple-600': cardFormatTime(
+                      note.createdAt,
+                      nowStore.now
+                    ).includes('in'),
+                  }"
+                >
                   {{ cardFormatTime(note.createdAt, nowStore.now) }}
                 </div>
               </div>
