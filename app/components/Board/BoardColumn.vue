@@ -267,14 +267,14 @@
             <div class="grid grid-cols-2 gap-1">
               <p
                 v-if="selectedCard.company"
-                class="text-gray-900 flex items-center gap-1"
+                class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
                 title="Company"
               >
                 <Icon name="mdi-light:factory" />{{ selectedCard.company }}
               </p>
               <p
                 v-if="selectedCard.jobTitle"
-                class="text-gray-900 flex items-center gap-1"
+                class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
                 title="Job Title"
               >
                 <Icon name="mdi-light:briefcase" />{{ selectedCard.jobTitle }}
@@ -282,7 +282,7 @@
               <!-- Location -->
               <p
                 v-if="selectedCard.location"
-                class="text-gray-900 flex items-center gap-1"
+                class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
                 title="Location"
               >
                 <Icon name="mdi-light:map-marker" />{{ selectedCard.location }}
@@ -290,7 +290,7 @@
               <!-- Via and Contact -->
               <p
                 v-if="selectedCard.via"
-                class="text-gray-900 flex items-center gap-1"
+                class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
                 title="Via"
               >
                 <Icon name="mdi-light:share-variant" />{{ selectedCard.via }}
@@ -300,7 +300,7 @@
                 <p
                   v-for="(contact, index) in selectedCard.contact.split(',')"
                   :key="index"
-                  class="text-gray-900 flex items-center gap-1"
+                  class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
                   title="Contact"
                 >
                   <Icon name="mdi-light:account" />{{ contact }}
@@ -308,7 +308,7 @@
               </template>
               <p
                 v-if="selectedCard.link"
-                class="text-gray-900 flex items-start gap-1"
+                class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
                 title="Job Link"
               >
                 <Icon name="mdi-light:link" class="flex-shrink-0 mt-1" />
@@ -351,14 +351,18 @@
             <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
               <div>
                 <label class="form-label">Created</label>
-                <p class="text-gray-600 text-sm">
-                  {{ formatTimeAgo(selectedCard.createdAt) }}
+                <p class="text-gray-600 card-label">
+                  <Icon name="mdi:clock-outline" />{{
+                    formatTimeAgo(selectedCard.createdAt)
+                  }}
                 </p>
               </div>
               <div>
                 <label class="form-label">Last Moved</label>
-                <p class="text-gray-600 text-sm">
-                  {{ formatTimeAgo(selectedCard.lastMoved) }}
+                <p class="text-gray-600 card-label">
+                  <Icon name="mdi:clock-outline" />{{
+                    formatTimeAgo(selectedCard.lastMoved)
+                  }}
                 </p>
               </div>
             </div>

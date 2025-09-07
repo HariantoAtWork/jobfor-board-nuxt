@@ -1,7 +1,7 @@
 <template>
   <div class="card-notes">
     <div class="card-note-header">
-      <h3 class="text-sm font-medium text-gray-700 flex items-center gap-2">
+      <h3 class="text-sm font-medium text-gray-700 card-label">
         <Icon name="mdi-light:note-text" />
         Notes ({{ sortedNotes.length }})
       </h3>
