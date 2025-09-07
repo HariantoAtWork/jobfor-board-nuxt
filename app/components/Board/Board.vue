@@ -287,8 +287,18 @@
                           class="text-gray-900 text-sm"
                           v-html="makeHtml(activity.description)"
                         />
-                        <p class="text-gray-500 text-xs">
-                          {{ formatActivityTime(activity.timestamp) }}
+                        <p
+                          class="text-gray-500 text-xs"
+                          :class="{
+                            'text-purple-600': cardFormatTime(
+                              activity.timestamp,
+                              nowStore.now
+                            ).includes('in'),
+                          }"
+                        >
+                          {{
+                            formatActivityTime(activity.timestamp, nowStore.now)
+                          }}
                         </p>
                       </div>
                     </div>
@@ -602,6 +612,11 @@ import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
 import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
 import user from '~/utils/user'
+import nowStore from '~/store/now'
+import {
+  formatTime as cardFormatTime,
+  formatActivityTime,
+} from '~/utils/dayjs-extend'
 
 // Board state
 const {
@@ -1384,9 +1399,4 @@ const groupedActivityHistory = computed(() => {
 
   return groups
 })
-
-const formatActivityTime = (timestamp: string) => {
-  const date = dayjs(timestamp)
-  return date.format('MMM D, h:mm A')
-}
 </script>

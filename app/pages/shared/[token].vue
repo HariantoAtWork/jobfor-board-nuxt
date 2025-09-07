@@ -378,7 +378,15 @@
                         class="text-sm text-gray-900"
                         v-html="makeHtml(activity.description)"
                       ></div>
-                      <div class="text-xs text-gray-500 mt-1">
+                      <div
+                        class="text-xs text-gray-500 mt-1"
+                        :class="{
+                          'text-purple-600': cardFormatTime(
+                            activity.timestamp,
+                            nowStore.now
+                          ).includes('in'),
+                        }"
+                      >
                         {{ formatActivityTime(activity.timestamp) }}
                       </div>
                     </div>

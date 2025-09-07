@@ -11,7 +11,7 @@ export const formatTime = (_createdDate, _now) => {
   const createdDate = dayjs(_createdDate)
   const now = dayjs(_now)
 
-  if (createdDate > now) {
+  if (createdDate.isAfter(now)) {
     // format future time as DD:HH:mm:ss
     const diff = createdDate.diff(now, 'second')
     const days = Math.floor(diff / 86400)
@@ -32,7 +32,7 @@ export const formatActivityTime = (_createdDate, _now) => {
   const createdDate = dayjs(_createdDate)
   const now = dayjs(_now)
 
-  if (createdDate > now) {
+  if (createdDate.isAfter(now)) {
     // format future time as DD:HH:mm:ss
     const diff = createdDate.diff(now, 'second')
     const days = Math.floor(diff / 86400)
