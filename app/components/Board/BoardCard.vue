@@ -49,13 +49,13 @@
     </div>
 
     <div class="card-meta">
-      <div v-if="card.company" class="flex items-center text-xs gap-1">
+      <div v-if="card.company" class="card-label">
         <Icon name="mdi-light:factory" />{{ card.company }}
       </div>
-      <div v-if="card.jobTitle" class="flex items-center text-xs gap-1">
+      <div v-if="card.jobTitle" class="card-label">
         <Icon name="mdi-light:briefcase" />{{ card.jobTitle }}
       </div>
-      <div v-if="card.location" class="flex items-center text-xs gap-1">
+      <div v-if="card.location" class="card-label">
         <Icon name="mdi-light:map-marker" />{{ card.location }}
       </div>
 
@@ -63,13 +63,13 @@
         <div
           v-for="(contact, index) in card.contact.split(',')"
           :key="index"
-          class="flex items-center text-xs gap-1"
+          class="card-label"
         >
           <Icon name="mdi-light:account" />{{ contact }}
         </div>
       </template>
 
-      <div v-if="card.link" class="flex items-center text-xs gap-1">
+      <div v-if="card.link" class="card-label">
         <Icon name="mdi-light:link" />
         <a
           :href="formattedLink"
@@ -84,7 +84,7 @@
     </div>
 
     <div v-if="card.via" class="card-meta">
-      <div class="flex items-center text-xs gap-1">
+      <div class="card-label">
         <Icon name="mdi-light:share-variant" />{{ card.via }}
       </div>
     </div>
@@ -93,7 +93,7 @@
       v-if="Array.isArray(card.notes) && card.notes.length"
       class="card-meta"
     >
-      <div class="flex items-center text-xs gap-1">
+      <div class="card-label">
         <Icon name="mdi-light:note" />{{ card.notes.length }} Note{{
           card.notes.length === 1 ? '' : 's'
         }}
@@ -101,7 +101,7 @@
     </div>
 
     <div
-      class="card-footer flex items-center text-xs gap-1"
+      class="card-footer card-label"
       :class="{
         'text-purple-600': ageInThisStage.includes('in'),
       }"

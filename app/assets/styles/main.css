@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer base {
+@layer base {
     html {
         font-family: "Inter", system-ui, sans-serif;
     }
@@ -17,7 +17,7 @@
     #__nuxt {
         height: 100vh;
     }
-} */
+}
 
 @layer components {
     .board-container {
@@ -110,6 +110,10 @@
 
     .card-title {
         @apply font-medium text-gray-800 text-sm truncate mb-1;
+    }
+
+    .card-label {
+        @apply grid grid-cols-[1rem_1fr] gap-1 items-center text-xs;
     }
 
     .card-company {
@@ -226,7 +230,7 @@
     }
 
     .context-menu-item {
-        @apply w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors;
+        @apply w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 grid grid-cols-[1rem_1fr]  gap-2 transition-colors;
     }
 
     .context-menu-item:hover {

@@ -88,25 +88,24 @@
                   <h4 class="font-medium text-gray-900 mb-2">
                     {{ card.title }}
                   </h4>
-                  <p v-if="card.company" class="text-sm text-gray-600 mb-2">
-                    {{ card.company }}
+                  <p v-if="card.company" class="card-label text-gray-600 mb-2">
+                    <Icon name="mdi-light:factory" />{{ card.company }}
                   </p>
-                  <p v-if="card.jobTitle" class="text-sm text-gray-600 mb-2">
-                    {{ card.jobTitle }}
+                  <p v-if="card.jobTitle" class="card-label text-gray-600 mb-2">
+                    <Icon name="mdi-light:briefcase" />{{ card.jobTitle }}
                   </p>
-                  <p
+                  <div
                     v-if="card.description"
-                    class="text-sm text-gray-500 line-clamp-3"
+                    class="card-label text-gray-500 line-clamp-3"
                     style="line-clamp: 3"
-                  >
-                    {{ card.description }}
-                  </p>
+                    v-html="makeHtml(card.description)"
+                  />
                   <div v-if="card.link" class="mt-3">
                     <a
                       :href="card.link"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1"
+                      class="card-label text-blue-600 hover:text-blue-800"
                       @click.stop
                     >
                       <Icon name="mdi:open-in-new" class="w-4 h-4" />
@@ -268,9 +267,10 @@
                 :key="note.id"
                 class="bg-gray-50 rounded-lg p-3"
               >
-                <div class="text-sm text-gray-900 whitespace-pre-wrap">
-                  {{ note.body }}
-                </div>
+                <div
+                  class="text-sm text-gray-900 whitespace-pre-wrap"
+                  v-html="makeHtml(note.body)"
+                />
                 <div class="text-xs text-gray-500 mt-2">
                   {{ formatDate(note.createdAt) }}
                 </div>
@@ -336,7 +336,7 @@
                   <div class="activity-content">
                     <div
                       class="text-sm text-gray-900"
-                      v-html="activity.description"
+                      v-html="makeHtml(activity.description)"
                     ></div>
                     <div class="text-xs text-gray-500 mt-1">
                       {{ formatTime(activity.timestamp) }}
