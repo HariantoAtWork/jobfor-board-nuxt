@@ -119,6 +119,14 @@
                       }}
                     </div>
                   </div>
+
+                  <div class="mt-3">
+                    <div class="card-label">
+                      <Icon name="mdi:clock-outline" />{{
+                        cardFormatTime(card.lastMoved, nowStore.now)
+                      }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -257,6 +265,13 @@
               {{ selectedCard.link }}
             </a>
           </div>
+          <div class="mt-3">
+            <div class="card-label">
+              <Icon name="mdi:clock-outline" />{{
+                cardFormatTime(selectedCard.lastMoved, nowStore.now)
+              }}
+            </div>
+          </div>
           <div v-if="selectedCard.notes && selectedCard.notes.length > 0">
             <label class="block text-sm font-medium text-gray-700 mb-1"
               >Notes</label
@@ -272,7 +287,7 @@
                   v-html="makeHtml(note.body)"
                 />
                 <div class="text-xs text-gray-500 mt-2">
-                  {{ formatDate(note.createdAt) }}
+                  {{ cardFormatTime(note.createdAt, nowStore.now) }}
                 </div>
               </div>
             </div>
@@ -339,7 +354,7 @@
                       v-html="makeHtml(activity.description)"
                     ></div>
                     <div class="text-xs text-gray-500 mt-1">
-                      {{ formatTime(activity.timestamp) }}
+                      {{ formatTime(activity.timestamp, nowStore.now) }}
                     </div>
                   </div>
                 </div>
@@ -356,6 +371,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { IBoard, IColumn, ICard } from '~/types'
+import nowStore from '~/store/now'
+import { formatTime as cardFormatTime } from '~/utils/dayjs-extend'
 
 // Use the shared layout for this page
 definePageMeta({
