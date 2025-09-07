@@ -12,4 +12,9 @@ export default defineNuxtConfig({
   alias: {
     '@modules': fileURLToPath(new URL('./modules', import.meta.url)),
   },
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
 })
