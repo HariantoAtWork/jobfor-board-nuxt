@@ -355,7 +355,7 @@
                         v-html="makeHtml(activity.description)"
                       ></div>
                       <div class="text-xs text-gray-500 mt-1">
-                        {{ formatDate(activity.timestamp) }}
+                        {{ formatActivityTime(activity.timestamp) }}
                       </div>
                     </div>
                   </div>
@@ -374,7 +374,10 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from '~/utils/dayjs-extend'
 import makeHtml from '~/utils/makeHtml'
-import { formatTime as cardFormatTime } from '~/utils/dayjs-extend'
+import {
+  formatTime as cardFormatTime,
+  formatActivityTime,
+} from '~/utils/dayjs-extend'
 import nowStore from '~/store/now'
 import type { IBoard, IColumn, ICard } from '~/types'
 
