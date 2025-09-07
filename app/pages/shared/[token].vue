@@ -284,7 +284,7 @@
               >
                 <div
                   class="text-sm text-gray-900 whitespace-pre-wrap"
-                  v-html="makeHtml(note.body)"
+                  v-html="makeHtml(note.body || '')"
                 />
                 <div class="text-xs text-gray-500 mt-2">
                   {{ cardFormatTime(note.createdAt, nowStore.now) }}
@@ -322,39 +322,41 @@
         </div>
         <div v-else class="space-y-6">
           <div
-            v-for="group in groupedHistory"
-            :key="group.date"
+            v-for="(group, monthYear) in groupedHistory"
+            :key="monthYear"
             class="activity-group"
           >
             <div class="activity-group-header">
-              <h4 class="text-sm font-medium text-gray-900">
-                {{ group.date }}
+              <h4 class="text-sm font-semibold text-gray-700">
+                {{ monthYear }}
               </h4>
             </div>
             <div class="activity-group-content">
-              <div
-                v-for="activity in group.activities"
-                :key="activity.id"
-                class="activity-item"
-              >
-                <div class="flex gap-3">
-                  <div class="activity-icon">
-                    <Icon
-                      :name="
-                        activity.type === 'note'
-                          ? 'mdi:note-text'
-                          : 'mdi:arrow-right'
-                      "
-                      class="w-4 h-4 text-gray-400"
-                    />
-                  </div>
-                  <div class="activity-content">
-                    <div
-                      class="text-sm text-gray-900"
-                      v-html="makeHtml(activity.description)"
-                    ></div>
-                    <div class="text-xs text-gray-500 mt-1">
-                      {{ formatTime(activity.timestamp, nowStore.now) }}
+              <div class="space-y-3">
+                <div
+                  v-for="activity in group"
+                  :key="activity.id"
+                  class="activity-item"
+                >
+                  <div class="flex gap-3">
+                    <div class="activity-icon">
+                      <Icon
+                        :name="
+                          activity.type === 'note'
+                            ? 'mdi:note-text'
+                            : 'mdi:arrow-right'
+                        "
+                        class="w-4 h-4 text-gray-400"
+                      />
+                    </div>
+                    <div class="activity-content">
+                      <div
+                        class="text-sm text-gray-900"
+                        v-html="makeHtml(activity.description)"
+                      ></div>
+                      <div class="text-xs text-gray-500 mt-1">
+                        {{ formatTime(activity.timestamp) }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -370,9 +372,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { IBoard, IColumn, ICard } from '~/types'
-import nowStore from '~/store/now'
+import dayjs from '~/utils/dayjs-extend'
+import makeHtml from '~/utils/makeHtml'
 import { formatTime as cardFormatTime } from '~/utils/dayjs-extend'
+import nowStore from '~/store/now'
+import type { IBoard, IColumn, ICard } from '~/types'
 
 // Use the shared layout for this page
 definePageMeta({
@@ -442,25 +446,19 @@ const activityHistory = computed(() => {
 })
 
 const groupedHistory = computed(() => {
-  const groups: { [key: string]: any[] } = {}
+  const groups: Record<string, any[]> = {}
 
   activityHistory.value.forEach((activity) => {
-    const date = new Date(activity.timestamp).toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
+    const date = dayjs(activity.timestamp)
+    const monthYear = date.format('MMMM YYYY')
 
-    if (!groups[date]) {
-      groups[date] = []
+    if (!groups[monthYear]) {
+      groups[monthYear] = []
     }
-    groups[date].push(activity)
+    groups[monthYear].push(activity)
   })
 
-  return Object.entries(groups).map(([date, activities]) => ({
-    date,
-    activities,
-  }))
+  return groups
 })
 
 // Methods

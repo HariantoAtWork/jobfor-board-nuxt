@@ -4,7 +4,11 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
-### Added - 2025-09-06T16:06:59+0200
+### Added
+
+### Changed
+- **2025-09-07T21:50:06+0200**: Updated shared board history to group activities by month (e.g., "January 2025") instead of by day, matching the main Board component's behaviour
+- **2025-09-07T21:50:06+0200**: Restored proper function calls in shared board page (makeHtml, cardFormatTime, nowStore) to match main Board component functionality - 2025-09-06T16:06:59+0200
 - **Board Sharing System** - Complete sharing functionality for database boards
 - **Share Button**: Generate shareable links for any board in the Database/Manage Boards modal
 - **Allow View Share Toggle**: Toggle button to control public access to boards (default: private)
