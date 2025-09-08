@@ -7,39 +7,14 @@
  * Created: 2025-09-08T14:42:16+0200
  */
 
-import { readFileSync } from 'fs'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { config } from 'dotenv'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const projectRoot = join(__dirname, '..')
-
-// Load environment variables from .env file if it exists
-function loadEnvFile() {
-  try {
-    const envPath = join(projectRoot, '.env')
-    const envContent = readFileSync(envPath, 'utf8')
-
-    envContent.split('\n').forEach((line) => {
-      const trimmedLine = line.trim()
-      if (trimmedLine && !trimmedLine.startsWith('#')) {
-        const [key, ...valueParts] = trimmedLine.split('=')
-        if (key && valueParts.length > 0) {
-          const value = valueParts.join('=').trim()
-          if (!process.env[key]) {
-            process.env[key] = value
-          }
-        }
-      }
-    })
-  } catch (error) {
-    // .env file doesn't exist or can't be read, continue with system env vars
-  }
+// Load environment variables from .env file
+if (process.env.NODE_ENV !== 'production') {
+  config()
+} else {
+  console.log('🔍 NODE_ENV is production, skipping environment variable check')
 }
-
-// Load environment variables
-loadEnvFile()
 
 // Required environment variables
 const requiredVars = {
