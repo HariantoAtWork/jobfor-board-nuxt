@@ -6,12 +6,14 @@ import Database from 'better-sqlite3'
 import { Pool } from 'pg'
 // import { checkEnvironmentVariables } from './checkEnvironmentVariables.server'
 
-// checkEnvironmentVariables()
-
-const SQLITE_PATH = process.env.SQLITE_PATH
+checkEnvironmentVariables()
 
 export const db = {
   sqlite() {
+    if (!process.env.SQLITE_PATH) {
+      throw new Error('SQLITE_PATH is not set')
+    }
+    const SQLITE_PATH = process.env.SQLITE_PATH
     const dbPath = join(process.cwd(), SQLITE_PATH)
 
     try {
