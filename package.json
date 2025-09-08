@@ -3,10 +3,11 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "start": "node .output/server/index.mjs",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "build-preview": "nuxt build && nuxt preview",
+    "build-preview": "npm run build && npm run start",
     "postinstall": "nuxt prepare",
     "deploy": "rm -rf .output && pnpm run build && npx wrangler pages deploy dist",
     "auth:generate": "npx @better-auth/cli generate -y --config ./modules/0000-auth/lib/auth.server.js",
@@ -17,7 +18,9 @@
     "db:seed": "npx knex seed:run --knexfile knexfile.js",
     "db:make-migration": "npx knex migrate:make --knexfile knexfile.js",
     "db:make-seed": "npx knex seed:make --knexfile knexfile.js",
-    "migrate": "./scripts/migrate.sh"
+    "migrate": "./scripts/migrate.sh",
+    "app:reset": "rm -rf .output && rm -rf data && rm -rf node_modules && bun install",
+    "ci": "./scripts/install.sh"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",

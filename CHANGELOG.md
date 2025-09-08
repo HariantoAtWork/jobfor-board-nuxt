@@ -5,6 +5,17 @@ All notable changes to the Job Application Tracker project will be documented in
 ## [Unreleased]
 
 ### Added
+- **Environment Variables Validation Script** - Created `scripts/check-env.mjs` for validating required environment variables
+  - **2025-09-08T14:42:16+0200**: Added comprehensive environment variable validation script
+  - Checks always required variables: `BETTER_AUTH_SECRET`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `DB_TYPE`
+  - Database-specific validation based on `DB_TYPE`:
+    - SQLite: Validates `SQLITE_PATH`
+    - PostgreSQL: Validates `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT`, `PGDATABASE`
+  - Automatic `.env` file loading with fallback to system environment variables
+  - Clear error reporting with missing variable lists
+  - Executable script with proper shebang and chmod +x permissions
+  - Exit codes: 0 for success, 1 for validation failures
+  - Comprehensive logging with emoji indicators for better readability
 
 ### Changed
 - **2025-09-07T21:50:06+0200**: Updated shared board history to group activities by month (e.g., "January 2025") instead of by day, matching the main Board component's behaviour
