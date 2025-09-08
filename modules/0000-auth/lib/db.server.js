@@ -4,16 +4,11 @@ import { mkdirSync, chmodSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import Database from 'better-sqlite3'
 import { Pool } from 'pg'
-// import { checkEnvironmentVariables } from './checkEnvironmentVariables.server'
-
-checkEnvironmentVariables()
 
 export const db = {
   sqlite() {
-    if (!process.env.SQLITE_PATH) {
-      throw new Error('SQLITE_PATH is not set')
-    }
-    const SQLITE_PATH = process.env.SQLITE_PATH
+    const SQLITE_PATH =
+      process.env.SQLITE_PATH || './data/auth/local-development.sqlite'
     const dbPath = join(process.cwd(), SQLITE_PATH)
 
     try {

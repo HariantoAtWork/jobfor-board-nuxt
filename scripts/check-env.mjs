@@ -10,11 +10,7 @@
 import { config } from 'dotenv'
 
 // Load environment variables from .env file
-if (process.env.NODE_ENV !== 'production') {
-  config()
-} else {
-  console.log('🔍 NODE_ENV is production, skipping environment variable check')
-}
+config()
 
 // Required environment variables
 const requiredVars = {

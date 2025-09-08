@@ -6,10 +6,13 @@ import { config } from 'dotenv'
 // Load environment variables from .env file
 config()
 
-var DEFAULT_SQLITE_PATH = join(__dirname, '.data/auth/default.sqlite')
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+const DEFAULT_SQLITE_PATH = join(
+  __dirname,
+  './data/auth/local-development.sqlite'
+)
 
 // Create folders for SQLite path and return the same path
 function createFolders(sqlitePath) {
