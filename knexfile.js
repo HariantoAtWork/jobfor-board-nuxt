@@ -19,7 +19,7 @@ function createFolders(sqlitePath) {
   if (sqlitePath) {
     const dbDir = sqlitePath
     try {
-      mkdirSync(dbDir, { recursive: true })
+      mkdirSync(dirname(dbDir), { recursive: true })
     } catch (error) {
       console.warn(
         `Warning: Could not create directory ${dbDir}:`,
