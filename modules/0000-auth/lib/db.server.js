@@ -4,9 +4,9 @@ import { mkdirSync, chmodSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import Database from 'better-sqlite3'
 import { Pool } from 'pg'
-import { checkEnvironmentVariables } from './checkEnvironmentVariables.server'
+// import { checkEnvironmentVariables } from './checkEnvironmentVariables.server'
 
-checkEnvironmentVariables()
+// checkEnvironmentVariables()
 
 const SQLITE_PATH = process.env.SQLITE_PATH
 
