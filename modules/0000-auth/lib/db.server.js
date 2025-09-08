@@ -4,8 +4,11 @@ import { mkdirSync, chmodSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import Database from 'better-sqlite3'
 import { Pool } from 'pg'
+import { checkEnvironmentVariables } from './checkEnvironmentVariables.server'
 
-const SQLITE_PATH = process.env.SQLITE_PATH || '.data/auth/jobfor-board.sqlite'
+checkEnvironmentVariables()
+
+const SQLITE_PATH = process.env.SQLITE_PATH
 
 export const db = {
   sqlite() {
