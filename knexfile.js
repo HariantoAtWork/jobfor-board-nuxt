@@ -2,7 +2,6 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { config } from 'dotenv'
-
 // Load environment variables from .env file
 config()
 
@@ -19,7 +18,7 @@ function createFolders(sqlitePath) {
   if (sqlitePath) {
     const dbDir = sqlitePath
     try {
-      mkdirSync(dirname(dbDir), { recursive: true })
+      mkdirSync(dbDir, { recursive: true })
     } catch (error) {
       console.warn(
         `Warning: Could not create directory ${dbDir}:`,

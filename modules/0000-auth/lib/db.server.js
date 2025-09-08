@@ -22,7 +22,7 @@ export const db = {
     const dbPath = join(process.cwd(), SQLITE_PATH)
 
     try {
-      mkdirSync(dirname(dbPath), { recursive: true }) // Can fail if no write permissions
+      mkdirSync(dbPath, { recursive: true }) // Can fail if no write permissions
       const database = new Database(dbPath) // Can fail if file is locked
       chmodSync(dbPath, 0o666) // Can fail if file doesn't exist
       return database
