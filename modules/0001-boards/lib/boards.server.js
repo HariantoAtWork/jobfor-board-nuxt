@@ -1,5 +1,7 @@
 import process from 'node:process'
 import { db } from '@modules/0000-auth/lib/db.server.js'
+import { config } from 'dotenv'
+config()
 
 const DB_TYPE = process.env.DB_TYPE || 'sqlite'
 
