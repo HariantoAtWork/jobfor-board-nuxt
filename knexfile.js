@@ -6,6 +6,8 @@ import { config } from 'dotenv'
 // Load environment variables from .env file
 config()
 
+var DEFAULT_SQLITE_PATH = join(__dirname, '.data/auth/default.sqlite')
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
@@ -54,8 +56,7 @@ export default {
           }
         : {
             filename: createFolders(
-              process.env.SQLITE_PATH ||
-                join(__dirname, '.data/auth/default.sqlite')
+              process.env.SQLITE_PATH || DEFAULT_SQLITE_PATH
             ),
           },
     migrations: {
@@ -89,8 +90,7 @@ export default {
           }
         : {
             filename: createFolders(
-              process.env.SQLITE_PATH ||
-                join(__dirname, '.data/auth/default.sqlite')
+              process.env.SQLITE_PATH || DEFAULT_SQLITE_PATH
             ),
           },
     migrations: {
