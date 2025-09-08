@@ -17,7 +17,7 @@ const DEFAULT_SQLITE_PATH = join(
 // Create folders for SQLite path and return the same path
 function createFolders(sqlitePath) {
   if (sqlitePath) {
-    const dbDir = dirname(sqlitePath)
+    const dbDir = sqlitePath
     try {
       mkdirSync(dbDir, { recursive: true })
     } catch (error) {
