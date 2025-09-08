@@ -3,6 +3,8 @@ import { betterAuth } from 'better-auth'
 import process from 'node:process'
 import { sendEmail } from './email.server'
 import { db } from './db.server'
+import { config } from 'dotenv'
+config()
 
 const DB_TYPE = process.env.DB_TYPE || 'sqlite'
 const database = db[DB_TYPE]()

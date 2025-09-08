@@ -47,7 +47,7 @@ function checkEnvironmentVariables() {
       missingVars.push(varName)
       hasErrors = true
     } else {
-      console.log(`✅ ${varName}: Set`)
+      console.log(`✅ ${varName}: ${value}`)
     }
   }
 
@@ -70,7 +70,7 @@ function checkEnvironmentVariables() {
           missingVars.push(varName)
           hasErrors = true
         } else {
-          console.log(`✅ ${varName}: Set`)
+          console.log(`✅ ${varName}: ${value}`)
         }
       }
     } else if (dbType === 'postgres') {
@@ -81,7 +81,7 @@ function checkEnvironmentVariables() {
           missingVars.push(varName)
           hasErrors = true
         } else {
-          console.log(`✅ ${varName}: Set`)
+          console.log(`✅ ${varName}: ${value}`)
         }
       }
     } else {

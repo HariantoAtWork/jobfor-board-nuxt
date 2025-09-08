@@ -1,5 +1,9 @@
 import { fileURLToPath } from 'node:url'
 
+console.log('--------------------------------', process.env.DB_TYPE, process.env.SQLITE_PATH)
+import checkEnvironmentVariables from './modules/0000-auth/lib/checkEnvironmentVariables.server'
+checkEnvironmentVariables()
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },

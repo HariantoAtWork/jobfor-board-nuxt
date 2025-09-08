@@ -1,5 +1,8 @@
 // import './env.server'
 import nodemailer from 'nodemailer'
+import { config } from 'dotenv'
+
+config()
 
 // Send an email - Promise version
 export const sendEmail = ({ to, subject, text }) => {

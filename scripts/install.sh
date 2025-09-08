@@ -2,6 +2,8 @@
 
 set -e # Exit on any error
 
+rm -rf .nuxt .output data
+
 # Install dependencies
 echo "🔍 Installing dependencies..."
 bun install
@@ -10,18 +12,10 @@ bun install
 echo "🔍 Checking environment variables..."
 ./scripts/check-env.mjs
 
-# Generate database schema: Better-Auth
-echo "🔍 Generating database schema: Better-Auth..."
-bun run auth:generate
-
-# Run database migrations: Better-Auth
-echo "🔍 Running database migrations: Better-Auth..."
-bun run auth:migrate
-
-# Run database migrations: Knex
-echo "🔍 Running database migrations: Knex..."
-# Run database migrations: Knex
-bun run db:migrate
+echo "🔍 Running migrations..."
+npx @better-auth/cli generate -y --config ./modules/0000-auth/lib/auth.server.js
+npx @better-auth/cli migrate -y --config ./modules/0000-auth/lib/auth.server.js
+npx knex migrate:latest --knexfile knexfile.js
 
 # Build Nuxt application
 echo "🔍 Building Nuxt application..."
