@@ -50,6 +50,12 @@
                 Add Bulk Links
               </button>
               <button
+                @click="openCopyUrlsModal"
+                class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
+              >
+                Copy URLs
+              </button>
+              <button
                 @click="deleteColumn"
                 class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               >
@@ -565,6 +571,94 @@
         </div>
       </div>
     </div>
+
+    <!-- Copy URLs Modal -->
+    <div
+      v-if="showCopyUrlsModal"
+      class="modal-overlay"
+      @click="showCopyUrlsModal = false"
+    >
+      <div class="modal-content max-w-2xl" @click.stop>
+        <div class="modal-header">
+          <h3 class="text-lg font-medium">Copy URLs from {{ column.title }}</h3>
+        </div>
+        <div class="modal-body">
+          <div
+            v-if="cardsWithUrls.length === 0"
+            class="text-center text-gray-500 py-8"
+          >
+            <Icon
+              name="mdi:link-off"
+              class="w-12 h-12 mx-auto mb-4 text-gray-300"
+            />
+            <p>No URLs found in this column</p>
+            <p class="text-sm mt-2">Add job links to cards to see them here</p>
+          </div>
+          <div v-else class="space-y-4">
+            <div class="flex items-center justify-between mb-4">
+              <p class="text-sm text-gray-600">
+                Found {{ cardsWithUrls.length }} URL{{
+                  cardsWithUrls.length === 1 ? '' : 's'
+                }}
+                in this column
+              </p>
+              <button
+                @click="copyAllUrls"
+                class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors flex items-center gap-1"
+              >
+                <Icon name="mdi:content-copy" class="w-4 h-4" />
+                Copy All URLs
+              </button>
+            </div>
+
+            <div class="max-h-96 overflow-y-auto space-y-3">
+              <div
+                v-for="card in cardsWithUrls"
+                :key="card.id"
+                class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1 min-w-0">
+                    <h4 class="font-medium text-gray-900 truncate">
+                      {{ card.title }}
+                    </h4>
+                    <p
+                      v-if="card.company"
+                      class="text-sm text-gray-600 truncate"
+                    >
+                      {{ card.company }}
+                    </p>
+                    <div class="mt-2">
+                      <a
+                        :href="formattedUrl(card.link)"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800 text-sm break-all"
+                        @click.stop
+                      >
+                        {{ formattedUrl(card.link) }}
+                      </a>
+                    </div>
+                  </div>
+                  <button
+                    @click="copySingleUrl(card.link)"
+                    class="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                    title="Copy URL"
+                  >
+                    <Icon name="mdi:content-copy" class="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click="showCopyUrlsModal = false" class="btn btn-secondary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -630,6 +724,7 @@ const showColumnMenu = ref(false)
 const showEditColumnForm = ref(false)
 const showCardDetails = ref(false)
 const showBulkLinksModal = ref(false)
+const showCopyUrlsModal = ref(false)
 const isEditingCard = ref(false)
 const selectedCard = ref<ICard | null>(null)
 const isDragOver = ref(false)
@@ -668,10 +763,76 @@ const bulkLinksData = ref({
   isLoading: false,
   processedLinks: [] as Array<{
     url: string
-    title: string
+    title: string | null
     status: 'pending' | 'success' | 'error'
   }>,
 })
+
+// Computed property to get cards with URLs
+const cardsWithUrls = computed(() => {
+  return props.cards.filter((card) => card.link && card.link.trim())
+})
+
+// Helper function to format URLs
+const formattedUrl = (url: string) => {
+  if (!url) return ''
+
+  const link = url.trim()
+
+  // If link already has a protocol, return as is
+  if (link.match(/^https?:\/\//)) {
+    return link
+  }
+
+  // If link starts with www., add https://
+  if (link.startsWith('www.')) {
+    return `https://${link}`
+  }
+
+  // For other cases, add https://
+  return `https://${link}`
+}
+
+// Copy single URL to clipboard
+const copySingleUrl = async (url: string) => {
+  try {
+    const formatted = formattedUrl(url)
+    await navigator.clipboard.writeText(formatted)
+    // You could add a toast notification here
+    console.log('URL copied to clipboard:', formatted)
+  } catch (error) {
+    console.error('Failed to copy URL:', error)
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea')
+    textArea.value = formattedUrl(url)
+    document.body.appendChild(textArea)
+    textArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textArea)
+  }
+}
+
+// Copy all URLs to clipboard
+const copyAllUrls = async () => {
+  try {
+    const urls = cardsWithUrls.value
+      .map((card) => formattedUrl(card.link || ''))
+      .join('\n')
+    await navigator.clipboard.writeText(urls)
+    console.log('All URLs copied to clipboard')
+  } catch (error) {
+    console.error('Failed to copy URLs:', error)
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea')
+    textArea.value = cardsWithUrls.value
+      .map((card) => formattedUrl(card.link || ''))
+      .join('\n')
+    document.body.appendChild(textArea)
+    textArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textArea)
+  }
+}
 
 const isCardDragging = (cardId: string) => {
   return (
@@ -847,6 +1008,11 @@ const deleteColumn = () => {
   emit('deletecolumn', props.column.id)
 }
 
+const openCopyUrlsModal = () => {
+  showCopyUrlsModal.value = true
+  showColumnMenu.value = false
+}
+
 const handleAddNote = (noteData: { title: string; body: string }) => {
   if (selectedCard.value) {
     emit('addnote', selectedCard.value.id, noteData)
@@ -893,11 +1059,13 @@ const processBulkLinks = async () => {
   // Process each link
   for (let i = 0; i < links.length; i++) {
     const link = links[i]
+    if (!link) continue // Skip if link is undefined
+
     try {
       const title = await fetchPageTitle(link)
       bulkLinksData.value.processedLinks[i] = {
         url: link,
-        title: title || 'Untitled',
+        title: title,
         status: 'success' as const,
       }
     } catch (error) {
@@ -922,10 +1090,10 @@ const processBulkLinks = async () => {
       emit(
         'addcard',
         {
-          title: link.title,
+          title: link.title || 'Untitled',
           link: link.url,
           company: extractCompanyFromUrl(link.url),
-          jobTitle: link.title,
+          jobTitle: link.title || 'Untitled',
           description: `Imported from: ${link.url}`,
         },
         props.column.id
@@ -997,7 +1165,9 @@ const extractCompanyFromUrl = (url: string): string => {
       .split('.')[0]
 
     // Capitalize first letter
-    return company.charAt(0).toUpperCase() + company.slice(1)
+    return company
+      ? company.charAt(0).toUpperCase() + company.slice(1)
+      : 'Unknown Company'
   } catch (_) {
     return 'Unknown Company'
   }

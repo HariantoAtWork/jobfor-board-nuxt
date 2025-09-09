@@ -5,6 +5,27 @@ All notable changes to the Job Application Tracker project will be documented in
 ## [Unreleased]
 
 ### Added
+- **Copy URLs Feature** - Added ability to copy URLs from column cards to clipboard
+  - **2025-09-09T13:59:46+0200**: Added "Copy URLs" button to Column context menu
+  - **Copy URLs Modal**: Comprehensive modal displaying all URLs from cards in the column
+    - Shows card title, company, and clickable URL for each card with a link
+    - Individual copy buttons for each URL with visual feedback
+    - "Copy All URLs" button to copy all URLs at once (one per line)
+    - Empty state message when no URLs are found in the column
+    - Scrollable list for columns with many cards
+  - **Smart URL Formatting**: Automatically formats URLs with proper protocols
+    - Adds `https://` prefix for URLs without protocol
+    - Handles `www.` prefixed URLs correctly
+    - Preserves existing `http://` and `https://` URLs
+  - **Clipboard Integration**: Modern clipboard API with fallback for older browsers
+    - Uses `navigator.clipboard.writeText()` for modern browsers
+    - Falls back to `document.execCommand('copy')` for older browsers
+    - Proper error handling and user feedback
+  - **Enhanced UX**: 
+    - Green-themed "Copy URLs" button in column context menu
+    - Modal automatically closes column menu when opened
+    - Clean, professional modal design matching application style
+    - Responsive layout with proper spacing and typography
 - **Environment Variables Validation Script** - Created `scripts/check-env.mjs` for validating required environment variables
   - **2025-09-08T14:42:16+0200**: Added comprehensive environment variable validation script
   - Checks always required variables: `BETTER_AUTH_SECRET`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `DB_TYPE`
