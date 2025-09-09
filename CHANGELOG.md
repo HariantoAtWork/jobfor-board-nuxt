@@ -17,6 +17,29 @@ All notable changes to the Job Application Tracker project will be documented in
   - Exit codes: 0 for success, 1 for validation failures
   - Comprehensive logging with emoji indicators for better readability
 
+- **Database Seeds System** - Created comprehensive database seeding system for development and testing
+  - **2025-09-08T19:12:00+0200**: Added `database/seeds/` directory with sample data
+  - **Sample Boards Seed** (`01_sample_boards.cjs`): Creates realistic job application boards
+    - Software Engineer Applications board with cards in different stages (Applied, Interview, Offer, Rejected)
+    - DevOps Engineer Applications board with interested/applied workflow
+    - Includes sample cards with notes, job links, company information, and locations
+    - Uses proper data structure matching the application's board format
+  - **Shared Boards Seed** (`02_shared_boards.cjs`): Creates sample shared boards for testing
+    - Public job board example with share token for testing sharing functionality
+    - Demonstrates how boards can be shared publicly with proper share_token and is_public fields
+    - Only runs in development environment (skipped in production)
+  - **Seeding Script** (`scripts/seed.sh`): Executable script for running database seeds
+    - Loads environment variables from .env file
+    - Runs all seeds with proper error handling
+    - Clear success/failure reporting with emoji indicators
+  - **Comprehensive Documentation** (`database/seeds/README.md`): Complete guide for using seeds
+    - Explains difference between migrations and seeds
+    - Usage instructions for running seeds individually or all at once
+    - Guidelines for creating new seed files
+    - Development vs production considerations
+  - **Knex Integration**: Properly configured in knexfile.js for seeds directory
+  - **Ordered Execution**: Seeds run in alphabetical order with numbered prefixes
+
 ### Changed
 - **2025-09-07T21:50:06+0200**: Updated shared board history to group activities by month (e.g., "January 2025") instead of by day, matching the main Board component's behaviour
 - **2025-09-07T21:50:06+0200**: Restored proper function calls in shared board page (makeHtml, cardFormatTime, nowStore) to match main Board component functionality - 2025-09-06T16:06:59+0200
