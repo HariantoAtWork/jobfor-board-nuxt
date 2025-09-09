@@ -8,23 +8,15 @@ import { config } from 'dotenv'
 
 config()
 
-console.log(
-  '# DB.server.js --------------------------------',
-  process.env.SQLITE_PATH
-)
-
 export const db = {
   sqlite() {
     const SQLITE_PATH =
-      process.env.SQLITE_PATH || './data/auth/local-development-nigga.sqlite'
-
-    console.log('WHAT IS THIS? --------------------------------', SQLITE_PATH)
-    const dbPath = join(process.cwd(), SQLITE_PATH)
+      process.env.SQLITE_PATH || './data/auth/local-development.sqlite'
 
     try {
-      mkdirSync(dbPath, { recursive: true }) // Can fail if no write permissions
-      const database = new Database(dbPath) // Can fail if file is locked
-      chmodSync(dbPath, 0o666) // Can fail if file doesn't exist
+      mkdirSync(dirname(SQLITE_PATH), { recursive: true }) // Can fail if no write permissions
+      const database = new Database(SQLITE_PATH) // Can fail if file is locked
+      chmodSync(SQLITE_PATH, 0o666) // Can fail if file doesn't exist
       return database
     } catch (error) {
       // Handle various failure scenarios gracefully
