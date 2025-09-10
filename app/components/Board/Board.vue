@@ -1054,10 +1054,17 @@ const onSaveBoard = async () => {
       }
     }
 
-    // Reset form state
-    saveType.value = 'new'
-    newBoardTitle.value = ''
-    selectedBoardId.value = ''
+    // Auto-select overwrite mode and board if only one exists
+    if (userBoards.value.length === 1) {
+      saveType.value = 'overwrite'
+      selectedBoardId.value = userBoards.value[0].id
+      newBoardTitle.value = ''
+    } else {
+      // Reset form state for multiple boards or no boards
+      saveType.value = 'new'
+      newBoardTitle.value = ''
+      selectedBoardId.value = ''
+    }
 
     showSaveBoardModal.value = true
     showDatabaseMenu.value = false

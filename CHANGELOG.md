@@ -42,6 +42,13 @@ All notable changes to the Job Application Tracker project will be documented in
     - Benefits from existing timeout and header configurations
     - Maintains consistency with bulk import feature
 
+### Improved - 2025-09-10T13:48:19+0200
+- **Save Board Modal Enhancement** - Auto-select single board for overwrite
+  - **Smart Default Selection**: When only one board exists, automatically selects "Overwrite Existing Board"
+  - **Pre-selected Board**: Single board is automatically selected in the dropdown
+  - **Improved UX**: Reduces clicks and streamlines the save process for single-board users
+  - **Fallback Logic**: Still defaults to "Create New Board" for multiple boards or no boards
+
 ### Improved - 2025-09-10T12:42:57+0200
 - **Notes Enhancement** - Made note body content optional
   - **CardNotes.vue**: Updated validation logic to only require title
