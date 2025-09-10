@@ -41,6 +41,15 @@ All notable changes to the Job Application Tracker project will be documented in
     - Uses same robust API endpoint with proper error handling
     - Benefits from existing timeout and header configurations
     - Maintains consistency with bulk import feature
+
+### Improved - 2025-09-10T12:42:57+0200
+- **Notes Enhancement** - Made note body content optional
+  - **CardNotes.vue**: Updated validation logic to only require title
+  - **Optional Body Field**: Notes can now be created with just a title
+  - **UI Updates**: Form labels now indicate "Content (optional)"
+  - **Display Logic**: Shows "No content" for notes without body text
+  - **Validation**: Removed requirement for body content in both add and edit modes
+  - **User Experience**: More flexible note creation for quick title-only notes
 - **Copy URLs Feature** - Added ability to copy URLs from column cards to clipboard
   - **2025-09-09T13:59:46+0200**: Added "Copy URLs" button to Column context menu
   - **Copy URLs Modal**: Comprehensive modal displaying all URLs from cards in the column

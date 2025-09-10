@@ -33,12 +33,12 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Content</label>
+            <label class="form-label">Content (optional)</label>
             <textarea
               v-model="newNote.body"
               class="form-textarea"
               rows="3"
-              placeholder="Note content..."
+              placeholder="Note content (optional)..."
               @keyup.ctrl.enter="addNote"
             ></textarea>
           </div>
@@ -110,9 +110,11 @@
             class="note-body-container"
           >
             <div
+              v-if="note.body"
               class="note-body whitespace-pre-wrap make-html"
               v-html="makeHtml(note.body)"
             />
+            <div v-else class="note-body text-gray-500 italic">No content</div>
           </div>
         </div>
 
@@ -138,12 +140,12 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Content</label>
+            <label class="form-label">Content (optional)</label>
             <textarea
               v-model="editingNote!.body"
               class="form-textarea"
               rows="3"
-              placeholder="Note content..."
+              placeholder="Note content (optional)..."
               @keyup.ctrl.enter="saveNoteEdit"
             ></textarea>
           </div>
@@ -202,18 +204,18 @@ const newNote = ref({
 })
 
 const canAddNote = computed(() => {
-  return newNote.value.title.trim() && newNote.value.body.trim()
+  return newNote.value.title.trim()
 })
 
 const canSaveNote = computed(() => {
-  return editingNote.value?.title.trim() && editingNote.value?.body.trim()
+  return editingNote.value?.title.trim()
 })
 
 const addNote = () => {
   if (canAddNote.value) {
     emit('addnote', {
       title: newNote.value.title.trim(),
-      body: newNote.value.body.trim(),
+      body: newNote.value.body.trim() || undefined,
     })
     cancelAddNote()
   }
@@ -241,7 +243,7 @@ const saveNoteEdit = () => {
 
     const updatedNote = {
       title: editingNote.value.title.trim(),
-      body: editingNote.value.body.trim(),
+      body: editingNote.value.body.trim() || undefined,
       createdAt: isoString,
     }
 
