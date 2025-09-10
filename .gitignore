@@ -32,5 +32,10 @@ logs
 !tailwind.config.js
 !nuxt.config.ts
 
+# Package Managers
+pnpm-lock.yaml
+bun.lock
+yarn.lock
+
 # App Folders
 data/
