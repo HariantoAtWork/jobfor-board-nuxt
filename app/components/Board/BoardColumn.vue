@@ -338,7 +338,14 @@
                     :class="[
                       'w-4 h-4',
                       urlStatus.isLoading ? 'animate-spin' : '',
-                      urlStatus.isAlive === true ? 'text-green-600' : '',
+                      urlStatus.isAlive === true &&
+                      urlStatus.hasContent === true
+                        ? 'text-green-600'
+                        : '',
+                      urlStatus.isAlive === true &&
+                      urlStatus.hasContent === false
+                        ? 'text-yellow-600'
+                        : '',
                       urlStatus.isAlive === false ? 'text-red-600' : '',
                       urlStatus.isAlive === null ? 'text-gray-400' : '',
                     ]"
@@ -743,19 +750,34 @@ const { getUrlStatus, refreshUrlStatus: checkUrlStatus } = useUrlStatus()
 const urlStatus = computed(() => {
   return selectedCard.value?.link
     ? getUrlStatus(selectedCard.value.link)
-    : { isAlive: null, lastChecked: null, isLoading: false }
+    : {
+        isAlive: null,
+        hasContent: null,
+        title: null,
+        lastChecked: null,
+        isLoading: false,
+      }
 })
 
 const getStatusIcon = () => {
   if (urlStatus.value.isLoading) return 'mdi:loading'
-  if (urlStatus.value.isAlive === true) return 'mdi:check-circle'
+  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === true)
+    return 'mdi:check-circle'
+  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === false)
+    return 'mdi:alert-circle'
   if (urlStatus.value.isAlive === false) return 'mdi:close-circle'
   return 'mdi:help-circle'
 }
 
 const getStatusTooltip = () => {
   if (urlStatus.value.isLoading) return 'Checking URL status...'
-  if (urlStatus.value.isAlive === true) return 'URL is accessible'
+  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === true) {
+    return `URL is accessible with content${
+      urlStatus.value.title ? `: ${urlStatus.value.title}` : ''
+    }`
+  }
+  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === false)
+    return 'URL is accessible but has no content'
   if (urlStatus.value.isAlive === false) return 'URL is not accessible'
   return 'Click to check URL status'
 }

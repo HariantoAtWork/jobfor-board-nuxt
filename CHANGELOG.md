@@ -5,22 +5,30 @@ All notable changes to the Job Application Tracker project will be documented in
 ## [Unreleased]
 
 ### Added
-- **URL Status Checker** - Added real-time URL accessibility checking for job links
+- **URL Status Checker** - Added real-time URL accessibility and content checking for job links
   - **2025-09-10T11:51:08+0200**: Implemented URL status checking functionality
+  - **2025-09-10T12:14:03+0200**: Enhanced with content checking using existing bulk links API
   - **URL Status Composable** (`useUrlStatus.ts`): Centralised URL status management
-    - Checks URL accessibility using HEAD requests with no-cors mode
+    - Reuses existing `/api/fetch-title` endpoint for robust URL checking
+    - Checks both URL accessibility and content availability
+    - Extracts page titles for better status information
     - Caches status results with timestamps to avoid repeated checks
     - Supports parallel checking of multiple URLs
     - Handles cross-origin URL checking gracefully
-  - **Visual Status Indicators**: Icon buttons next to URLs showing accessibility status
-    - 🟢 Green check circle: URL is accessible
+  - **Enhanced Visual Status Indicators**: Icon buttons next to URLs showing comprehensive status
+    - 🟢 Green check circle: URL is accessible with content
+    - 🟡 Yellow alert circle: URL is accessible but has no content
     - 🔴 Red X circle: URL is not accessible  
     - ⚪ Gray help circle: Status unknown (click to check)
     - 🔄 Spinning loading icon: Currently checking
+  - **Rich Tooltips**: Detailed status information with page titles
+    - Shows page title when available
+    - Indicates content availability status
+    - Provides clear error messages
   - **BoardCard.vue Integration**: Status icon in card link section
     - Automatic status check when card loads
     - Click to refresh status manually
-    - Hover tooltips with status information
+    - Enhanced hover tooltips with content information
   - **BoardColumn.vue Integration**: Status icon in card details modal
     - Automatic status check when card is selected
     - Manual refresh capability
@@ -29,6 +37,10 @@ All notable changes to the Job Application Tracker project will be documented in
     - Adds `https://` for URLs without protocol
     - Handles `www.` prefixed URLs correctly
     - Preserves existing protocols
+  - **Reused Existing Infrastructure**: Leverages proven bulk links functionality
+    - Uses same robust API endpoint with proper error handling
+    - Benefits from existing timeout and header configurations
+    - Maintains consistency with bulk import feature
 - **Copy URLs Feature** - Added ability to copy URLs from column cards to clipboard
   - **2025-09-09T13:59:46+0200**: Added "Copy URLs" button to Column context menu
   - **Copy URLs Modal**: Comprehensive modal displaying all URLs from cards in the column

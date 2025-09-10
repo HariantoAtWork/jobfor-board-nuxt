@@ -2,21 +2,26 @@ import { ref, reactive } from 'vue'
 
 export interface UrlStatus {
   isAlive: boolean | null // null = checking, true = alive, false = dead
+  hasContent: boolean | null // null = unknown, true = has content, false = empty/no content
+  title: string | null // Page title if available
   lastChecked: string | null // ISO date string
   isLoading: boolean
+  error?: string // Error message if check failed
 }
 
 export function useUrlStatus() {
   const urlStatuses = reactive<Map<string, UrlStatus>>(new Map())
 
-  // Check if a URL is alive
-  const checkUrlStatus = async (url: string): Promise<boolean> => {
-    if (!url) return false
+  // Check if a URL is alive and has content using existing fetch-title API
+  const checkUrlStatus = async (url: string): Promise<{ isAlive: boolean; hasContent: boolean; title: string | null }> => {
+    if (!url) return { isAlive: false, hasContent: false, title: null }
 
     try {
       // Set loading state
       urlStatuses.set(url, {
         isAlive: null,
+        hasContent: null,
+        title: null,
         lastChecked: null,
         isLoading: true
       })
@@ -24,36 +29,48 @@ export function useUrlStatus() {
       // Format URL properly
       const formattedUrl = formatUrl(url)
       
-      // Use fetch with HEAD request to check if URL is accessible
-      const response = await fetch(formattedUrl, {
-        method: 'HEAD',
-        mode: 'no-cors', // This allows checking cross-origin URLs
-        cache: 'no-cache'
-      })
+      // Use the existing fetch-title API endpoint which already handles:
+      // - URL validation
+      // - Proper headers and timeouts
+      // - Content fetching and title extraction
+      // - Error handling
+      const response = await fetch(`/api/fetch-title?url=${encodeURIComponent(formattedUrl)}`)
 
-      // For no-cors requests, we can't read the response status
-      // If we get here without an error, the URL is likely alive
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      // If we get here, the URL is alive and has content
       const isAlive = true
+      const hasContent = data.title && data.title !== 'Untitled'
+      const title = data.title || null
       
       // Update status
       urlStatuses.set(url, {
         isAlive,
+        hasContent,
+        title,
         lastChecked: new Date().toISOString(),
         isLoading: false
       })
 
-      return isAlive
+      return { isAlive, hasContent, title }
     } catch (error) {
       console.warn(`URL check failed for ${url}:`, error)
       
       // Update status as dead
       urlStatuses.set(url, {
         isAlive: false,
+        hasContent: false,
+        title: null,
         lastChecked: new Date().toISOString(),
-        isLoading: false
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       })
 
-      return false
+      return { isAlive: false, hasContent: false, title: null }
     }
   }
 
@@ -81,25 +98,27 @@ export function useUrlStatus() {
   const getUrlStatus = (url: string): UrlStatus => {
     return urlStatuses.get(url) || {
       isAlive: null,
+      hasContent: null,
+      title: null,
       lastChecked: null,
       isLoading: false
     }
   }
 
   // Refresh URL status
-  const refreshUrlStatus = async (url: string): Promise<boolean> => {
+  const refreshUrlStatus = async (url: string): Promise<{ isAlive: boolean; hasContent: boolean; title: string | null }> => {
     return await checkUrlStatus(url)
   }
 
   // Check multiple URLs
-  const checkMultipleUrls = async (urls: string[]): Promise<Map<string, boolean>> => {
-    const results = new Map<string, boolean>()
+  const checkMultipleUrls = async (urls: string[]): Promise<Map<string, { isAlive: boolean; hasContent: boolean; title: string | null }>> => {
+    const results = new Map<string, { isAlive: boolean; hasContent: boolean; title: string | null }>()
     
     // Check URLs in parallel
     const promises = urls.map(async (url) => {
-      const isAlive = await checkUrlStatus(url)
-      results.set(url, isAlive)
-      return { url, isAlive }
+      const result = await checkUrlStatus(url)
+      results.set(url, result)
+      return { url, ...result }
     })
 
     await Promise.all(promises)
