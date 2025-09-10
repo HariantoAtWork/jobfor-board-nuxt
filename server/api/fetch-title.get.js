@@ -76,7 +76,16 @@ export default defineEventHandler(async (event) => {
       url: url,
     }
   } catch (error) {
-    console.error('Error fetching page title:', error)
+    // Suppress verbose error logging - URL fetch failures are normal
+    // Only log critical server errors in development
+    if (process.env.NODE_ENV === 'development' && error.statusCode >= 500) {
+      console.warn(
+        'Server error fetching page title for:',
+        url,
+        '-',
+        error.message
+      )
+    }
 
     if (error.statusCode) {
       throw error
