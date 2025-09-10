@@ -314,7 +314,7 @@
               </template>
               <p
                 v-if="selectedCard.link"
-                class="text-gray-900 grid grid-cols-[1rem_1fr] gap-1 items-center"
+                class="text-gray-900 grid grid-cols-[1rem_1fr_auto] gap-1 items-center"
                 title="Job Link"
               >
                 <Icon name="mdi-light:link" class="flex-shrink-0 mt-1" />
@@ -327,6 +327,23 @@
                 >
                   {{ formattedCardLink }}
                 </a>
+                <button
+                  @click.stop="refreshUrlStatus(selectedCard.link!)"
+                  :disabled="urlStatus.isLoading"
+                  class="ml-1 p-1 rounded hover:bg-gray-100 transition-colors"
+                  :title="getStatusTooltip()"
+                >
+                  <Icon
+                    :name="getStatusIcon()"
+                    :class="[
+                      'w-4 h-4',
+                      urlStatus.isLoading ? 'animate-spin' : '',
+                      urlStatus.isAlive === true ? 'text-green-600' : '',
+                      urlStatus.isAlive === false ? 'text-red-600' : '',
+                      urlStatus.isAlive === null ? 'text-gray-400' : '',
+                    ]"
+                  />
+                </button>
               </p>
             </div>
             <div
@@ -670,6 +687,7 @@ import BoardCard from './BoardCard.vue'
 import CardNotes from '../CardNotes.vue'
 import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
+import { useUrlStatus } from '~/composables/useUrlStatus'
 
 interface Props {
   column: IColumn
@@ -718,6 +736,33 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+// URL status functionality
+const { getUrlStatus, refreshUrlStatus: checkUrlStatus } = useUrlStatus()
+
+const urlStatus = computed(() => {
+  return selectedCard.value?.link
+    ? getUrlStatus(selectedCard.value.link)
+    : { isAlive: null, lastChecked: null, isLoading: false }
+})
+
+const getStatusIcon = () => {
+  if (urlStatus.value.isLoading) return 'mdi:loading'
+  if (urlStatus.value.isAlive === true) return 'mdi:check-circle'
+  if (urlStatus.value.isAlive === false) return 'mdi:close-circle'
+  return 'mdi:help-circle'
+}
+
+const getStatusTooltip = () => {
+  if (urlStatus.value.isLoading) return 'Checking URL status...'
+  if (urlStatus.value.isAlive === true) return 'URL is accessible'
+  if (urlStatus.value.isAlive === false) return 'URL is not accessible'
+  return 'Click to check URL status'
+}
+
+const refreshUrlStatus = async (url: string) => {
+  await checkUrlStatus(url)
+}
 
 const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
@@ -895,6 +940,11 @@ const handleCardClick = (card: ICard) => {
   selectedCard.value = card
   showCardDetails.value = true
   isEditingCard.value = false
+
+  // Check URL status when card is selected
+  if (card.link) {
+    checkUrlStatus(card.link)
+  }
 }
 
 const handleMoveCard = (cardId: string, columnId: string) => {

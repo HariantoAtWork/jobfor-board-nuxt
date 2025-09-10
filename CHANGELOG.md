@@ -5,6 +5,30 @@ All notable changes to the Job Application Tracker project will be documented in
 ## [Unreleased]
 
 ### Added
+- **URL Status Checker** - Added real-time URL accessibility checking for job links
+  - **2025-09-10T11:51:08+0200**: Implemented URL status checking functionality
+  - **URL Status Composable** (`useUrlStatus.ts`): Centralised URL status management
+    - Checks URL accessibility using HEAD requests with no-cors mode
+    - Caches status results with timestamps to avoid repeated checks
+    - Supports parallel checking of multiple URLs
+    - Handles cross-origin URL checking gracefully
+  - **Visual Status Indicators**: Icon buttons next to URLs showing accessibility status
+    - 🟢 Green check circle: URL is accessible
+    - 🔴 Red X circle: URL is not accessible  
+    - ⚪ Gray help circle: Status unknown (click to check)
+    - 🔄 Spinning loading icon: Currently checking
+  - **BoardCard.vue Integration**: Status icon in card link section
+    - Automatic status check when card loads
+    - Click to refresh status manually
+    - Hover tooltips with status information
+  - **BoardColumn.vue Integration**: Status icon in card details modal
+    - Automatic status check when card is selected
+    - Manual refresh capability
+    - Consistent styling with card view
+  - **Smart URL Formatting**: Proper protocol handling for status checks
+    - Adds `https://` for URLs without protocol
+    - Handles `www.` prefixed URLs correctly
+    - Preserves existing protocols
 - **Copy URLs Feature** - Added ability to copy URLs from column cards to clipboard
   - **2025-09-09T13:59:46+0200**: Added "Copy URLs" button to Column context menu
   - **Copy URLs Modal**: Comprehensive modal displaying all URLs from cards in the column

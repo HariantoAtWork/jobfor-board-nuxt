@@ -113,7 +113,7 @@
     }
 
     .card-label {
-        @apply grid grid-cols-[1rem_1fr] gap-1 items-center text-xs;
+        @apply grid grid-cols-[1rem_1fr_1rem] gap-1 items-center text-xs;
     }
 
     .card-company {
