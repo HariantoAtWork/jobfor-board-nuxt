@@ -1,4 +1,86 @@
 // GET /api/fetch-title - Fetch page title from URL
+
+// Function to analyze if a page has meaningful content
+function analyzeContentQuality(html, title, url) {
+  // Check for generic/empty titles that indicate no meaningful content
+  const genericTitles = [
+    'untitled',
+    'loading...',
+    'please wait',
+    'redirecting',
+    'error',
+    'not found',
+    'access denied',
+    'forbidden',
+    'unauthorized',
+  ]
+
+  const lowerTitle = (title || '').toLowerCase().trim()
+
+  // If title is generic, likely no meaningful content
+  if (genericTitles.includes(lowerTitle)) {
+    return false
+  }
+
+  // Check for Google Share links and similar redirect/loading pages
+  // These are specific patterns that indicate redirect/loading pages
+  if (lowerTitle === 'google') {
+    // Google Share/redirect patterns that typically have no meaningful content
+    if (
+      url.includes('google.com/webhp') ||
+      url.includes('google.com/url') ||
+      url.includes('drive.google.com') ||
+      url.includes('docs.google.com') ||
+      url.includes('sheets.google.com') ||
+      url.includes('slides.google.com')
+    ) {
+      return false
+    }
+    // Main Google homepage and other Google services should be considered as having content
+  }
+
+  // Check for minimal content indicators
+  const bodyMatch = html.match(/<body[^>]*>(.*?)<\/body>/is)
+  if (bodyMatch) {
+    const bodyContent = bodyMatch[1]
+
+    // Remove script and style tags to get actual content
+    const textContent = bodyContent
+      .replace(/<script[^>]*>.*?<\/script>/gis, '')
+      .replace(/<style[^>]*>.*?<\/style>/gis, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+    // If very little text content, likely no meaningful content
+    if (textContent.length < 50) {
+      return false
+    }
+
+    // Check for common "no content" indicators
+    const noContentIndicators = [
+      'loading',
+      'please wait',
+      'redirecting',
+      'javascript required',
+      'enable javascript',
+      'this page requires javascript',
+      'content loading',
+      'please enable javascript',
+    ]
+
+    const lowerContent = textContent.toLowerCase()
+    for (const indicator of noContentIndicators) {
+      if (lowerContent.includes(indicator)) {
+        return false
+      }
+    }
+  }
+
+  // If we get here, assume the page has meaningful content
+  return true
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
@@ -69,11 +151,15 @@ export default defineEventHandler(async (event) => {
         .trim()
     }
 
+    // Analyze content quality to determine if page has meaningful content
+    const hasContent = analyzeContentQuality(html, cleanTitle, url)
+
     return {
       success: true,
       title: cleanTitle || 'Untitled',
       originalTitle: title,
       url: url,
+      hasContent: hasContent,
     }
   } catch (error) {
     // Suppress verbose error logging - URL fetch failures are normal

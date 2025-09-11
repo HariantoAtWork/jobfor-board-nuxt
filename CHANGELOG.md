@@ -42,6 +42,16 @@ All notable changes to the Job Application Tracker project will be documented in
     - Benefits from existing timeout and header configurations
     - Maintains consistency with bulk import feature
 
+### Enhanced - 2025-09-11T11:26:37+0200
+- **URL Content Analysis Enhancement** - Better detection of meaningful content vs. redirect/loading pages
+  - **Enhanced Content Detection**: Added `analyzeContentQuality()` function to detect meaningful content
+  - **Google Share Link Detection**: Correctly identifies Google Share/Jobs links as having no meaningful content
+  - **Generic Title Filtering**: Filters out generic titles like "Loading...", "Redirecting", etc.
+  - **Content Analysis**: Analyzes HTML body content to detect JavaScript-heavy or empty pages
+  - **API Response Enhancement**: Added `hasContent` field to `/api/fetch-title` response
+  - **Frontend Integration**: Updated `useUrlStatus` composable to use enhanced content analysis
+  - **Improved Accuracy**: Now correctly shows Google Share links as "alive but no content" instead of "alive with content"
+
 ### Improved - 2025-09-10T13:48:19+0200
 - **Save Board Modal Enhancement** - Auto-select single board for overwrite
   - **Smart Default Selection**: When only one board exists, automatically selects "Overwrite Existing Board"

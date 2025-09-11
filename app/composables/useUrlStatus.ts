@@ -42,9 +42,10 @@ export function useUrlStatus() {
 
       const data = await response.json()
       
-      // If we get here, the URL is alive and has content
+      // If we get here, the URL is alive
       const isAlive = true
-      const hasContent = data.title && data.title !== 'Untitled'
+      // Use the hasContent field from the API response (enhanced content analysis)
+      const hasContent = data.hasContent === true
       const title = data.title || null
       
       // Update status
