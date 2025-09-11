@@ -161,147 +161,98 @@
     />
 
     <!-- Add Column Modal -->
-    <div
-      v-if="showAddColumnForm"
-      class="modal-overlay"
-      @click="showAddColumnForm = false"
+    <UIModal
+      :is-open="showAddColumnForm"
+      title="Add New Column"
+      @close="showAddColumnForm = false"
+      @confirm="addColumn"
+      :show-confirm-button="true"
+      confirm-text="Add Column"
     >
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h3 class="text-lg font-medium">Add New Column</h3>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label">Column Title</label>
-            <input
-              v-model="newColumnTitle"
-              type="text"
-              class="form-input"
-              placeholder="e.g., Phone Interview"
-              @keyup.enter="addColumn"
-            />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button @click="showAddColumnForm = false" class="btn btn-secondary">
-            Cancel
-          </button>
-          <button @click="addColumn" class="btn btn-primary">Add Column</button>
-        </div>
-      </div>
-    </div>
+      <UIFormGroup label="Column Title">
+        <UIInput
+          v-model="newColumnTitle"
+          type="text"
+          placeholder="e.g., Phone Interview"
+          @keyup.enter="addColumn"
+        />
+      </UIFormGroup>
+    </UIModal>
 
     <!-- Import URL Modal -->
-    <div
-      v-if="showImportUrlForm"
-      class="modal-overlay"
-      @click="showImportUrlForm = false"
+    <UIModal
+      :is-open="showImportUrlForm"
+      title="Import from URL"
+      @close="showImportUrlForm = false"
+      @confirm="importFromUrl"
+      :show-confirm-button="true"
+      confirm-text="Import"
     >
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h3 class="text-lg font-medium">Import from URL</h3>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label">URL</label>
-            <input
-              v-model="importUrl"
-              type="url"
-              class="form-input"
-              placeholder="https://..."
-            />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button @click="showImportUrlForm = false" class="btn btn-secondary">
-            Cancel
-          </button>
-          <button @click="importFromUrl" class="btn btn-primary">Import</button>
-        </div>
-      </div>
-    </div>
+      <UIFormGroup label="URL">
+        <UIInput v-model="importUrl" type="url" placeholder="https://..." />
+      </UIFormGroup>
+    </UIModal>
 
     <!-- Activity History Modal -->
-    <div v-if="showHistory" class="modal-overlay" @click="showHistory = false">
-      <div class="modal-content max-w-2xl" @click.stop>
-        <div class="modal-header flex item-center justify-between">
-          <h3 class="text-lg font-medium">Activity History</h3>
-          <button
-            @click="showHistory = false"
-            class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
-          >
-            <Icon name="mdi:close" />
-          </button>
-        </div>
-        <div class="modal-body pt-0">
-          <div
-            v-if="activityHistory.length === 0"
-            class="text-center text-gray-500 py-8"
-          >
-            <svg
-              class="w-12 h-12 mx-auto mb-4 text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p>No activity history yet</p>
+    <UIModal
+      :is-open="showHistory"
+      title="Activity History"
+      size="2xl"
+      @close="showHistory = false"
+      :show-footer="false"
+    >
+      <div v-if="activityHistory.length === 0">
+        <UIEmptyState
+          icon="mdi:clock-outline"
+          title="No activity history yet"
+          description="Your board activity will appear here as you move cards and add notes."
+        />
+      </div>
+      <div v-else class="space-y-6">
+        <div
+          v-for="(group, monthYear) in groupedActivityHistory"
+          :key="monthYear"
+          class="activity-group"
+        >
+          <div class="activity-group-header">
+            <h4 class="text-sm font-semibold text-gray-700">
+              {{ monthYear }}
+            </h4>
           </div>
-          <div v-else class="space-y-6">
-            <div
-              v-for="(group, monthYear) in groupedActivityHistory"
-              :key="monthYear"
-              class="activity-group"
-            >
-              <div class="activity-group-header">
-                <h4 class="text-sm font-semibold text-gray-700">
-                  {{ monthYear }}
-                </h4>
-              </div>
-              <div class="activity-group-content">
-                <div class="space-y-3">
-                  <div
-                    v-for="activity in group"
-                    :key="activity.id"
-                    class="activity-item"
-                  >
-                    <div class="flex items-start gap-3">
-                      <div class="activity-icon">
-                        <Icon
-                          :name="
-                            activity.type === 'note'
+          <div class="activity-group-content">
+            <div class="space-y-3">
+              <div
+                v-for="activity in group"
+                :key="activity.id"
+                class="activity-item"
+              >
+                <div class="flex items-start gap-3">
+                  <div class="activity-icon">
+                    <Icon
+                      :name="
+                            (activity as any).type === 'note'
                               ? 'mdi:note-text'
                               : 'mdi:arrow-right'
                           "
-                          class="w-4 h-4 text-gray-400"
-                        />
-                      </div>
-                      <div class="activity-content">
-                        <div
-                          class="text-gray-900 text-sm"
-                          v-html="makeHtml(activity.description)"
-                        />
-                        <p
-                          class="text-gray-500 text-xs"
-                          :class="{
-                            'text-purple-600': cardFormatTime(
-                              activity.timestamp,
-                              nowStore.now
-                            ).includes('in'),
-                          }"
-                        >
-                          {{
-                            formatActivityTime(activity.timestamp, nowStore.now)
-                          }}
-                        </p>
-                      </div>
-                    </div>
+                      class="w-4 h-4 text-gray-400"
+                    />
+                  </div>
+                  <div class="activity-content">
+                    <div
+                      class="text-gray-900 text-sm"
+                      v-html="makeHtml(activity.description)"
+                    />
+                    <p
+                      class="text-gray-500 text-xs"
+                      :class="{
+                        'text-purple-600': cardFormatTime(
+                          activity.timestamp,
+                          nowStore.now
+                        ).includes('in'),
+                      }"
+                    >
+                      {{ formatActivityTime(activity.timestamp, nowStore.now) }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -309,64 +260,47 @@
           </div>
         </div>
       </div>
-    </div>
+    </UIModal>
 
     <!-- Board Selection Modal -->
-    <div
-      v-if="showBoardSelectionModal"
-      class="modal-overlay"
-      @click="showBoardSelectionModal = false"
+    <UIModal
+      :is-open="showBoardSelectionModal"
+      title="Load Board from Database"
+      size="2xl"
+      @close="showBoardSelectionModal = false"
+      :show-footer="false"
     >
-      <div class="modal-content max-w-2xl" @click.stop>
-        <div class="modal-header flex items-center justify-between">
-          <h3 class="text-lg font-medium">Load Board from Database</h3>
-          <button
-            @click="showBoardSelectionModal = false"
-            class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
-          >
-            <Icon name="mdi:close" />
-          </button>
-        </div>
-        <div class="modal-body pt-0">
-          <div
-            v-if="userBoards.length === 0"
-            class="text-center text-gray-500 py-8"
-          >
-            <Icon
-              name="mdi:database-off"
-              class="w-12 h-12 mx-auto mb-4 text-gray-300"
-            />
-            <p>No boards found in database</p>
-            <p class="text-sm mt-2">
-              Create a board by saving your current board first.
-            </p>
-          </div>
-          <div v-else class="space-y-3">
-            <div
-              v-for="board in userBoards"
-              :key="board.id"
-              class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-              @click="loadSelectedBoard(board.id)"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
-                  <p class="text-sm text-gray-500">
-                    Created:
-                    {{ new Date(board.created_at).toLocaleDateString() }}
-                  </p>
-                  <p class="text-sm text-gray-500">
-                    Cards: {{ board.data.cards?.length || 0 }} | Columns:
-                    {{ board.data.columns?.length || 0 }}
-                  </p>
-                </div>
-                <Icon name="mdi:chevron-right" class="text-gray-400" />
-              </div>
+      <div v-if="userBoards.length === 0">
+        <UIEmptyState
+          icon="mdi:database-off"
+          title="No boards found in database"
+          description="Create a board by saving your current board first."
+        />
+      </div>
+      <div v-else class="space-y-3">
+        <div
+          v-for="board in userBoards"
+          :key="board.id"
+          class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+          @click="loadSelectedBoard(board.id)"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
+              <p class="text-sm text-gray-500">
+                Created:
+                {{ new Date(board.created_at).toLocaleDateString() }}
+              </p>
+              <p class="text-sm text-gray-500">
+                Cards: {{ board.data.cards?.length || 0 }} | Columns:
+                {{ board.data.columns?.length || 0 }}
+              </p>
             </div>
+            <Icon name="mdi:chevron-right" class="text-gray-400" />
           </div>
         </div>
       </div>
-    </div>
+    </UIModal>
 
     <!-- Board Management Modal -->
     <div
@@ -501,105 +435,80 @@
     </div>
 
     <!-- Save Board Modal -->
-    <div
-      v-if="showSaveBoardModal"
-      class="modal-overlay"
-      @click="showSaveBoardModal = false"
+    <UIModal
+      :is-open="showSaveBoardModal"
+      title="Save Board to Database"
+      size="lg"
+      @close="showSaveBoardModal = false"
+      @confirm="saveBoardToDatabase"
+      :show-confirm-button="true"
+      :confirm-disabled="
+        saveType === 'overwrite' &&
+        (!selectedBoardId || userBoards.length === 0)
+      "
+      :confirm-text="saveType === 'new' ? 'Create Board' : 'Overwrite Board'"
     >
-      <div class="modal-content max-w-lg" @click.stop>
-        <div class="modal-header">
-          <h3 class="text-lg font-medium">Save Board to Database</h3>
-        </div>
-        <div class="modal-body">
-          <!-- Save Type Selection -->
-          <div class="form-group">
-            <label class="form-label">Save Type</label>
-            <div class="space-y-2">
-              <label class="flex items-center">
-                <input
-                  v-model="saveType"
-                  type="radio"
-                  value="new"
-                  class="mr-2"
-                />
-                <span>Create New Board</span>
-              </label>
-              <label class="flex items-center">
-                <input
-                  v-model="saveType"
-                  type="radio"
-                  value="overwrite"
-                  class="mr-2"
-                />
-                <span>Overwrite Existing Board</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- New Board Title (only show when creating new) -->
-          <div v-if="saveType === 'new'" class="form-group">
-            <label class="form-label">Board Title</label>
+      <!-- Save Type Selection -->
+      <UIFormGroup label="Save Type">
+        <div class="space-y-2">
+          <label class="flex items-center">
+            <input v-model="saveType" type="radio" value="new" class="mr-2" />
+            <span>Create New Board</span>
+          </label>
+          <label class="flex items-center">
             <input
-              v-model="newBoardTitle"
-              type="text"
-              class="form-input"
-              :placeholder="new Date().toISOString()"
+              v-model="saveType"
+              type="radio"
+              value="overwrite"
+              class="mr-2"
             />
-            <p class="text-sm text-gray-500 mt-1">
-              Leave empty to use creation date as title
-            </p>
-          </div>
+            <span>Overwrite Existing Board</span>
+          </label>
+        </div>
+      </UIFormGroup>
 
-          <!-- Existing Board Selection (only show when overwriting) -->
-          <div v-if="saveType === 'overwrite'" class="form-group">
-            <label class="form-label">Select Board to Overwrite</label>
-            <div
-              v-if="userBoards.length === 0"
-              class="text-center text-gray-500 py-4"
-            >
-              <Icon
-                name="mdi:database-off"
-                class="w-8 h-8 mx-auto mb-2 text-gray-300"
-              />
-              <p class="text-sm">No existing boards found</p>
-              <p class="text-xs mt-1">Create a new board instead</p>
-            </div>
-            <select
-              v-else
-              v-model="selectedBoardId"
-              class="form-input"
-              required
-            >
-              <option value="">Select a board to overwrite...</option>
-              <option
-                v-for="board in userBoards"
-                :key="board.id"
-                :value="board.id"
-              >
-                {{ board.title }} ({{
-                  new Date(board.created_at).toLocaleDateString()
-                }})
-              </option>
-            </select>
-          </div>
+      <!-- New Board Title (only show when creating new) -->
+      <UIFormGroup
+        v-if="saveType === 'new'"
+        label="Board Title"
+        help-text="Leave empty to use creation date as title"
+      >
+        <UIInput
+          v-model="newBoardTitle"
+          type="text"
+          :placeholder="new Date().toISOString()"
+        />
+      </UIFormGroup>
+
+      <!-- Existing Board Selection (only show when overwriting) -->
+      <UIFormGroup
+        v-if="saveType === 'overwrite'"
+        label="Select Board to Overwrite"
+      >
+        <div v-if="userBoards.length === 0">
+          <UIEmptyState
+            icon="mdi:database-off"
+            title="No existing boards found"
+            description="Create a new board instead"
+            icon-size="md"
+          />
         </div>
-        <div class="modal-footer">
-          <button @click="showSaveBoardModal = false" class="btn btn-secondary">
-            Cancel
-          </button>
-          <button
-            @click="saveBoardToDatabase"
-            class="btn btn-primary"
-            :disabled="
-              saveType === 'overwrite' &&
-              (!selectedBoardId || userBoards.length === 0)
-            "
-          >
-            {{ saveType === 'new' ? 'Create Board' : 'Overwrite Board' }}
-          </button>
-        </div>
-      </div>
-    </div>
+        <UISelect
+          v-else
+          v-model="selectedBoardId"
+          :options="
+            userBoards.map((board) => ({
+              value: board.id,
+              label: `${board.title} (${new Date(
+                board.created_at
+              ).toLocaleDateString()})`,
+            }))
+          "
+          placeholder="Select a board to overwrite..."
+          required
+        />
+      </UIFormGroup>
+    </UIModal>
   </div>
 </template>
 

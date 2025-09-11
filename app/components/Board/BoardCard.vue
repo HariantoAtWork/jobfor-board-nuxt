@@ -80,28 +80,7 @@
         >
           View job
         </a>
-        <button
-          @click.stop="refreshUrlStatus(card.link!)"
-          :disabled="urlStatus.isLoading"
-          class="ml-1 p-1 rounded hover:bg-gray-100 transition-colors"
-          :title="getStatusTooltip()"
-        >
-          <Icon
-            :name="getStatusIcon()"
-            :class="[
-              'w-3 h-3',
-              urlStatus.isLoading ? 'animate-spin' : '',
-              urlStatus.isAlive === true && urlStatus.hasContent === true
-                ? 'text-green-600'
-                : '',
-              urlStatus.isAlive === true && urlStatus.hasContent === false
-                ? 'text-yellow-600'
-                : '',
-              urlStatus.isAlive === false ? 'text-red-600' : '',
-              urlStatus.isAlive === null ? 'text-gray-400' : '',
-            ]"
-          />
-        </button>
+        <UIUrlStatus v-if="card.link" :url="card.link" size="sm" />
       </div>
     </div>
 
@@ -139,7 +118,6 @@ import type { ICard, IColumn } from '~/types'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import nowStore from '~/store/now'
 import { formatTime } from '~/utils/dayjs-extend'
-import { useUrlStatus } from '~/composables/useUrlStatus'
 
 interface Props {
   card: ICard
@@ -159,48 +137,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
-
-// URL status functionality
-const { getUrlStatus, refreshUrlStatus: checkUrlStatus } = useUrlStatus()
-
-const urlStatus = computed(() => {
-  return props.card.link
-    ? getUrlStatus(props.card.link)
-    : {
-        isAlive: null,
-        hasContent: null,
-        title: null,
-        lastChecked: null,
-        isLoading: false,
-      }
-})
-
-const getStatusIcon = () => {
-  if (urlStatus.value.isLoading) return 'mdi:loading'
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === true)
-    return 'mdi:check-circle'
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === false)
-    return 'mdi:alert-circle'
-  if (urlStatus.value.isAlive === false) return 'mdi:close-circle'
-  return 'mdi:help-circle'
-}
-
-const getStatusTooltip = () => {
-  if (urlStatus.value.isLoading) return 'Checking URL status...'
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === true) {
-    return `URL is accessible with content${
-      urlStatus.value.title ? `: ${urlStatus.value.title}` : ''
-    }`
-  }
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === false)
-    return 'URL is accessible but has no content'
-  if (urlStatus.value.isAlive === false) return 'URL is not accessible'
-  return 'Click to check URL status'
-}
-
-const refreshUrlStatus = async (url: string) => {
-  await checkUrlStatus(url)
-}
 
 const ageInThisStage = computed(() => {
   return formatTime(props.card.lastMoved, nowStore.now)
@@ -263,14 +199,9 @@ const closeMenu = () => {
   showMoveMenu.value = false
 }
 
-// Add click outside listener and check URL status on mount
+// Add click outside listener
 onMounted(() => {
   document.addEventListener('click', closeMenu)
-
-  // Check URL status when card loads
-  if (props.card.link) {
-    checkUrlStatus(props.card.link)
-  }
 })
 
 onUnmounted(() => {

@@ -92,133 +92,101 @@
     </div>
 
     <!-- Add Card Modal -->
-    <div
-      v-if="showAddCardForm"
-      class="modal-overlay"
-      @click="showAddCardForm = false"
+    <UIModal
+      :is-open="showAddCardForm"
+      title="Add New Job Application"
+      size="lg"
+      @close="showAddCardForm = false"
+      @confirm="addCard"
+      :show-confirm-button="true"
+      confirm-text="Add Card"
     >
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h3 class="text-lg font-medium">Add New Job Application</h3>
-        </div>
-        <div class="modal-body">
-          <form @submit.prevent="addCard">
-            <div class="form-group">
-              <label class="form-label">Title *</label>
-              <input
-                v-model="newCard.title"
-                type="text"
-                class="form-input"
-                placeholder="Job title or application name"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Company</label>
-              <input
-                v-model="newCard.company"
-                type="text"
-                class="form-input"
-                placeholder="Company name"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Job Title</label>
-              <input
-                v-model="newCard.jobTitle"
-                type="text"
-                class="form-input"
-                placeholder="Specific job title"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Location</label>
-              <input
-                v-model="newCard.location"
-                type="text"
-                class="form-input"
-                placeholder="e.g., London, Remote, New York"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Via</label>
-              <input
-                v-model="newCard.via"
-                type="text"
-                class="form-input"
-                placeholder="e.g., Indeed, LinkedIn, Direct"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Contact</label>
-              <input
-                v-model="newCard.contact"
-                type="text"
-                class="form-input"
-                placeholder="Contact person or email"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Job Link</label>
-              <input
-                v-model="newCard.link"
-                type="url"
-                class="form-input"
-                placeholder="https://..."
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Description</label>
-              <textarea
-                v-model="newCard.description"
-                class="form-textarea"
-                rows="3"
-                placeholder="Additional notes or description"
-              ></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button @click="showAddCardForm = false" class="btn btn-secondary">
-            Cancel
-          </button>
-          <button @click="addCard" class="btn btn-primary">Add Card</button>
-        </div>
-      </div>
-    </div>
+      <form @submit.prevent="addCard">
+        <UIFormGroup label="Title" required>
+          <UIInput
+            v-model="newCard.title"
+            type="text"
+            placeholder="Job title or application name"
+            required
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Company">
+          <UIInput
+            v-model="newCard.company"
+            type="text"
+            placeholder="Company name"
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Job Title">
+          <UIInput
+            v-model="newCard.jobTitle"
+            type="text"
+            placeholder="Specific job title"
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Location">
+          <UIInput
+            v-model="newCard.location"
+            type="text"
+            placeholder="e.g., London, Remote, New York"
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Via">
+          <UIInput
+            v-model="newCard.via"
+            type="text"
+            placeholder="e.g., Indeed, LinkedIn, Direct"
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Contact">
+          <UIInput
+            v-model="newCard.contact"
+            type="text"
+            placeholder="Contact person or email"
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Job Link">
+          <UIInput
+            v-model="newCard.link"
+            type="url"
+            placeholder="https://..."
+          />
+        </UIFormGroup>
+
+        <UIFormGroup label="Description">
+          <UITextarea
+            v-model="newCard.description"
+            rows="3"
+            placeholder="Additional notes or description"
+          />
+        </UIFormGroup>
+      </form>
+    </UIModal>
 
     <!-- Edit Column Modal -->
-    <div
-      v-if="showEditColumnForm"
-      class="modal-overlay"
-      @click="showEditColumnForm = false"
+    <UIModal
+      :is-open="showEditColumnForm"
+      title="Edit Column"
+      @close="showEditColumnForm = false"
+      @confirm="saveColumnEdit"
+      :show-confirm-button="true"
+      confirm-text="Save Changes"
     >
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h3 class="text-lg font-medium">Edit Column</h3>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label">Column Title</label>
-            <input
-              v-model="editColumnData.title"
-              type="text"
-              class="form-input"
-              placeholder="Enter column title"
-              @keyup.enter="saveColumnEdit"
-            />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button @click="showEditColumnForm = false" class="btn btn-secondary">
-            Cancel
-          </button>
-          <button @click="saveColumnEdit" class="btn btn-primary">
-            Save Changes
-          </button>
-        </div>
-      </div>
-    </div>
+      <UIFormGroup label="Column Title">
+        <UIInput
+          v-model="editColumnData.title"
+          type="text"
+          placeholder="Enter column title"
+          @keyup.enter="saveColumnEdit"
+        />
+      </UIFormGroup>
+    </UIModal>
 
     <!-- Card Details Modal -->
     <div
@@ -328,30 +296,11 @@
                 >
                   {{ formattedCardLink }}
                 </a>
-                <button
-                  @click.stop="refreshUrlStatus(selectedCard.link!)"
-                  :disabled="urlStatus.isLoading"
-                  class="ml-1 p-1 rounded hover:bg-gray-100 transition-colors"
-                  :title="getStatusTooltip()"
-                >
-                  <Icon
-                    :name="getStatusIcon()"
-                    :class="[
-                      'w-4 h-4',
-                      urlStatus.isLoading ? 'animate-spin' : '',
-                      urlStatus.isAlive === true &&
-                      urlStatus.hasContent === true
-                        ? 'text-green-600'
-                        : '',
-                      urlStatus.isAlive === true &&
-                      urlStatus.hasContent === false
-                        ? 'text-yellow-600'
-                        : '',
-                      urlStatus.isAlive === false ? 'text-red-600' : '',
-                      urlStatus.isAlive === null ? 'text-gray-400' : '',
-                    ]"
-                  />
-                </button>
+                <UIUrlStatus
+                  v-if="selectedCard.link"
+                  :url="selectedCard.link"
+                  size="md"
+                />
               </p>
             </div>
             <div
@@ -695,7 +644,6 @@ import BoardCard from './BoardCard.vue'
 import CardNotes from '../CardNotes.vue'
 import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
-import { useUrlStatus } from '~/composables/useUrlStatus'
 
 interface Props {
   column: IColumn
@@ -744,48 +692,6 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
-
-// URL status functionality
-const { getUrlStatus, refreshUrlStatus: checkUrlStatus } = useUrlStatus()
-
-const urlStatus = computed(() => {
-  return selectedCard.value?.link
-    ? getUrlStatus(selectedCard.value.link)
-    : {
-        isAlive: null,
-        hasContent: null,
-        title: null,
-        lastChecked: null,
-        isLoading: false,
-      }
-})
-
-const getStatusIcon = () => {
-  if (urlStatus.value.isLoading) return 'mdi:loading'
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === true)
-    return 'mdi:check-circle'
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === false)
-    return 'mdi:alert-circle'
-  if (urlStatus.value.isAlive === false) return 'mdi:close-circle'
-  return 'mdi:help-circle'
-}
-
-const getStatusTooltip = () => {
-  if (urlStatus.value.isLoading) return 'Checking URL status...'
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === true) {
-    return `URL is accessible with content${
-      urlStatus.value.title ? `: ${urlStatus.value.title}` : ''
-    }`
-  }
-  if (urlStatus.value.isAlive === true && urlStatus.value.hasContent === false)
-    return 'URL is accessible but has no content'
-  if (urlStatus.value.isAlive === false) return 'URL is not accessible'
-  return 'Click to check URL status'
-}
-
-const refreshUrlStatus = async (url: string) => {
-  await checkUrlStatus(url)
-}
 
 const showAddCardForm = ref(false)
 const showColumnMenu = ref(false)
@@ -963,11 +869,6 @@ const handleCardClick = (card: ICard) => {
   selectedCard.value = card
   showCardDetails.value = true
   isEditingCard.value = false
-
-  // Check URL status when card is selected
-  if (card.link) {
-    checkUrlStatus(card.link)
-  }
 }
 
 const handleMoveCard = (cardId: string, columnId: string) => {
