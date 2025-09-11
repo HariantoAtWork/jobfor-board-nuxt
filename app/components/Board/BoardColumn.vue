@@ -44,6 +44,13 @@
                 Edit Column
               </button>
               <button
+                @click="deleteColumn"
+                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
+                Delete Column
+              </button>
+              <hr class="my-1" />
+              <button
                 @click="showBulkLinksModal = true"
                 class="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
               >
@@ -54,12 +61,6 @@
                 class="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
               >
                 Copy URLs
-              </button>
-              <button
-                @click="deleteColumn"
-                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-              >
-                Delete Column
               </button>
             </div>
           </div>
