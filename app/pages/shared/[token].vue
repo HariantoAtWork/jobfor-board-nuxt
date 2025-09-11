@@ -113,7 +113,8 @@
                     </a>
                   </div>
                   <div v-if="card.notes && card.notes.length > 0" class="mt-3">
-                    <div class="text-xs text-gray-500">
+                    <div class="card-label text-xs text-gray-500">
+                      <Icon name="mdi:note-text" />
                       {{ card.notes.length }} note{{
                         card.notes.length !== 1 ? 's' : ''
                       }}
