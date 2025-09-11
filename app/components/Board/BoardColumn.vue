@@ -44,6 +44,12 @@
                 Edit Column
               </button>
               <button
+                @click="emptyColumn"
+                class="block w-full text-left px-4 py-2 text-sm text-orange-600 hover:bg-gray-100"
+              >
+                Empty Column
+              </button>
+              <button
                 @click="deleteColumn"
                 class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               >
@@ -162,7 +168,7 @@
         <UIFormGroup label="Description">
           <UITextarea
             v-model="newCard.description"
-            rows="3"
+            :rows="3"
             placeholder="Additional notes or description"
           />
         </UIFormGroup>
@@ -667,6 +673,7 @@ interface Emits {
   (e: 'drop', columnId: string): void
   (e: 'addcard', cardData: Partial<ICard>, columnId: string): void
   (e: 'editcolumn', columnId: string, title: string): void
+  (e: 'emptycolumn', columnId: string): void
   (e: 'deletecolumn', columnId: string): void
   (e: 'cardclick', card: ICard): void
   (e: 'editcard', card: ICard): void
@@ -748,7 +755,7 @@ const cardsWithUrls = computed(() => {
 })
 
 // Helper function to format URLs
-const formattedUrl = (url: string) => {
+const formattedUrl = (url: string | undefined) => {
   if (!url) return ''
 
   const link = url.trim()
@@ -768,7 +775,7 @@ const formattedUrl = (url: string) => {
 }
 
 // Copy single URL to clipboard
-const copySingleUrl = async (url: string) => {
+const copySingleUrl = async (url: string | undefined) => {
   try {
     const formatted = formattedUrl(url)
     await navigator.clipboard.writeText(formatted)
@@ -976,6 +983,18 @@ const formattedCardLink = computed(() => {
   // For other cases, add https://
   return `https://${link}`
 })
+
+const emptyColumn = () => {
+  showColumnMenu.value = false
+  if (
+    confirm(
+      'Are you sure you want to empty this column? All cards will be removed.'
+    )
+  ) {
+    // Emit event to parent to handle emptying the column
+    emit('emptycolumn', props.column.id)
+  }
+}
 
 const deleteColumn = () => {
   showColumnMenu.value = false

@@ -33,6 +33,7 @@
           @drop="handleCardDrop"
           @addcard="handleAddCard"
           @editcolumn="handleEditColumn"
+          @emptycolumn="handleEmptyColumn"
           @deletecolumn="handleDeleteColumn"
           @cardclick="handleCardClick"
           @editcard="handleEditCard"
@@ -649,6 +650,16 @@ const addColumn = () => {
 
 const handleEditColumn = (columnId: string, title: string) => {
   updateColumn(columnId, { title })
+}
+
+const handleEmptyColumn = (columnId: string) => {
+  // Get all cards in this column
+  const cardsInColumn = cards.value.filter((card) => card.columnId === columnId)
+
+  // Delete each card in the column
+  cardsInColumn.forEach((card) => {
+    deleteCard(card.id)
+  })
 }
 
 const handleDeleteColumn = (columnId: string) => {
