@@ -102,13 +102,15 @@
     </div>
 
     <div
-      class="card-footer card-label"
+      class="card-footer"
       :class="{
         'text-purple-600': ageInThisStage.includes('in'),
       }"
     >
-      <Icon name="mdi-light:clock" class="inline-block" />
-      {{ ageInThisStage }}
+      <div class="card-label">
+        <Icon name="mdi-light:clock" class="inline-block" />
+        {{ ageInThisStage }}
+      </div>
     </div>
   </div>
 </template>
