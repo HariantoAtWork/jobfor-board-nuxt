@@ -11,21 +11,19 @@
         @apply bg-gray-50 text-gray-900;
         margin: 0;
         padding: 0;
-        height: 100vh;
+        /* height: 100vh; */
     }
 
     #__nuxt {
-        height: 100vh;
+        @apply h-dvh h-svh absolute inset-0;
     }
 }
 
 @layer components {
     .board-container {
-        @apply bg-gray-50;
+        @apply h-full bg-gray-50;
         display: grid;
         grid-template-rows: auto 1fr auto;
-        min-height: 100vh;
-        height: 100vh;
     }
 
     .board-header {
