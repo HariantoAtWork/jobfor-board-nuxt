@@ -21,4 +21,12 @@ export default defineNuxtConfig({
       allowedHosts: true,
     },
   },
+  app: {
+    head: {
+      title: 'Job Application Tracker',
+      meta: [
+        { name: 'description', content: 'Job Application Tracker' },
+      ],
+    },
+  }
 })
