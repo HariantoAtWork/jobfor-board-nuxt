@@ -34,13 +34,34 @@ export function useUrlStatus() {
       // - Proper headers and timeouts
       // - Content fetching and title extraction
       // - Error handling
-      const response = await fetch(`/api/fetch-title?url=${encodeURIComponent(formattedUrl)}`)
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      const response = await fetch(`/api/fetch-title?url=${encodeURIComponent(formattedUrl)}`, {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
 
       const data = await response.json()
+      
+      // Check if the API returned an error response
+      if (!data.success) {
+        // API returned a structured error response
+        const isAlive = false
+        const hasContent = false
+        const title = null
+        
+        // Update status as dead
+        urlStatuses.set(url, {
+          isAlive,
+          hasContent,
+          title,
+          lastChecked: new Date().toISOString(),
+          isLoading: false,
+          error: data.error
+        })
+
+        return { isAlive, hasContent, title }
+      }
       
       // If we get here, the URL is alive
       const isAlive = true
@@ -59,8 +80,6 @@ export function useUrlStatus() {
 
       return { isAlive, hasContent, title }
     } catch (error) {
-      console.warn(`URL check failed for ${url}:`, error)
-      
       // Update status as dead
       urlStatuses.set(url, {
         isAlive: false,

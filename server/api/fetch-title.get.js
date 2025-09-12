@@ -86,7 +86,21 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const url = query.url
 
+    // Check if this is an AJAX request (has Accept: application/json header)
+    const isAjaxRequest =
+      getHeader(event, 'accept')?.includes('application/json') ||
+      getHeader(event, 'x-requested-with') === 'XMLHttpRequest'
+
     if (!url) {
+      if (isAjaxRequest) {
+        return {
+          success: false,
+          error: 'URL parameter is required',
+          isAlive: false,
+          hasContent: false,
+          title: null,
+        }
+      }
       throw createError({
         statusCode: 400,
         statusMessage: 'URL parameter is required',
@@ -97,6 +111,15 @@ export default defineEventHandler(async (event) => {
     try {
       new URL(url)
     } catch (error) {
+      if (isAjaxRequest) {
+        return {
+          success: false,
+          error: 'Invalid URL format',
+          isAlive: false,
+          hasContent: false,
+          title: null,
+        }
+      }
       throw createError({
         statusCode: 400,
         statusMessage: 'Invalid URL format',
@@ -119,6 +142,15 @@ export default defineEventHandler(async (event) => {
     })
 
     if (!response.ok) {
+      if (isAjaxRequest) {
+        return {
+          success: false,
+          error: `Failed to fetch page: ${response.statusText}`,
+          isAlive: false,
+          hasContent: false,
+          title: null,
+        }
+      }
       throw createError({
         statusCode: response.status,
         statusMessage: `Failed to fetch page: ${response.statusText}`,
@@ -162,15 +194,42 @@ export default defineEventHandler(async (event) => {
       hasContent: hasContent,
     }
   } catch (error) {
-    // Suppress verbose error logging - URL fetch failures are normal
-    // Only log critical server errors in development
-    if (process.env.NODE_ENV === 'development' && error.statusCode >= 500) {
-      console.warn(
-        'Server error fetching page title for:',
-        url,
-        '-',
-        error.message
-      )
+    // Check if this is an AJAX request for error handling
+    const isAjaxRequest =
+      getHeader(event, 'accept')?.includes('application/json') ||
+      getHeader(event, 'x-requested-with') === 'XMLHttpRequest'
+
+    // Log backend issues for debugging
+    if (process.env.NODE_ENV === 'development') {
+      // Log server errors (500+) - these indicate backend problems
+      if (error.statusCode >= 500) {
+        console.error('🚨 Backend error fetching page title:', {
+          url,
+          statusCode: error.statusCode,
+          message: error.message,
+          stack: error.stack,
+        })
+      }
+      // Log unexpected errors (no status code) - these indicate code bugs
+      else if (!error.statusCode) {
+        console.error('🐛 Unexpected error in fetch-title API:', {
+          url,
+          message: error.message,
+          stack: error.stack,
+        })
+      }
+      // Don't log client errors (400-499) - these are normal URL failures
+    }
+
+    // For AJAX requests, return JSON error response instead of throwing
+    if (isAjaxRequest) {
+      return {
+        success: false,
+        error: error.message || 'Failed to fetch page title',
+        isAlive: false,
+        hasContent: false,
+        title: null,
+      }
     }
 
     if (error.statusCode) {
