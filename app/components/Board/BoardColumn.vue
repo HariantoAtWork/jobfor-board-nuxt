@@ -30,7 +30,7 @@
             class="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help"
           />
           <div
-            class="absolute top-full left-[-0.5em] mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-200 max-w-xs whitespace-normal break-words"
+            class="absolute top-full left-[-0.5em] mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-200 w-[16em] max-w-xs whitespace-normal break-words"
           >
             {{ column.description }}
             <div
