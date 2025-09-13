@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import type { IBoardData, ICard, IColumn, INote, DragState } from '~/types'
 import type { Command } from '~/types/commands'
-import { getDefaultBoardData, generateId, moveCard } from '~/utils/helpers'
+import { getDefaultBoardData } from '~/utils/helpers'
 import {
   saveBoardToStorage,
   loadBoardFromStorage,
@@ -29,6 +29,10 @@ export function useBoardWithCommands() {
   // Command history manager
   const historyManager = new CommandHistoryManagerImpl(50)
 
+  // Reactive state for undo/redo
+  const undoStackLength = ref(0)
+  const redoStackLength = ref(0)
+
   const dragState = ref<DragState>({
     isDragging: false,
     draggedCard: null,
@@ -48,8 +52,8 @@ export function useBoardWithCommands() {
   const cards = computed(() => board.value.cards)
 
   // Command pattern reactive state
-  const canUndo = computed(() => historyManager.canUndo())
-  const canRedo = computed(() => historyManager.canRedo())
+  const canUndo = computed(() => undoStackLength.value > 0)
+  const canRedo = computed(() => redoStackLength.value > 0)
   const undoDescription = computed(() => historyManager.getUndoDescription())
   const redoDescription = computed(() => historyManager.getRedoDescription())
 
@@ -153,6 +157,9 @@ export function useBoardWithCommands() {
   const executeCommand = async (command: Command) => {
     const success = await historyManager.executeCommand(command)
     if (success) {
+      // Update reactive state
+      undoStackLength.value = historyManager.getHistorySize()
+      redoStackLength.value = historyManager.getRedoSize()
       saveBoard()
     }
     return success
@@ -162,6 +169,9 @@ export function useBoardWithCommands() {
   const undo = async (): Promise<boolean> => {
     const success = await historyManager.undo()
     if (success) {
+      // Update reactive state
+      undoStackLength.value = historyManager.getHistorySize()
+      redoStackLength.value = historyManager.getRedoSize()
       saveBoard()
     }
     return success
@@ -170,6 +180,9 @@ export function useBoardWithCommands() {
   const redo = async (): Promise<boolean> => {
     const success = await historyManager.redo()
     if (success) {
+      // Update reactive state
+      undoStackLength.value = historyManager.getHistorySize()
+      redoStackLength.value = historyManager.getRedoSize()
       saveBoard()
     }
     return success
@@ -342,6 +355,9 @@ export function useBoardWithCommands() {
   // Command history utilities
   const clearHistory = () => {
     historyManager.clear()
+    // Update reactive state
+    undoStackLength.value = 0
+    redoStackLength.value = 0
   }
 
   const getHistory = () => {

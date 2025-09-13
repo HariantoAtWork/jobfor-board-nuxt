@@ -1,5 +1,5 @@
 import type { IBoardData, ICard, IColumn, INote } from '~/types'
-import type { BaseCommand } from '~/types/commands'
+import { BaseCommand } from '~/types/commands'
 import { generateId } from './helpers'
 
 // Add Card Command
@@ -28,7 +28,7 @@ export class AddCardCommand extends BaseCommand {
       lastMoved: new Date().toISOString(),
       history: [],
       notes: [],
-    }
+    } as ICard
   }
 
   async execute(): Promise<void> {
@@ -69,8 +69,8 @@ export class UpdateCardCommand extends BaseCommand {
       throw new Error(`Card with id ${cardId} not found`)
     }
 
-    this.originalCard = { ...board.cards[cardIndex] }
-    this.updatedCard = { ...this.originalCard, ...updates }
+    this.originalCard = { ...board.cards[cardIndex] } as ICard
+    this.updatedCard = { ...this.originalCard, ...updates } as ICard
   }
 
   async execute(): Promise<void> {
@@ -182,7 +182,7 @@ export class DeleteCardCommand extends BaseCommand {
       throw new Error(`Card with id ${cardId} not found`)
     }
 
-    this.card = { ...board.cards[cardIndex] }
+    this.card = { ...board.cards[cardIndex] } as ICard
     this.cardIndex = cardIndex
   }
 
@@ -217,7 +217,7 @@ export class AddColumnCommand extends BaseCommand {
       id: generateId(),
       title: columnData.title || 'New Column',
       order: columnData.order ?? maxOrder + 1,
-    }
+    } as IColumn
   }
 
   async execute(): Promise<void> {
@@ -254,8 +254,8 @@ export class UpdateColumnCommand extends BaseCommand {
       throw new Error(`Column with id ${columnId} not found`)
     }
 
-    this.originalColumn = { ...board.columns[columnIndex] }
-    this.updatedColumn = { ...this.originalColumn, ...updates }
+    this.originalColumn = { ...board.columns[columnIndex] } as IColumn
+    this.updatedColumn = { ...this.originalColumn, ...updates } as IColumn
   }
 
   async execute(): Promise<void> {
@@ -294,7 +294,7 @@ export class DeleteColumnCommand extends BaseCommand {
       throw new Error(`Column with id ${columnId} not found`)
     }
 
-    this.column = { ...board.columns[columnIndex] }
+    this.column = { ...board.columns[columnIndex] } as IColumn
     this.columnIndex = columnIndex
   }
 
@@ -308,16 +308,19 @@ export class DeleteColumnCommand extends BaseCommand {
     )
 
     if (otherColumns.length > 0 && cardsInColumn.length > 0) {
-      const targetColumnId = otherColumns[0].id
+      const targetColumn = otherColumns[0]
+      if (targetColumn) {
+        const targetColumnId = targetColumn.id
 
-      for (const card of cardsInColumn) {
-        const moveCommand = new MoveCardCommand(
-          this.board,
-          card.id,
-          targetColumnId
-        )
-        await moveCommand.execute()
-        this.moveCommands.push(moveCommand)
+        for (const card of cardsInColumn) {
+          const moveCommand = new MoveCardCommand(
+            this.board,
+            card.id,
+            targetColumnId
+          )
+          await moveCommand.execute()
+          this.moveCommands.push(moveCommand)
+        }
       }
     }
 
@@ -335,7 +338,10 @@ export class DeleteColumnCommand extends BaseCommand {
 
     // Undo all move commands in reverse order
     for (let i = this.moveCommands.length - 1; i >= 0; i--) {
-      await this.moveCommands[i].undo()
+      const command = this.moveCommands[i]
+      if (command) {
+        await command.undo()
+      }
     }
     this.moveCommands = []
   }
@@ -364,7 +370,7 @@ export class AddNoteCommand extends BaseCommand {
       title: noteData.title || 'New Note',
       body: noteData.body || '',
       createdAt: new Date().toISOString(),
-    }
+    } as INote
   }
 
   async execute(): Promise<void> {
@@ -410,7 +416,7 @@ export class DeleteNoteCommand extends BaseCommand {
       throw new Error(`Note with id ${noteId} not found`)
     }
 
-    this.note = { ...card.notes[noteIndex] }
+    this.note = { ...card.notes[noteIndex] } as INote
     this.noteIndex = noteIndex
   }
 

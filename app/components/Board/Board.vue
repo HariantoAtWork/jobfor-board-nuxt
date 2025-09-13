@@ -617,8 +617,8 @@ onMounted(() => {
 })
 
 // Card management
-const handleAddCard = (cardData: Partial<ICard>, columnId: string) => {
-  addCard(cardData, columnId)
+const handleAddCard = async (cardData: Partial<ICard>, columnId: string) => {
+  await addCard(cardData, columnId)
 }
 
 const handleCardClick = (card: ICard) => {
@@ -681,22 +681,22 @@ const handleEditCard = (card: ICard) => {
   console.log('Edit card:', card)
 }
 
-const handleDeleteCard = (cardId: string) => {
+const handleDeleteCard = async (cardId: string) => {
   if (confirm('Are you sure you want to delete this card?')) {
-    deleteCard(cardId)
+    await deleteCard(cardId)
   }
 }
 
-const handleUpdateCard = (cardId: string, cardData: Partial<ICard>) => {
-  updateCard(cardId, cardData)
+const handleUpdateCard = async (cardId: string, cardData: Partial<ICard>) => {
+  await updateCard(cardId, cardData)
 }
 
 // Note management
-const handleAddNote = (
+const handleAddNote = async (
   cardId: string,
   noteData: { title: string; body: string }
 ) => {
-  addNoteToCard(cardId, noteData)
+  await addNoteToCard(cardId, noteData)
 }
 
 const handleUpdateNote = (
@@ -707,40 +707,40 @@ const handleUpdateNote = (
   updateNoteInCard(cardId, noteId, noteData)
 }
 
-const handleDeleteNote = (cardId: string, noteId: string) => {
-  deleteNoteFromCard(cardId, noteId)
+const handleDeleteNote = async (cardId: string, noteId: string) => {
+  await deleteNoteFromCard(cardId, noteId)
 }
 
 // Column management
-const addColumn = () => {
+const addColumn = async () => {
   if (newColumnTitle.value.trim()) {
-    addColumnToBoard(newColumnTitle.value.trim())
+    await addColumnToBoard(newColumnTitle.value.trim())
     newColumnTitle.value = ''
     showAddColumnForm.value = false
   }
 }
 
-const handleEditColumn = (columnId: string, title: string) => {
-  updateColumn(columnId, { title })
+const handleEditColumn = async (columnId: string, title: string) => {
+  await updateColumn(columnId, { title })
 }
 
-const handleEmptyColumn = (columnId: string) => {
+const handleEmptyColumn = async (columnId: string) => {
   // Get all cards in this column
   const cardsInColumn = cards.value.filter((card) => card.columnId === columnId)
 
   // Delete each card in the column
-  cardsInColumn.forEach((card) => {
-    deleteCard(card.id)
-  })
+  for (const card of cardsInColumn) {
+    await deleteCard(card.id)
+  }
 }
 
-const handleDeleteColumn = (columnId: string) => {
+const handleDeleteColumn = async (columnId: string) => {
   if (
     confirm(
       'Are you sure you want to delete this column? All cards will be moved to the first column.'
     )
   ) {
-    deleteColumnFromBoard(columnId)
+    await deleteColumnFromBoard(columnId)
   }
 }
 
@@ -883,8 +883,8 @@ const importFromUrl = async () => {
   }
 }
 
-const handleMoveCard = (cardId: string, columnId: string) => {
-  moveCardToColumn(cardId, columnId)
+const handleMoveCard = async (cardId: string, columnId: string) => {
+  await moveCardToColumn(cardId, columnId)
 }
 
 const toggleFileMenu = () => {
