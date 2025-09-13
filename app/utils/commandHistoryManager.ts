@@ -30,11 +30,10 @@ export class CommandHistoryManagerImpl implements CommandHistoryManager {
   }
 
   async undo(): Promise<boolean> {
-    if (this.undoStack.length === 0) {
+    const command = this.undoStack.pop()
+    if (!command) {
       return false
     }
-
-    const command = this.undoStack.pop()!
 
     try {
       await command.undo()
@@ -49,11 +48,10 @@ export class CommandHistoryManagerImpl implements CommandHistoryManager {
   }
 
   async redo(): Promise<boolean> {
-    if (this.redoStack.length === 0) {
+    const command = this.redoStack.pop()
+    if (!command) {
       return false
     }
-
-    const command = this.redoStack.pop()!
 
     try {
       await command.execute()
@@ -76,13 +74,11 @@ export class CommandHistoryManagerImpl implements CommandHistoryManager {
   }
 
   getUndoDescription(): string | null {
-    if (this.undoStack.length === 0) return null
-    return this.undoStack[this.undoStack.length - 1].getDescription()
+    return this.undoStack[this.undoStack.length - 1]?.getDescription() ?? null
   }
 
   getRedoDescription(): string | null {
-    if (this.redoStack.length === 0) return null
-    return this.redoStack[this.redoStack.length - 1].getDescription()
+    return this.redoStack[this.redoStack.length - 1]?.getDescription() ?? null
   }
 
   getHistory(): Command[] {
