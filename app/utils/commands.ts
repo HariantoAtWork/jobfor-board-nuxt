@@ -2,6 +2,16 @@ import type { IBoardData, ICard, IColumn, INote } from '~/types'
 import { BaseCommand } from '~/types/commands'
 import { generateId } from './helpers'
 
+// ✅ Reusable deep clone utility function
+function deepClone<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj)) as T
+}
+
+// ✅ Reusable function to ensure array property is initialized
+function ensureArray<T>(value: T[] | undefined | null): T[] {
+  return Array.isArray(value) ? value : []
+}
+
 // Add Card Command
 export class AddCardCommand extends BaseCommand {
   private card: ICard
@@ -13,21 +23,20 @@ export class AddCardCommand extends BaseCommand {
     private columnId: string
   ) {
     super(board)
+    const cardDataId = cardData.id || generateId()
+    delete cardData.id
+    const now = new Date().toISOString()
+
     this.card = {
-      id: generateId(),
-      title: cardData.title || 'New Job Application',
-      company: cardData.company || '',
-      jobTitle: cardData.jobTitle || '',
-      via: cardData.via || '',
-      link: cardData.link || '',
-      contact: cardData.contact || '',
-      description: cardData.description || '',
-      location: cardData.location || '',
+      id: cardDataId,
       columnId,
-      createdAt: new Date().toISOString(),
-      lastMoved: new Date().toISOString(),
-      history: [],
-      notes: [],
+      ...deepClone({
+        ...cardData,
+        createdAt: now,
+        lastMoved: now,
+        history: ensureArray(cardData.history),
+        notes: ensureArray(cardData.notes),
+      }),
     } as ICard
   }
 
@@ -69,8 +78,9 @@ export class UpdateCardCommand extends BaseCommand {
       throw new Error(`Card with id ${cardId} not found`)
     }
 
-    this.originalCard = { ...board.cards[cardIndex] } as ICard
-    this.updatedCard = { ...this.originalCard, ...updates } as ICard
+    // ✅ Deep clone using reusable function
+    this.originalCard = deepClone(board.cards[cardIndex]!)
+    this.updatedCard = deepClone({ ...this.originalCard, ...updates })
   }
 
   async execute(): Promise<void> {
@@ -111,17 +121,18 @@ export class UpdateCardCommand extends BaseCommand {
 
 // Move Card Command
 export class MoveCardCommand extends BaseCommand {
-  private originalColumnId: string
+  private originalCard: ICard
   private newColumnId: string
 
   constructor(board: IBoardData, private cardId: string, newColumnId: string) {
     super(board)
-    const card = board.cards.find((c) => c.id === cardId)
-    if (!card) {
+    const cardIndex = board.cards.findIndex((c) => c.id === cardId)
+    if (cardIndex === -1) {
       throw new Error(`Card with id ${cardId} not found`)
     }
 
-    this.originalColumnId = card.columnId
+    // ✅ Store complete original card state with deep clone
+    this.originalCard = deepClone(board.cards[cardIndex]!)
     this.newColumnId = newColumnId
   }
 
@@ -147,32 +158,28 @@ export class MoveCardCommand extends BaseCommand {
   }
 
   async undo(): Promise<void> {
-    const card = this.board.cards.find((c) => c.id === this.cardId)
-    if (card) {
-      card.columnId = this.originalColumnId
-      card.lastMoved = new Date().toISOString()
-
-      // Remove the last history entry (the one we just added)
-      card.history.pop()
+    const cardIndex = this.board.cards.findIndex((c) => c.id === this.cardId)
+    if (cardIndex !== -1) {
+      // ✅ Replace card with complete original state (including original lastMoved)
+      this.board.cards[cardIndex] = deepClone(this.originalCard)
     }
   }
 
   getDescription(): string {
     const originalColumn = this.board.columns.find(
-      (col) => col.id === this.originalColumnId
+      (col) => col.id === this.originalCard.columnId
     )
     const newColumn = this.board.columns.find(
       (col) => col.id === this.newColumnId
     )
-    const card = this.board.cards.find((c) => c.id === this.cardId)
 
-    return `Move card: "${card?.title}" from "${originalColumn?.title}" to "${newColumn?.title}"`
+    return `Move card: "${this.originalCard.title}" from "${originalColumn?.title}" to "${newColumn?.title}"`
   }
 }
 
 // Delete Card Command
 export class DeleteCardCommand extends BaseCommand {
-  private card: ICard
+  private originalCard: ICard
   private cardIndex: number = -1
 
   constructor(board: IBoardData, private cardId: string) {
@@ -182,7 +189,8 @@ export class DeleteCardCommand extends BaseCommand {
       throw new Error(`Card with id ${cardId} not found`)
     }
 
-    this.card = { ...board.cards[cardIndex] } as ICard
+    // ✅ Deep clone using reusable function
+    this.originalCard = deepClone(board.cards[cardIndex]!)
     this.cardIndex = cardIndex
   }
 
@@ -194,15 +202,15 @@ export class DeleteCardCommand extends BaseCommand {
 
   async undo(): Promise<void> {
     if (this.cardIndex !== -1) {
-      this.board.cards.splice(this.cardIndex, 0, this.card)
+      this.board.cards.splice(this.cardIndex, 0, this.originalCard)
     }
   }
 
   getDescription(): string {
     const column = this.board.columns.find(
-      (col) => col.id === this.card.columnId
+      (col) => col.id === this.originalCard.columnId
     )
-    return `Delete card: "${this.card.title}" from "${column?.title}"`
+    return `Delete card: "${this.originalCard.title}" from "${column?.title}"`
   }
 }
 
@@ -254,8 +262,9 @@ export class UpdateColumnCommand extends BaseCommand {
       throw new Error(`Column with id ${columnId} not found`)
     }
 
-    this.originalColumn = { ...board.columns[columnIndex] } as IColumn
-    this.updatedColumn = { ...this.originalColumn, ...updates } as IColumn
+    // ✅ Deep clone using reusable function
+    this.originalColumn = deepClone(board.columns[columnIndex]!)
+    this.updatedColumn = deepClone({ ...this.originalColumn, ...updates })
   }
 
   async execute(): Promise<void> {
@@ -283,7 +292,7 @@ export class UpdateColumnCommand extends BaseCommand {
 
 // Delete Column Command
 export class DeleteColumnCommand extends BaseCommand {
-  private column: IColumn
+  private originalColumn: IColumn
   private columnIndex: number = -1
   private moveCommands: MoveCardCommand[] = []
 
@@ -294,7 +303,7 @@ export class DeleteColumnCommand extends BaseCommand {
       throw new Error(`Column with id ${columnId} not found`)
     }
 
-    this.column = { ...board.columns[columnIndex] } as IColumn
+    this.originalColumn = deepClone(board.columns[columnIndex]!) as IColumn
     this.columnIndex = columnIndex
   }
 
@@ -333,7 +342,7 @@ export class DeleteColumnCommand extends BaseCommand {
   async undo(): Promise<void> {
     // Restore the column
     if (this.columnIndex !== -1) {
-      this.board.columns.splice(this.columnIndex, 0, this.column)
+      this.board.columns.splice(this.columnIndex, 0, this.originalColumn)
     }
 
     // Undo all move commands in reverse order
@@ -350,7 +359,7 @@ export class DeleteColumnCommand extends BaseCommand {
     const cardCount = this.board.cards.filter(
       (card) => card.columnId === this.columnId
     ).length
-    return `Delete column: "${this.column.title}" (${cardCount} cards moved)`
+    return `Delete column: "${this.originalColumn.title}" (${cardCount} cards moved)`
   }
 }
 
@@ -397,7 +406,7 @@ export class AddNoteCommand extends BaseCommand {
 
 // Delete Note Command
 export class DeleteNoteCommand extends BaseCommand {
-  private note: INote
+  private originalNote: INote
   private noteIndex: number = -1
 
   constructor(
@@ -416,7 +425,7 @@ export class DeleteNoteCommand extends BaseCommand {
       throw new Error(`Note with id ${noteId} not found`)
     }
 
-    this.note = { ...card.notes[noteIndex] } as INote
+    this.originalNote = deepClone(card.notes[noteIndex]) as INote
     this.noteIndex = noteIndex
   }
 
@@ -430,12 +439,12 @@ export class DeleteNoteCommand extends BaseCommand {
   async undo(): Promise<void> {
     const card = this.board.cards.find((c) => c.id === this.cardId)
     if (card && this.noteIndex !== -1) {
-      card.notes.splice(this.noteIndex, 0, this.note)
+      card.notes.splice(this.noteIndex, 0, this.originalNote)
     }
   }
 
   getDescription(): string {
     const card = this.board.cards.find((c) => c.id === this.cardId)
-    return `Delete note: "${this.note.title}" from card "${card?.title}"`
+    return `Delete note: "${this.originalNote.title}" from card "${card?.title}"`
   }
 }
