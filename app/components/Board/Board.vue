@@ -9,19 +9,18 @@
         <div class="flex items-center gap-2">
           <UILogo />
           <h1 class="text-xl font-semibold">Job Application Tracker</h1>
+          <!-- Undo/Redo Buttons -->
+          <UIUndoRedoButtons
+            :can-undo="canUndo"
+            :can-redo="canRedo"
+            :undo-description="undoDescription"
+            :redo-description="redoDescription"
+            :history="getHistory()"
+            @undo="handleUndo"
+            @redo="handleRedo"
+            @clear-history="clearHistory"
+          />
         </div>
-
-        <!-- Undo/Redo Buttons -->
-        <UIUndoRedoButtons
-          :can-undo="canUndo"
-          :can-redo="canRedo"
-          :undo-description="undoDescription"
-          :redo-description="redoDescription"
-          :history="getHistory()"
-          @undo="handleUndo"
-          @redo="handleRedo"
-          @clear-history="clearHistory"
-        />
       </div>
     </header>
 
