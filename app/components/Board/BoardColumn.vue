@@ -21,6 +21,23 @@
       @dragend="handleColumnDragEnd"
     >
       <div class="flex items-center gap-2">
+        <div
+          v-if="column.description && column.description.trim()"
+          class="relative group"
+        >
+          <Icon
+            name="mdi:information-outline"
+            class="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help"
+          />
+          <div
+            class="absolute top-full left-[-0.5em] mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-200 max-w-xs whitespace-normal break-words"
+          >
+            {{ column.description }}
+            <div
+              class="absolute bottom-full left-3 border-4 border-transparent border-b-gray-900"
+            ></div>
+          </div>
+        </div>
         <h3 class="column-title">{{ column.title }}</h3>
         <span class="column-count">{{ cards.length }}</span>
       </div>
@@ -190,6 +207,13 @@
           type="text"
           placeholder="Enter column title"
           @keyup.enter="saveColumnEdit"
+        />
+      </UIFormGroup>
+      <UIFormGroup label="Description (Optional)">
+        <UITextarea
+          v-model="editColumnData.description"
+          :rows="3"
+          placeholder="Additional information about this column"
         />
       </UIFormGroup>
     </UIModal>
@@ -672,7 +696,7 @@ interface Emits {
   (e: 'dragend'): void
   (e: 'drop', columnId: string): void
   (e: 'addcard', cardData: Partial<ICard>, columnId: string): void
-  (e: 'editcolumn', columnId: string, title: string): void
+  (e: 'editcolumn', columnId: string, title: string, description?: string): void
   (e: 'emptycolumn', columnId: string): void
   (e: 'deletecolumn', columnId: string): void
   (e: 'cardclick', card: ICard): void
@@ -724,6 +748,7 @@ const newCard = ref({
 
 const editColumnData = ref({
   title: '',
+  description: '',
 })
 
 const editCardData = ref({
@@ -903,14 +928,21 @@ const addCard = () => {
 const editColumn = () => {
   showColumnMenu.value = false
   editColumnData.value.title = props.column.title
+  editColumnData.value.description = props.column.description || ''
   showEditColumnForm.value = true
 }
 
 const saveColumnEdit = () => {
   if (editColumnData.value.title.trim()) {
-    emit('editcolumn', props.column.id, editColumnData.value.title)
+    emit(
+      'editcolumn',
+      props.column.id,
+      editColumnData.value.title,
+      editColumnData.value.description
+    )
     showEditColumnForm.value = false
     editColumnData.value.title = ''
+    editColumnData.value.description = ''
   }
 }
 

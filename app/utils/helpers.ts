@@ -15,45 +15,113 @@ export function formatTimeAgo(dateString: string): string {
   }
 }
 
-export function getCardsForColumn(cards: ICard[] | undefined, columnId: string): ICard[] {
+export function getCardsForColumn(
+  cards: ICard[] | undefined,
+  columnId: string
+): ICard[] {
   if (!Array.isArray(cards)) {
     return []
   }
-  return cards.filter(card => card.columnId === columnId)
+  return cards.filter((card) => card.columnId === columnId)
 }
 
-export function addCardToHistory(card: ICard, columnId: string, columnTitle: string): ICardHistory {
+export function addCardToHistory(
+  card: ICard,
+  columnId: string,
+  columnTitle: string
+): ICardHistory {
   return {
     id: generateId(),
     columnId,
     columnTitle,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   }
 }
 
-export function moveCard(card: ICard, newColumnId: string, newColumnTitle: string): ICard {
+export function moveCard(
+  card: ICard,
+  newColumnId: string,
+  newColumnTitle: string
+): ICard {
   const historyEntry = addCardToHistory(card, newColumnId, newColumnTitle)
-  
+
   return {
     ...card,
     columnId: newColumnId,
     lastMoved: new Date().toISOString(),
-    history: [...card.history, historyEntry]
+    history: [...card.history, historyEntry],
   }
 }
 
 export function getDefaultColumns(): IColumn[] {
   return [
-    { id: generateId(), title: 'Job Posting', order: 1 },
-    { id: generateId(), title: 'Cover Letter', order: 2 },
-    { id: generateId(), title: 'Applied', order: 3 },
-    { id: generateId(), title: 'First Meeting', order: 4 },
-    { id: generateId(), title: 'Under Review', order: 5 },
-    { id: generateId(), title: 'Follow Up', order: 6 },
-    { id: generateId(), title: 'Offer', order: 7 },
-    { id: generateId(), title: 'Rejected / Expired', order: 8 },
-    { id: generateId(), title: 'Recruit Companies', order: 9 },
-    { id: generateId(), title: 'Missed Calls', order: 10 }
+    {
+      id: generateId(),
+      title: 'Job Posting',
+      description:
+        'Job opportunities found or shared that you want to consider applying for',
+      order: 1,
+    },
+    {
+      id: generateId(),
+      title: 'Cover Letter',
+      description:
+        'Jobs you are actively writing or have written cover letters for',
+      order: 2,
+    },
+    {
+      id: generateId(),
+      title: 'Applied',
+      description: 'Applications submitted and waiting for initial response',
+      order: 3,
+    },
+    {
+      id: generateId(),
+      title: 'First Meeting',
+      description:
+        'Initial interviews, phone screens, or first contact scheduled',
+      order: 4,
+    },
+    {
+      id: generateId(),
+      title: 'Under Review',
+      description:
+        'Applications being reviewed by the company after initial contact',
+      order: 5,
+    },
+    {
+      id: generateId(),
+      title: 'Follow Up',
+      description: 'Waiting for response or need to follow up with the company',
+      order: 6,
+    },
+    {
+      id: generateId(),
+      title: 'Offer',
+      description: 'Job offers received and under consideration',
+      order: 7,
+    },
+    {
+      id: generateId(),
+      title: 'Trashed',
+      description:
+        'Rejected applications, expired postings, or opportunities no longer relevant',
+      order: 8,
+    },
+    {
+      id: generateId(),
+      title: 'Recruit Companies',
+      description:
+        'Companies you want to proactively reach out to for opportunities',
+      order: 9,
+    },
+    {
+      id: generateId(),
+      title: 'Missed Calls',
+      description:
+        'Missed phone calls or interviews that need to be rescheduled',
+      order: 10,
+    },
   ]
 }
 
@@ -61,6 +129,6 @@ export function getDefaultBoardData(): IBoardData {
   return {
     id: generateId(),
     columns: getDefaultColumns(),
-    cards: []
+    cards: [],
   }
 }

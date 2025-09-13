@@ -224,6 +224,7 @@ export class AddColumnCommand extends BaseCommand {
     this.column = {
       id: generateId(),
       title: columnData.title || 'New Column',
+      description: columnData.description || '',
       order: columnData.order ?? maxOrder + 1,
     } as IColumn
   }

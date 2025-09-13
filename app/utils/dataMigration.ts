@@ -44,14 +44,16 @@ function migrateColumn(column: any): IColumn {
     return {
       id: column.id || generateId(),
       title: column.title || 'Untitled Column',
-      order: 0 // Will be set properly by the application
+      description: column.description || '',
+      order: 0, // Will be set properly by the application
     }
   }
-  
+
   return {
     id: column.id || generateId(),
     title: column.title || 'Untitled Column',
-    order: column.order
+    description: column.description || '',
+    order: column.order,
   }
 }
 
@@ -60,7 +62,7 @@ function migrateColumn(column: any): IColumn {
  */
 function migrateCard(card: any): ICard {
   const now = new Date().toISOString()
-  
+
   return {
     id: card.id || generateId(),
     title: card.title || 'Untitled Card',
@@ -74,18 +76,22 @@ function migrateCard(card: any): ICard {
     columnId: card.columnId || card.column_id || '', // Handle old field name
     createdAt: card.createdAt || card.created_at || now, // Handle old field name
     lastMoved: card.lastMoved || card.last_moved || now, // Handle old field name
-    history: Array.isArray(card.history) ? card.history.map((h: any) => ({
-      id: h.id || generateId(),
-      columnId: h.columnId || h.column_id || '',
-      columnTitle: h.columnTitle || h.column_title || 'Unknown Column',
-      timestamp: h.timestamp || now
-    })) : [],
-    notes: Array.isArray(card.notes) ? card.notes.map((n: any) => ({
-      id: n.id || generateId(),
-      createdAt: n.createdAt || n.created_at || now,
-      title: n.title || 'Untitled Note',
-      body: n.body || undefined
-    })) : []
+    history: Array.isArray(card.history)
+      ? card.history.map((h: any) => ({
+          id: h.id || generateId(),
+          columnId: h.columnId || h.column_id || '',
+          columnTitle: h.columnTitle || h.column_title || 'Unknown Column',
+          timestamp: h.timestamp || now,
+        }))
+      : [],
+    notes: Array.isArray(card.notes)
+      ? card.notes.map((n: any) => ({
+          id: n.id || generateId(),
+          createdAt: n.createdAt || n.created_at || now,
+          title: n.title || 'Untitled Note',
+          body: n.body || undefined,
+        }))
+      : [],
   }
 }
 
@@ -95,12 +101,8 @@ function migrateCard(card: any): ICard {
 function migrateBoardData(data: any): IBoardData {
   return {
     id: data.id || generateId(),
-    columns: Array.isArray(data.columns) 
-      ? data.columns.map(migrateColumn)
-      : [],
-    cards: Array.isArray(data.cards) 
-      ? data.cards.map(migrateCard)
-      : []
+    columns: Array.isArray(data.columns) ? data.columns.map(migrateColumn) : [],
+    cards: Array.isArray(data.cards) ? data.cards.map(migrateCard) : [],
   }
 }
 
@@ -110,23 +112,24 @@ function migrateBoardData(data: any): IBoardData {
 export function migrateDataIfNeeded(data: any): IBoardData | null {
   try {
     const currentVersion = getDataVersion()
-    
+
     // If we're already at the current version, no migration needed
     if (currentVersion >= CURRENT_DATA_VERSION) {
       return data
     }
-    
-    console.log(`Migrating data from version ${currentVersion} to ${CURRENT_DATA_VERSION}`)
-    
+
+    console.log(
+      `Migrating data from version ${currentVersion} to ${CURRENT_DATA_VERSION}`
+    )
+
     // Perform migration
     const migratedData = migrateBoardData(data)
-    
+
     // Update version
     setDataVersion(CURRENT_DATA_VERSION)
-    
+
     console.log('Data migration completed successfully')
     return migratedData
-    
   } catch (error) {
     console.error('Data migration failed:', error)
     return null

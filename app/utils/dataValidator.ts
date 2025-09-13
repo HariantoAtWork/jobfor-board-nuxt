@@ -48,37 +48,40 @@ function isValidCardHistory(obj: any): obj is ICardHistory {
  */
 function isValidCard(obj: any): obj is ICard {
   if (!obj || typeof obj !== 'object') return false
-  
+
   // Check required fields
   if (typeof obj.id !== 'string') return false
   if (typeof obj.title !== 'string') return false
   if (typeof obj.columnId !== 'string') return false
   if (typeof obj.createdAt !== 'string') return false
   if (typeof obj.lastMoved !== 'string') return false
-  
+
   // Check optional fields
   if (obj.via !== undefined && typeof obj.via !== 'string') return false
   if (obj.company !== undefined && typeof obj.company !== 'string') return false
-  if (obj.jobTitle !== undefined && typeof obj.jobTitle !== 'string') return false
-  if (obj.location !== undefined && typeof obj.location !== 'string') return false
+  if (obj.jobTitle !== undefined && typeof obj.jobTitle !== 'string')
+    return false
+  if (obj.location !== undefined && typeof obj.location !== 'string')
+    return false
   if (obj.link !== undefined && typeof obj.link !== 'string') return false
   if (obj.contact !== undefined && typeof obj.contact !== 'string') return false
-  if (obj.description !== undefined && typeof obj.description !== 'string') return false
-  
+  if (obj.description !== undefined && typeof obj.description !== 'string')
+    return false
+
   // Check arrays
   if (!Array.isArray(obj.history)) return false
   if (!Array.isArray(obj.notes)) return false
-  
+
   // Validate history entries
   for (const historyItem of obj.history) {
     if (!isValidCardHistory(historyItem)) return false
   }
-  
+
   // Validate notes
   for (const note of obj.notes) {
     if (!isValidNote(note)) return false
   }
-  
+
   return true
 }
 
@@ -87,22 +90,22 @@ function isValidCard(obj: any): obj is ICard {
  */
 function isValidBoardData(obj: any): obj is IBoardData {
   if (!obj || typeof obj !== 'object') return false
-  
+
   // Check required fields
   if (typeof obj.id !== 'string') return false
   if (!Array.isArray(obj.columns)) return false
   if (!Array.isArray(obj.cards)) return false
-  
+
   // Validate columns
   for (const column of obj.columns) {
     if (!isValidColumn(column)) return false
   }
-  
+
   // Validate cards
   for (const card of obj.cards) {
     if (!isValidCard(card)) return false
   }
-  
+
   return true
 }
 
@@ -113,7 +116,8 @@ function sanitizeColumn(obj: any): IColumn {
   return {
     id: typeof obj.id === 'string' ? obj.id : generateId(),
     title: typeof obj.title === 'string' ? obj.title : 'Untitled Column',
-    order: typeof obj.order === 'number' && !isNaN(obj.order) ? obj.order : 0
+    description: typeof obj.description === 'string' ? obj.description : '',
+    order: typeof obj.order === 'number' && !isNaN(obj.order) ? obj.order : 0,
   }
 }
 
@@ -123,9 +127,12 @@ function sanitizeColumn(obj: any): IColumn {
 function sanitizeNote(obj: any): INote {
   return {
     id: typeof obj.id === 'string' ? obj.id : generateId(),
-    createdAt: typeof obj.createdAt === 'string' ? obj.createdAt : new Date().toISOString(),
+    createdAt:
+      typeof obj.createdAt === 'string'
+        ? obj.createdAt
+        : new Date().toISOString(),
     title: typeof obj.title === 'string' ? obj.title : 'Untitled Note',
-    body: typeof obj.body === 'string' ? obj.body : undefined
+    body: typeof obj.body === 'string' ? obj.body : undefined,
   }
 }
 
@@ -136,8 +143,12 @@ function sanitizeCardHistory(obj: any): ICardHistory {
   return {
     id: typeof obj.id === 'string' ? obj.id : generateId(),
     columnId: typeof obj.columnId === 'string' ? obj.columnId : '',
-    columnTitle: typeof obj.columnTitle === 'string' ? obj.columnTitle : 'Unknown Column',
-    timestamp: typeof obj.timestamp === 'string' ? obj.timestamp : new Date().toISOString()
+    columnTitle:
+      typeof obj.columnTitle === 'string' ? obj.columnTitle : 'Unknown Column',
+    timestamp:
+      typeof obj.timestamp === 'string'
+        ? obj.timestamp
+        : new Date().toISOString(),
   }
 }
 
@@ -146,7 +157,7 @@ function sanitizeCardHistory(obj: any): ICardHistory {
  */
 function sanitizeCard(obj: any): ICard {
   const now = new Date().toISOString()
-  
+
   return {
     id: typeof obj.id === 'string' ? obj.id : generateId(),
     title: typeof obj.title === 'string' ? obj.title : 'Untitled Card',
@@ -156,16 +167,15 @@ function sanitizeCard(obj: any): ICard {
     location: typeof obj.location === 'string' ? obj.location : undefined,
     link: typeof obj.link === 'string' ? obj.link : undefined,
     contact: typeof obj.contact === 'string' ? obj.contact : undefined,
-    description: typeof obj.description === 'string' ? obj.description : undefined,
+    description:
+      typeof obj.description === 'string' ? obj.description : undefined,
     columnId: typeof obj.columnId === 'string' ? obj.columnId : '',
     createdAt: typeof obj.createdAt === 'string' ? obj.createdAt : now,
     lastMoved: typeof obj.lastMoved === 'string' ? obj.lastMoved : now,
-    history: Array.isArray(obj.history) 
+    history: Array.isArray(obj.history)
       ? obj.history.map(sanitizeCardHistory)
       : [],
-    notes: Array.isArray(obj.notes)
-      ? obj.notes.map(sanitizeNote)
-      : []
+    notes: Array.isArray(obj.notes) ? obj.notes.map(sanitizeNote) : [],
   }
 }
 
@@ -175,12 +185,8 @@ function sanitizeCard(obj: any): ICard {
 function sanitizeBoardData(obj: any): IBoardData {
   return {
     id: typeof obj.id === 'string' ? obj.id : generateId(),
-    columns: Array.isArray(obj.columns)
-      ? obj.columns.map(sanitizeColumn)
-      : [],
-    cards: Array.isArray(obj.cards)
-      ? obj.cards.map(sanitizeCard)
-      : []
+    columns: Array.isArray(obj.columns) ? obj.columns.map(sanitizeColumn) : [],
+    cards: Array.isArray(obj.cards) ? obj.cards.map(sanitizeCard) : [],
   }
 }
 
@@ -194,25 +200,26 @@ export function validateAndSanitizeBoardData(data: any): IBoardData | null {
     if (data === null || data === undefined) {
       return null
     }
-    
+
     // If data is already valid, return it as-is
     if (isValidBoardData(data)) {
       return data
     }
-    
+
     // Try to sanitize the data
     const sanitized = sanitizeBoardData(data)
-    
+
     // Validate the sanitized data
     if (isValidBoardData(sanitized)) {
       console.warn('Board data was malformed and has been sanitized')
       return sanitized
     }
-    
+
     // If sanitization failed, return null to use default
-    console.error('Board data is completely invalid and will be reset to default')
+    console.error(
+      'Board data is completely invalid and will be reset to default'
+    )
     return null
-    
   } catch (error) {
     console.error('Error validating board data:', error)
     return null

@@ -217,8 +217,8 @@ export function useBoardWithCommands() {
   }
 
   // Add new column using command pattern
-  const addColumn = async (title: string) => {
-    const command = new AddColumnCommand(board.value, { title })
+  const addColumn = async (title: string, description?: string) => {
+    const command = new AddColumnCommand(board.value, { title, description })
     const success = await executeCommand(command)
     return success
   }

@@ -189,6 +189,13 @@
           @keyup.enter="addColumn"
         />
       </UIFormGroup>
+      <UIFormGroup label="Description (Optional)">
+        <UITextarea
+          v-model="newColumnDescription"
+          :rows="3"
+          placeholder="Additional information about this column"
+        />
+      </UIFormGroup>
     </UIModal>
 
     <!-- Import URL Modal -->
@@ -589,6 +596,7 @@ const showBoardSelectionModal = ref(false)
 const showBoardManagementModal = ref(false)
 const showSaveBoardModal = ref(false)
 const newColumnTitle = ref('')
+const newColumnDescription = ref('')
 const importUrl = ref('')
 const fileInput = ref<HTMLInputElement>()
 const menuPosition = ref<'top' | 'bottom'>('bottom')
@@ -713,14 +721,22 @@ const handleDeleteNote = async (cardId: string, noteId: string) => {
 // Column management
 const addColumn = async () => {
   if (newColumnTitle.value.trim()) {
-    await addColumnToBoard(newColumnTitle.value.trim())
+    await addColumnToBoard(
+      newColumnTitle.value.trim(),
+      newColumnDescription.value.trim()
+    )
     newColumnTitle.value = ''
+    newColumnDescription.value = ''
     showAddColumnForm.value = false
   }
 }
 
-const handleEditColumn = async (columnId: string, title: string) => {
-  await updateColumn(columnId, { title })
+const handleEditColumn = async (
+  columnId: string,
+  title: string,
+  description?: string
+) => {
+  await updateColumn(columnId, { title, description })
 }
 
 const handleEmptyColumn = async (columnId: string) => {
