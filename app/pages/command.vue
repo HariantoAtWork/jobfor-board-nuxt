@@ -1,5 +1,5 @@
 <template>
-  <Board />
+  <BoardWithCommands />
 </template>
 <script setup>
 definePageMeta({
