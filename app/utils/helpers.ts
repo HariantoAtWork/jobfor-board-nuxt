@@ -1,6 +1,6 @@
-import { formatDistanceToNow } from 'date-fns'
 import type { ICard, IColumn, ICardHistory, IBoardData } from '~/types'
 import { v7 as uuidv7 } from 'uuid'
+import dayjs from '~/utils/dayjs-extend'
 
 export function generateId(): string {
   return uuidv7()
@@ -8,8 +8,8 @@ export function generateId(): string {
 
 export function formatTimeAgo(dateString: string): string {
   try {
-    const date = new Date(dateString)
-    return formatDistanceToNow(date, { addSuffix: true })
+    const date = dayjs(dateString)
+    return date.fromNow()
   } catch {
     return 'Unknown time'
   }

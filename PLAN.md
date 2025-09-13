@@ -152,7 +152,7 @@ app/
 - **Styling:** Tailwind CSS or UnoCSS for utility-first styling
 - **Icons:** Font Awesome (as per user preference)
 - **Drag & Drop:** @vueuse/core or vue-draggable-next
-- **Date Handling:** date-fns for timestamp management
+- **Date Handling:** dayjs for timestamp management
 - **Validation:** vee-validate for form validation
 
 ## Development Priorities
