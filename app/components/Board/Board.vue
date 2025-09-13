@@ -5,11 +5,23 @@
 
     <!-- Header -->
     <header class="board-header">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <UILogo />
           <h1 class="text-xl font-semibold">Job Application Tracker</h1>
         </div>
+
+        <!-- Undo/Redo Buttons -->
+        <UIUndoRedoButtons
+          :can-undo="canUndo"
+          :can-redo="canRedo"
+          :undo-description="undoDescription"
+          :redo-description="redoDescription"
+          :history="getHistory()"
+          @undo="handleUndo"
+          @redo="handleRedo"
+          @clear-history="clearHistory"
+        />
       </div>
     </header>
 
@@ -515,7 +527,8 @@
 
 <script setup lang="ts">
 import type { ICard, IColumn, INote, ICardHistory } from '~/types'
-import { useBoard } from '~/composables/useBoard'
+import { useBoardWithCommands } from '~/composables/useBoardWithCommands'
+import { onMounted, onUnmounted } from 'vue'
 import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
 import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
@@ -556,7 +569,16 @@ const {
   deleteNoteFromCard,
   clearBoard,
   defaultBoard,
-} = useBoard()
+  // Command pattern properties
+  canUndo,
+  canRedo,
+  undoDescription,
+  redoDescription,
+  undo,
+  redo,
+  clearHistory,
+  getHistory,
+} = useBoardWithCommands()
 
 // UI state
 const showAddColumnForm = ref(false)
@@ -603,6 +625,56 @@ const handleCardClick = (card: ICard) => {
   // This is now handled in the BoardColumn component
   console.log('Card clicked:', card)
 }
+
+// Undo/Redo handlers
+const handleUndo = async () => {
+  await undo()
+}
+
+const handleRedo = async () => {
+  await redo()
+}
+
+// Keyboard shortcuts
+const handleKeydown = async (event: KeyboardEvent) => {
+  // Check if we're in an input field (don't trigger shortcuts)
+  const target = event.target as HTMLElement
+  if (
+    target.tagName === 'INPUT' ||
+    target.tagName === 'TEXTAREA' ||
+    target.contentEditable === 'true'
+  ) {
+    return
+  }
+
+  if (event.ctrlKey || event.metaKey) {
+    switch (event.key) {
+      case 'z':
+        event.preventDefault()
+        if (event.shiftKey) {
+          // Ctrl+Shift+Z or Cmd+Shift+Z for redo
+          await handleRedo()
+        } else {
+          // Ctrl+Z or Cmd+Z for undo
+          await handleUndo()
+        }
+        break
+      case 'y':
+        event.preventDefault()
+        // Ctrl+Y or Cmd+Y for redo
+        await handleRedo()
+        break
+    }
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
 
 const handleEditCard = (card: ICard) => {
   // TODO: Implement card editing modal
