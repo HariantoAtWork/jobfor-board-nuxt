@@ -1,5 +1,12 @@
 <template>
   <div class="board-container">
+    <!-- Storage Recovery Component -->
+    <UIStorageRecovery
+      ref="storageRecoveryRef"
+      @recovered="handleStorageRecovered"
+      @reset="handleStorageReset"
+    />
+
     <!-- Menu Bar -->
     <UIMenuBar />
 
@@ -105,6 +112,14 @@
               >
                 <Icon name="mdi:link" class="w-4 h-4" />
                 Import from URL
+              </button>
+              <div class="border-t border-gray-200 my-1"></div>
+              <button
+                @click="showStorageRecovery"
+                class="context-menu-item text-orange-600 hover:bg-orange-50"
+              >
+                <Icon name="mdi:backup-restore" class="w-4 h-4" />
+                Storage Recovery
               </button>
               <div class="border-t border-gray-200 my-1"></div>
               <button
@@ -538,6 +553,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
 import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
+import { getStorageInfo } from '~/utils/storageBackup'
 import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
 import user from '~/utils/user'
@@ -599,6 +615,7 @@ const newColumnTitle = ref('')
 const newColumnDescription = ref('')
 const importUrl = ref('')
 const fileInput = ref<HTMLInputElement>()
+const storageRecoveryRef = ref()
 const menuPosition = ref<'top' | 'bottom'>('bottom')
 const fileMenuPosition = ref<'top' | 'bottom'>('bottom')
 const databaseMenuPosition = ref<'top' | 'bottom'>('bottom')
@@ -640,6 +657,24 @@ const handleUndo = async () => {
 
 const handleRedo = async () => {
   await redo()
+}
+
+// Storage recovery handlers
+const handleStorageRecovered = () => {
+  // Reload the board after successful recovery
+  loadBoard()
+  console.log('Storage recovered successfully')
+}
+
+const handleStorageReset = () => {
+  // Reload the board after reset
+  loadBoard()
+  console.log('Storage reset to default')
+}
+
+const showStorageRecovery = () => {
+  storageRecoveryRef.value?.showRecoveryModal()
+  showFileMenu.value = false
 }
 
 // Keyboard shortcuts
