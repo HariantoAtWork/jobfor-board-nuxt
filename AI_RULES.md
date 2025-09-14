@@ -112,3 +112,85 @@ app/
 - All dependencies are managed through **pnpm**
 - Icons are automatically optimized and tree-shaken
 - Follow **en-UK** spelling conventions in documentation
+
+
+## types
+
+```ts name="types/index.ts"
+export interface IColumn {
+  id: string
+  title: string
+  description?: string
+  order: number
+}
+
+export interface ICardHistory {
+  id: string
+  columnId: string
+  columnTitle: string
+  timestamp: string // ISO date string
+}
+
+export interface INote {
+  id: string
+  createdAt: string // ISO date string
+  title: string
+  body?: string
+}
+
+export interface ICard {
+  id: string
+  title: string
+  via?: string
+  company?: string
+  jobTitle?: string
+  location?: string
+  link?: string
+  contact?: string
+  description?: string
+  columnId: string
+  createdAt: string // ISO date string
+  lastMoved: string // ISO date string
+  history: ICardHistory[]
+  notes: INote[]
+}
+
+export interface IBoardData {
+  id: string
+  columns: IColumn[]
+  cards: ICard[]
+}
+
+export interface IBoard {
+  id: string
+  user_id: string
+  title: string
+  data: IBoardData
+  created_at: string // ISO date string
+  updated_at: string // ISO date string
+}
+
+export interface ICreateBoardRequest {
+  title: string
+  data: IBoardData
+}
+
+export interface IUpdateBoardRequest {
+  title?: string
+  data?: IBoardData
+}
+
+// Additional utility types
+export interface DragState {
+  isDragging: boolean
+  draggedCard: ICard | null
+  sourceColumnId: string | null
+}
+
+export interface BoardState {
+  board: IBoardData
+  dragState: DragState
+  isLoading: boolean
+  error: string | null
+}
+```
