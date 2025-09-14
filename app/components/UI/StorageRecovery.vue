@@ -308,12 +308,12 @@ import {
   createManualBackup,
   getAllManualBackups,
   restoreFromBackup,
-  restoreFromManualBackup,
+  restoreFromAutomaticBackup,
   exportStorageToFile,
   importStorageFromFile,
   resetToDefaultData,
 } from '~/utils/storageBackup'
-import { recoverFromCorruption } from '~/composables/useBoardWithCommands'
+import { useBoardWithCommands } from '~/composables/useBoardWithCommands'
 import dayjs from '~/utils/dayjs-extend'
 
 // Props
@@ -330,6 +330,9 @@ const emit = defineEmits<{
   recovered: []
   reset: []
 }>()
+
+// Use the board composable
+const { recoverFromCorruption } = useBoardWithCommands()
 
 // State
 const showRecoveryModal = ref(false)
@@ -375,7 +378,7 @@ const formatDate = (timestamp: string): string => {
 const tryAutomaticRecovery = async () => {
   isRecovering.value = true
   try {
-    await recoverFromCorruption()
+    recoverFromCorruption()
     refreshStorageInfo()
     emit('recovered')
     alert('Automatic recovery completed successfully!')
@@ -390,12 +393,14 @@ const tryAutomaticRecovery = async () => {
 const restoreFromBackup = async () => {
   isRecovering.value = true
   try {
-    // This would need to be implemented in the storage system
-    // For now, we'll use the existing recovery mechanism
-    await recoverFromCorruption()
-    refreshStorageInfo()
-    emit('recovered')
-    alert('Data restored from backup successfully!')
+    const success = restoreFromAutomaticBackup()
+    if (success) {
+      refreshStorageInfo()
+      emit('recovered')
+      alert('Data restored from automatic backup successfully!')
+    } else {
+      alert('Failed to restore from automatic backup.')
+    }
   } catch (error) {
     console.error('Backup restoration failed:', error)
     alert('Failed to restore from backup.')

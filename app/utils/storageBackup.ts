@@ -225,6 +225,42 @@ export function restoreFromBackup(backupId: string): boolean {
 }
 
 /**
+ * Restore from automatic backup
+ */
+export function restoreFromAutomaticBackup(): boolean {
+  if (typeof window === 'undefined') return false
+
+  try {
+    const backup = localStorage.getItem(BACKUP_KEY)
+
+    if (!backup || !isValidJSON(backup)) {
+      throw new Error('Automatic backup not found or corrupted')
+    }
+
+    const parsed = JSON.parse(backup)
+    const validated = validateAndSanitizeBoardData(parsed)
+    if (!validated) {
+      throw new Error('Automatic backup data failed validation')
+    }
+
+    // Create a backup of current data before restoring
+    const currentData = localStorage.getItem(STORAGE_KEY)
+    if (currentData) {
+      localStorage.setItem(RECOVERY_KEY, currentData)
+    }
+
+    // Restore the automatic backup
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(validated))
+
+    console.log('Successfully restored from automatic backup')
+    return true
+  } catch (error) {
+    console.error('Failed to restore from automatic backup:', error)
+    return false
+  }
+}
+
+/**
  * Delete a manual backup
  */
 export function deleteManualBackup(backupId: string): boolean {

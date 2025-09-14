@@ -4,6 +4,14 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-14T23:15:30+0200
+- **Import Error Fix** - Fixed `recoverFromCorruption` import error in StorageRecovery component
+  - **Composable Integration**: Properly integrated `useBoardWithCommands` composable in StorageRecovery component
+  - **Function Separation**: Created separate `restoreFromAutomaticBackup()` function for automatic backup restoration
+  - **Import Resolution**: Fixed all import/export issues between storage utilities and UI components
+  - **Build Success**: Resolved all build warnings and errors for clean production builds
+  - **Fresh Browser Support**: Storage recovery system now works correctly for fresh browsers without localStorage data
+
 ### Added - 2025-09-14T22:55:18+0200
 - **Storage Recovery System** - Comprehensive browser storage backup and recovery solution
   - **Storage Backup Utility** (`storageBackup.ts`): Complete backup and recovery system
