@@ -82,7 +82,36 @@
         <div class="space-y-4">
           <h4 class="font-semibold text-gray-800">Recovery Options</h4>
 
-          <!-- Option 1: Try Automatic Recovery -->
+          <!-- Option 1: Export All Data (Recommended) -->
+          <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+            <div class="flex items-start gap-3">
+              <Icon name="mdi:download" class="w-6 h-6 text-blue-600 mt-1" />
+              <div class="flex-1">
+                <h5 class="font-medium text-blue-800">
+                  Export All Data (Recommended)
+                </h5>
+                <p class="text-sm text-blue-700 mb-3">
+                  <strong>First step:</strong> Export all your localStorage data
+                  to a JSON file before attempting any recovery. This ensures
+                  you have a complete backup of everything.
+                </p>
+                <button
+                  @click="exportAllLocalStorage"
+                  :disabled="isRecovering"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Icon
+                    v-if="isRecovering"
+                    name="mdi:loading"
+                    class="w-4 h-4 animate-spin mr-2"
+                  />
+                  Export All Data
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Option 2: Try Automatic Recovery -->
           <div class="border border-gray-200 rounded-lg p-4">
             <div class="flex items-start gap-3">
               <Icon name="mdi:auto-fix" class="w-6 h-6 text-blue-600 mt-1" />
@@ -108,7 +137,7 @@
             </div>
           </div>
 
-          <!-- Option 2: Restore from Backup -->
+          <!-- Option 3: Restore from Backup -->
           <div class="border border-gray-200 rounded-lg p-4">
             <div class="flex items-start gap-3">
               <Icon
@@ -136,7 +165,7 @@
             </div>
           </div>
 
-          <!-- Option 3: Manual Backups -->
+          <!-- Option 4: Manual Backups -->
           <div class="border border-gray-200 rounded-lg p-4">
             <div class="flex items-start gap-3">
               <Icon name="mdi:archive" class="w-6 h-6 text-purple-600 mt-1" />
@@ -188,7 +217,7 @@
             </div>
           </div>
 
-          <!-- Option 4: Import from File -->
+          <!-- Option 5: Import from File -->
           <div class="border border-gray-200 rounded-lg p-4">
             <div class="flex items-start gap-3">
               <Icon
@@ -225,7 +254,7 @@
             </div>
           </div>
 
-          <!-- Option 5: Reset to Default -->
+          <!-- Option 6: Reset to Default -->
           <div class="border border-red-200 rounded-lg p-4">
             <div class="flex items-start gap-3">
               <Icon name="mdi:alert-circle" class="w-6 h-6 text-red-600 mt-1" />
@@ -373,6 +402,44 @@ const formatBytes = (bytes: number): string => {
 
 const formatDate = (timestamp: string): string => {
   return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
+}
+
+const exportAllLocalStorage = () => {
+  try {
+    const allData: Record<string, any> = {}
+
+    // Get all localStorage data
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key) {
+        try {
+          // Try to parse as JSON first
+          allData[key] = JSON.parse(localStorage.getItem(key) || '')
+        } catch (e) {
+          // If not JSON, store as string
+          allData[key] = localStorage.getItem(key)
+        }
+      }
+    }
+
+    // Create download
+    const dataStr = JSON.stringify(allData, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `localStorage-backup-${dayjs().format('YYYY-MM-DD')}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+
+    console.log('✅ All localStorage data exported!')
+    alert('All localStorage data exported successfully!')
+  } catch (error) {
+    console.error('Failed to export localStorage data:', error)
+    alert('Failed to export localStorage data. Please try again.')
+  }
 }
 
 const tryAutomaticRecovery = async () => {

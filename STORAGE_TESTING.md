@@ -313,7 +313,8 @@ for (let i = 0; i < localStorage.length; i++) {
 
 3. **Test Corruption Scenarios**
    - Use corruption scripts one by one
-   - Test each recovery option
+   - **First**: Test "Export All Data" option (new recommended first step)
+   - Test each recovery option in order
    - Verify data restoration
 
 4. **Test Edge Cases**
@@ -334,6 +335,7 @@ After injecting corrupted data and refreshing:
 - ✅ **Recovery Modal**: Opens with multiple options
 - ✅ **Storage Status**: Shows "Corrupted" status
 - ✅ **Error Messages**: Specific error information displayed
+- ✅ **Export All Data**: New recommended first option (blue highlighted)
 - ✅ **Recovery Options**: All recovery methods work
 - ✅ **Data Restoration**: Data is properly restored
 
