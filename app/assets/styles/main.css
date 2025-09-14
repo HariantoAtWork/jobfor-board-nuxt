@@ -24,15 +24,21 @@
         @apply h-full bg-gray-50;
         display: grid;
         grid-template-rows: auto 1fr auto;
+        grid-template-areas:
+            "header"
+            "content"
+            "footer";
     }
 
     .board-header {
+        grid-area: header;
         @apply border-b border-gray-200 px-6 py-4 shadow-md;
         background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         color: white;
     }
 
     .board-content {
+        grid-area: content;
         @apply overflow-x-auto overflow-y-auto;
         min-height: 0; /* Important for grid item to shrink */
     }
@@ -156,6 +162,7 @@
     }
 
     .board-footer {
+        grid-area: footer;
         @apply bg-white border-t border-gray-200 px-6 py-4 shadow-sm;
     }
 
