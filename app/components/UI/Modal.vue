@@ -34,7 +34,7 @@
             <button
               v-if="showConfirmButton"
               @click="confirm"
-              class="btn btn-primary"
+              :class="confirmClass"
               :disabled="confirmDisabled"
             >
               {{ confirmText }}
@@ -60,6 +60,7 @@ interface Props {
   cancelText?: string
   confirmText?: string
   confirmDisabled?: boolean
+  confirmClass?: string
   closeOnOverlay?: boolean
 }
 
@@ -80,6 +81,7 @@ const props = withDefaults(defineProps<Props>(), {
   cancelText: 'Cancel',
   confirmText: 'Confirm',
   confirmDisabled: false,
+  confirmClass: 'btn btn-primary',
   closeOnOverlay: true,
 })
 

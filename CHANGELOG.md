@@ -4,6 +4,14 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-14T23:45:12+0200
+- **Confirm Reset Modal** - Fixed missing confirm button in reset confirmation dialog
+  - **Modal Component Enhancement**: Added `confirmClass` prop to UIModal component for custom button styling
+  - **Confirm Button Display**: Fixed `showConfirmButton` prop not being set to `true` in reset confirmation
+  - **Button Styling**: Added red styling for destructive reset action with proper hover states
+  - **Function Naming**: Resolved naming conflict between imported and local `restoreFromBackup` functions
+  - **User Experience**: Users can now properly confirm or cancel the reset operation
+
 ### Enhanced - 2025-09-14T23:30:45+0200
 - **Export All Data Option** - Added comprehensive localStorage export as first recovery option
   - **New First Option**: "Export All Data (Recommended)" appears as the top recovery option

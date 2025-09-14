@@ -311,8 +311,9 @@
       title="Confirm Reset"
       @close="showConfirmModal = false"
       @confirm="performReset"
+      :show-confirm-button="true"
       confirm-text="Reset to Default"
-      confirm-class="bg-red-600 hover:bg-red-700"
+      confirm-class="btn bg-red-600 hover:bg-red-700 text-white"
     >
       <div class="text-center">
         <Icon
@@ -336,7 +337,7 @@ import {
   getStorageInfo,
   createManualBackup,
   getAllManualBackups,
-  restoreFromBackup,
+  restoreFromBackup as restoreFromManualBackupUtil,
   restoreFromAutomaticBackup,
   exportStorageToFile,
   importStorageFromFile,
@@ -479,7 +480,7 @@ const restoreFromBackup = async () => {
 const restoreFromManualBackup = async (backupId: string) => {
   isRecovering.value = true
   try {
-    const success = restoreFromBackup(backupId)
+    const success = restoreFromManualBackupUtil(backupId)
     if (success) {
       refreshStorageInfo()
       emit('recovered')
