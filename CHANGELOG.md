@@ -4,6 +4,30 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Enhanced - 2025-09-16T00:57:47+0200
+- **Security Enhancement** - Upgraded HTML sanitization with DOMPurify for better XSS protection
+  - **DOMPurify Integration**: Replaced marked's basic sanitize with comprehensive DOMPurify sanitization
+  - **Enhanced Security**: Added DOMPurify package with advanced HTML sanitization capabilities
+  - **Comprehensive Tag Allowlist**: Configured specific allowed HTML tags for safe markdown rendering
+    - Text formatting: `p`, `br`, `strong`, `em`, `u`, `b`, `i`, `s`, `strike`
+    - Headings: `h1`, `h2`, `h3`, `h4`, `h5`, `h6`
+    - Lists: `ul`, `ol`, `li`
+    - Code: `blockquote`, `pre`, `code`
+    - Links and media: `a`, `img`
+    - Tables: `table`, `thead`, `tbody`, `tr`, `th`, `td`
+  - **Attribute Security**: Restricted allowed attributes to safe ones only
+    - Links: `href`, `title`, `target`, `rel`
+    - Images: `src`, `alt`, `width`, `height`
+    - General: `class`, `id`
+  - **Security Configuration**: Disabled dangerous features
+    - `ALLOW_DATA_ATTR: false` - Prevents data attribute injection
+    - `ALLOW_UNKNOWN_PROTOCOLS: false` - Blocks dangerous protocols
+    - `SANITIZE_DOM: true` - Comprehensive DOM sanitization
+    - `KEEP_CONTENT: true` - Preserves safe content while removing dangerous elements
+  - **XSS Prevention**: Protects against JavaScript injection in markdown content
+  - **Maintained Functionality**: All existing markdown features work while being more secure
+  - **Future-Ready**: Foundation for safe JavaScript-enabled content when needed
+
 ### Added - 2025-09-15T23:54:21+0200
 - **Cursor Rules System** - Comprehensive development guidelines and project structure documentation
   - **Project Structure Rules** (`.cursor/rules/project-structure.mdc`): Core architecture and technology stack guidelines
