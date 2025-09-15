@@ -15,7 +15,7 @@
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <UILogo />
-          <h1 class="text-xl font-semibold">Job Application Tracker</h1>
+          <h1 class="text-xl font-semibold">Job Application Organiser</h1>
           <!-- Undo/Redo Buttons -->
           <UIUndoRedoButtons
             :can-undo="canUndo"

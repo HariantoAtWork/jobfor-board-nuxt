@@ -4,6 +4,35 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Changed - 2025-09-15T12:15:30+0200
+- **Project Naming Update** - Changed from "Job Application Tracker" to "Job Application Organiser"
+  - **README.md**: Updated title, descriptions, and all references to use "Organiser"
+  - **nuxt.config.ts**: Updated app title and meta description
+  - **Board.vue**: Updated main header title
+  - **CHANGELOG.md**: Updated project references
+  - **Rationale**: "Organiser" better reflects the manual organisation aspect vs automatic tracking
+  - **User Psychology**: "Organiser" is more appealing and accurate for a tool that requires user input
+  - **Clarity**: Eliminates confusion about whether the system automatically tracks vs requires manual organisation
+
+### Added - 2025-09-15T12:04:14+0200
+- **Comprehensive Project Description** - Created detailed project documentation and README
+  - **Complete README.md Rewrite**: Replaced generic Nuxt starter content with comprehensive project description
+  - **Project Overview**: Clear explanation of the Job Application Organiser's purpose and functionality
+  - **Feature Documentation**: Detailed breakdown of all application features including:
+    - Kanban Board Management with visual progress tracking and customisable columns
+    - Application Tracking with history, notes system, and activity timeline
+    - Data Management with local storage, database integration, and import/export
+    - User Management with authentication, multi-board support, and sharing
+    - User Experience features including responsive design, undo/redo, and keyboard shortcuts
+  - **Technology Stack Documentation**: Complete breakdown of frontend, backend, and development tools
+  - **Quick Start Guide**: Step-by-step installation and setup instructions
+  - **Project Structure**: Clear file organisation and directory structure explanation
+  - **Usage Instructions**: Comprehensive guide for creating boards, managing applications, and using advanced features
+  - **Development Documentation**: Available scripts, environment variables, and development guidelines
+  - **Contributing Guidelines**: Clear instructions for contributing to the project
+  - **Professional Presentation**: Modern formatting with emojis, code blocks, and clear sections
+  - **User-Friendly Language**: Accessible documentation suitable for both technical and non-technical users
+
 ### Fixed - 2025-09-14T23:45:12+0200
 - **Confirm Reset Modal** - Fixed missing confirm button in reset confirmation dialog
   - **Modal Component Enhancement**: Added `confirmClass` prop to UIModal component for custom button styling
