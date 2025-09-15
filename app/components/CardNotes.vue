@@ -112,7 +112,7 @@
             <div
               v-if="note.body"
               class="note-body whitespace-pre-wrap make-html"
-              v-html="makeHtml(note.body)"
+              v-sanitize-html="note.body"
             />
             <div v-else class="note-body text-gray-500 italic">No content</div>
           </div>

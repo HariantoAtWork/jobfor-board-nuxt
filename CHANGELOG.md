@@ -4,6 +4,21 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Enhanced - 2025-09-16T01:07:24+0200
+- **Custom v-sanitize-html Directive** - Created reusable Vue directive for HTML sanitization
+  - **Plugin Implementation**: Created `plugins/sanitize-html.client.js` with comprehensive sanitization
+  - **Directive Registration**: Automatically available throughout the application
+  - **Cleaner Code**: Replaced manual `makeHtml()` calls with semantic `v-sanitize-html` directive
+  - **Consistent Security**: Same DOMPurify configuration across all HTML rendering
+  - **Component Updates**: Updated all components to use the new directive
+    - `CardNotes.vue`: Note body rendering
+    - `BoardColumn.vue`: Card description rendering
+    - `Board.vue`: Activity description rendering
+    - `shared/[token].vue`: All HTML content rendering
+  - **Code Cleanup**: Removed redundant `makeHtml` imports from components
+  - **Better Developer Experience**: More semantic and maintainable HTML sanitization
+  - **Future-Proof**: Centralized sanitization logic for easy updates and configuration
+
 ### Enhanced - 2025-09-16T00:57:47+0200
 - **Security Enhancement** - Upgraded HTML sanitization with DOMPurify for better XSS protection
   - **DOMPurify Integration**: Replaced marked's basic sanitize with comprehensive DOMPurify sanitization

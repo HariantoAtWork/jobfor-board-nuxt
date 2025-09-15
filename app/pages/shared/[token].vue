@@ -98,7 +98,7 @@
                     v-if="card.description"
                     class="card-label text-gray-500 line-clamp-3"
                     style="line-clamp: 3"
-                    v-html="makeHtml(card.description)"
+                    v-sanitize-html="card.description"
                   />
                   <div v-if="card.link" class="mt-3">
                     <a
@@ -301,7 +301,7 @@
               >
                 <div
                   class="text-sm text-gray-900 whitespace-pre-wrap"
-                  v-html="makeHtml(note.body || '')"
+                  v-sanitize-html="note.body || ''"
                 />
                 <div
                   class="text-xs text-gray-500 mt-2"
@@ -377,7 +377,7 @@
                     <div class="activity-content">
                       <div
                         class="text-sm text-gray-900"
-                        v-html="makeHtml(activity.description)"
+                        v-sanitize-html="activity.description"
                       ></div>
                       <div
                         class="text-xs text-gray-500 mt-1"
@@ -406,7 +406,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from '~/utils/dayjs-extend'
-import makeHtml from '~/utils/makeHtml'
 import {
   formatTime as cardFormatTime,
   formatActivityTime,

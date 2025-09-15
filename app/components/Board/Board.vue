@@ -274,7 +274,7 @@
                   <div class="activity-content">
                     <div
                       class="text-gray-900 text-sm"
-                      v-html="makeHtml(activity.description)"
+                      v-sanitize-html="activity.description"
                     />
                     <p
                       class="text-gray-500 text-xs"
@@ -554,7 +554,6 @@ import { exportBoardData, importBoardData } from '~/utils/storage'
 import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
 import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
 import { getStorageInfo } from '~/utils/storageBackup'
-import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
 import user from '~/utils/user'
 import nowStore from '~/store/now'

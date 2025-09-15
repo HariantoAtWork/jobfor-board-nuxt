@@ -343,7 +343,7 @@
                 <div
                   class="make-html text-gray-700 overflow-y-auto max-h-8"
                   style="max-height: 8em"
-                  v-html="makeHtml(selectedCard.description)"
+                  v-sanitize-html="selectedCard.description"
                 />
               </div>
             </div>
@@ -672,7 +672,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { formatTimeAgo } from '~/utils/helpers'
 import BoardCard from './BoardCard.vue'
 import CardNotes from '../CardNotes.vue'
-import makeHtml from '~/utils/makeHtml'
 import dayjs from '~/utils/dayjs-extend'
 
 interface Props {
