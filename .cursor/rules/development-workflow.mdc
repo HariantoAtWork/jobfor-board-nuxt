@@ -1,0 +1,90 @@
+---
+alwaysApply: true
+description: Development workflow and tooling guidelines
+---
+
+# Development Workflow & Tooling
+
+## Package Management
+- **Always use `pnpm`** instead of npm
+- Package manager is specified in [package.json](mdc:package.json)
+- Use `pnpm install` for dependencies
+- Use `pnpm add <package>` for new packages
+- Use `pnpm remove <package>` for package removal
+
+## Development Commands
+
+### Core Commands
+```bash
+pnpm dev              # Start development server
+pnpm build            # Build for production
+pnpm generate         # Generate static site
+pnpm preview          # Preview production build
+```
+
+### Database Commands
+```bash
+pnpm db:migrate       # Run database migrations
+pnpm db:seed          # Seed database with sample data
+pnpm db:migrate:rollback  # Rollback last migration
+pnpm db:migrate:status    # Check migration status
+```
+
+### Authentication Commands
+```bash
+pnpm auth:generate    # Generate auth configuration
+pnpm auth:migrate     # Run auth migrations
+```
+
+### Utility Commands
+```bash
+pnpm app:reset        # Reset application (clean install)
+pnpm ci               # CI installation script
+pnpm migrate          # Run migration script
+```
+
+## File Management
+
+### Changelog Updates
+- **Always update** [CHANGELOG.md](mdc:CHANGELOG.md) for any changes
+- Use **ISO date format** from terminal: `date +"%Y-%m-%dT%H:%M:%S%z"`
+- Include **descriptive entries** for each change
+- Group changes by **type** (Added, Changed, Fixed, Removed)
+
+### Project Documentation
+- [README.md](mdc:README.md) - Main project documentation
+- [AI_RULES.md](mdc:AI_RULES.md) - AI development guidelines
+- [INSTRUCTIONS.md](mdc:INSTRUCTIONS.md) - Development instructions
+- [PLAN.md](mdc:PLAN.md) - Project planning document
+
+## Code Quality
+
+### TypeScript
+- Use **strict TypeScript** configuration
+- Define **interfaces** in [app/types/](mdc:app/types/)
+- Use **type annotations** for function parameters and returns
+- Leverage **Nuxt auto-imports** for Vue composables
+
+### Styling
+- Use **Tailwind CSS** utility classes
+- Follow **mobile-first** responsive design
+- Use **consistent spacing** and typography
+- Implement **dark mode** support where appropriate
+
+### Testing
+- Write **unit tests** for composables
+- Test **API endpoints** with proper error handling
+- Validate **form inputs** and user interactions
+- Test **accessibility** features
+
+## Git Workflow
+- Use **descriptive commit messages**
+- Create **feature branches** for new functionality
+- Update **CHANGELOG.md** before committing
+- Use **conventional commits** format when possible
+
+## Environment Setup
+- Copy [env.example](mdc:env.example) to `.env`
+- Configure **database connection** settings
+- Set up **authentication** secrets
+- Configure **email** settings for notifications

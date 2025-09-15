@@ -4,6 +4,49 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Added - 2025-09-15T23:54:21+0200
+- **Cursor Rules System** - Comprehensive development guidelines and project structure documentation
+  - **Project Structure Rules** (`.cursor/rules/project-structure.mdc`): Core architecture and technology stack guidelines
+    - Always-applied rules for project structure and development conventions
+    - Technology stack documentation (Nuxt 4, Vue 3, TypeScript, Tailwind CSS)
+    - Package management guidelines (pnpm instead of npm)
+    - File structure and directory organization patterns
+  - **Nuxt Vue Conventions** (`.cursor/rules/nuxt-vue-conventions.mdc`): Vue 3 and Nuxt 4 development patterns
+    - Script setup syntax and Composition API best practices
+    - Component structure and template conventions
+    - File naming conventions and import/export rules
+    - TypeScript conventions and type definitions
+  - **Component Patterns** (`.cursor/rules/component-patterns.mdc`): UI component development guidelines
+    - Standard component templates and structure
+    - Board and UI component organization
+    - Styling guidelines with Tailwind CSS
+    - Accessibility requirements and best practices
+  - **State Management** (`.cursor/rules/state-management.mdc`): Composables and state management patterns
+    - Composable architecture and structure
+    - Command pattern implementation for undo/redo
+    - Data persistence and storage management
+    - Type definitions and interfaces
+  - **API Server Patterns** (`.cursor/rules/api-server-patterns.mdc`): Server-side development guidelines
+    - API route structure and error handling
+    - Module architecture and configuration
+    - Database patterns with Knex.js
+    - Authentication and session management
+  - **Development Workflow** (`.cursor/rules/development-workflow.mdc`): Tooling and workflow guidelines
+    - Package management with pnpm
+    - Development commands and scripts
+    - File management and changelog updates
+    - Code quality and testing requirements
+  - **Kanban Board Logic** (`.cursor/rules/kanban-board-logic.mdc`): Board functionality and patterns
+    - Board architecture and component structure
+    - Drag and drop implementation
+    - Command pattern for undo/redo operations
+    - Card and column management patterns
+    - Data persistence and performance optimizations
+  - **Comprehensive Coverage**: Rules cover all aspects of the project from frontend to backend
+  - **File References**: Each rule includes proper file references using `[filename](mdc:filename)` syntax
+  - **Metadata Configuration**: Proper frontmatter with `alwaysApply`, `globs`, and `description` properties
+  - **Development Consistency**: Ensures consistent development practices across the entire project
+
 ### Changed - 2025-09-15T12:15:30+0200
 - **Project Naming Update** - Changed from "Job Application Tracker" to "Job Application Organiser"
   - **README.md**: Updated title, descriptions, and all references to use "Organiser"

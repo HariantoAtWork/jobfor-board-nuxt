@@ -1,0 +1,99 @@
+---
+globs: server/api/**/*.js,modules/**/*.js
+description: Server-side API and module development patterns
+---
+
+# Server-Side Development Patterns
+
+## API Route Structure
+
+### Standard API Route
+```javascript
+// server/api/example.get.js
+export default defineEventHandler(async (event) => {
+  try {
+    // Get query parameters
+    const query = getQuery(event)
+    
+    // Get request body
+    const body = await readBody(event)
+    
+    // Business logic here
+    
+    // Return response
+    return {
+      success: true,
+      data: result
+    }
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Internal Server Error'
+    })
+  }
+})
+```
+
+### API Endpoints
+- [server/api/boards/](mdc:server/api/boards/) - Board management endpoints
+- [server/api/fetch-title.get.js](mdc:server/api/fetch-title.get.js) - URL title fetching
+- [server/api/shared/](mdc:server/api/shared/) - Shared board endpoints
+
+## Module Architecture
+
+### Module Structure
+- [modules/0000-auth/](mdc:modules/0000-auth/) - Authentication module
+- [modules/0001-boards/](mdc:modules/0001-boards/) - Boards management module
+
+### Module Configuration
+```javascript
+// modules/example/index.js
+export default defineNuxtModule({
+  meta: {
+    name: 'example-module',
+    configKey: 'example'
+  },
+  setup(options, nuxt) {
+    // Module setup logic
+  }
+})
+```
+
+## Database Patterns
+
+### Migration Files
+- [database/migrations/](mdc:database/migrations/) - Database schema migrations
+- [database/seeds/](mdc:database/seeds/) - Sample data seeding
+
+### Knex.js Usage
+```javascript
+// Database query example
+import { db } from '@modules/0000-auth/lib/db.server.js'
+
+const boards = await db('boards')
+  .where('user_id', userId)
+  .orderBy('created_at', 'desc')
+```
+
+## Authentication
+
+### Better Auth Integration
+- Configuration: [modules/0000-auth/lib/auth.server.js](mdc:modules/0000-auth/lib/auth.server.js)
+- Client-side: [modules/0000-auth/lib/auth.client.js](mdc:modules/0000-auth/lib/auth.client.js)
+- Database: [modules/0000-auth/lib/db.server.js](mdc:modules/0000-auth/lib/db.server.js)
+
+### Session Management
+- Server-side: [modules/0000-auth/lib/session.server.js](mdc:modules/0000-auth/lib/session.server.js)
+- Environment: [modules/0000-auth/lib/env.server.js](mdc:modules/0000-auth/lib/env.server.js)
+
+## Error Handling
+- Use `createError()` for HTTP errors
+- Implement proper **status codes**
+- Provide **meaningful error messages**
+- Log errors for debugging
+- Handle **validation errors** gracefully
+
+## Environment Variables
+- Check environment: [modules/0000-auth/lib/checkEnvironmentVariables.server.js](mdc:modules/0000-auth/lib/checkEnvironmentVariables.server.js)
+- Use [env.example](mdc:env.example) as template
+- Validate required variables on startup

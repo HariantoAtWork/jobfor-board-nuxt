@@ -1,0 +1,74 @@
+---
+globs: app/composables/**/*.ts,app/store/**/*.js
+description: State management patterns with composables and stores
+---
+
+# State Management Patterns
+
+## Composables Architecture
+
+### Core Composables
+- [app/composables/useBoard.ts](mdc:app/composables/useBoard.ts) - Board state management
+- [app/composables/useBoardWithCommands.ts](mdc:app/composables/useBoardWithCommands.ts) - Board with command pattern
+- [app/composables/useUrlStatus.ts](mdc:app/composables/useUrlStatus.ts) - URL status checking
+
+### Composable Structure
+```typescript
+// useExample.ts
+import { ref, computed } from 'vue'
+
+export const useExample = () => {
+  // Private state
+  const state = ref('')
+  
+  // Computed properties
+  const computedValue = computed(() => {
+    return state.value.toUpperCase()
+  })
+  
+  // Public methods
+  const updateState = (newValue: string) => {
+    state.value = newValue
+  }
+  
+  // Return public API
+  return {
+    state: readonly(state),
+    computedValue,
+    updateState
+  }
+}
+```
+
+## State Management Principles
+
+### Data Flow
+1. **Components** use composables for state
+2. **Composables** manage reactive state and business logic
+3. **API calls** are handled in composables or server routes
+4. **Local storage** is managed through utility functions
+
+### Command Pattern Implementation
+- Use [app/composables/useBoardWithCommands.ts](mdc:app/composables/useBoardWithCommands.ts) for undo/redo functionality
+- Commands are defined in [app/types/commands.ts](mdc:app/types/commands.ts)
+- Command history is managed by [app/utils/commandHistoryManager.ts](mdc:app/utils/commandHistoryManager.ts)
+
+### Data Persistence
+- **Local Storage**: [app/utils/storage.ts](mdc:app/utils/storage.ts)
+- **Database**: Server API routes in `server/api/`
+- **Backup/Recovery**: [app/utils/storageBackup.ts](mdc:app/utils/storageBackup.ts)
+
+## Type Definitions
+All types are defined in [app/types/index.ts](mdc:app/types/index.ts):
+- `IBoard` - Board structure
+- `ICard` - Card structure  
+- `IColumn` - Column structure
+- `INote` - Note structure
+- `ICardHistory` - History tracking
+
+## Best Practices
+- Use **readonly()** for state that shouldn't be mutated directly
+- Implement **proper error handling** in composables
+- Use **computed properties** for derived state
+- Keep **business logic** in composables, not components
+- Use **TypeScript** for all state interfaces

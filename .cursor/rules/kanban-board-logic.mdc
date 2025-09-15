@@ -1,0 +1,167 @@
+---
+globs: app/components/Board/**/*.vue,app/composables/useBoard*.ts
+description: Kanban board functionality and drag-and-drop patterns
+---
+
+# Kanban Board Logic & Patterns
+
+## Board Architecture
+
+### Core Components
+- [app/components/Board/Board.vue](mdc:app/components/Board/Board.vue) - Main board container
+- [app/components/Board/BoardColumn.vue](mdc:app/components/Board/BoardColumn.vue) - Column component
+- [app/components/Board/BoardCard.vue](mdc:app/components/Board/BoardCard.vue) - Card component
+
+### State Management
+- [app/composables/useBoard.ts](mdc:app/composables/useBoard.ts) - Basic board state
+- [app/composables/useBoardWithCommands.ts](mdc:app/composables/useBoardWithCommands.ts) - Board with undo/redo
+
+## Data Structures
+
+### Board Data Model
+```typescript
+interface IBoardData {
+  id: string
+  columns: IColumn[]
+  cards: ICard[]
+}
+
+interface IColumn {
+  id: string
+  title: string
+  description?: string
+  order: number
+}
+
+interface ICard {
+  id: string
+  title: string
+  company?: string
+  jobTitle?: string
+  location?: string
+  link?: string
+  contact?: string
+  description?: string
+  columnId: string
+  createdAt: string
+  lastMoved: string
+  history: ICardHistory[]
+  notes: INote[]
+}
+```
+
+## Drag & Drop Implementation
+
+### Drag State Management
+```typescript
+interface DragState {
+  isDragging: boolean
+  draggedCard: ICard | null
+  sourceColumnId: string | null
+}
+```
+
+### Drag Events
+- `@dragstart` - Begin drag operation
+- `@dragend` - End drag operation
+- `@dragover` - Handle drag over target
+- `@drop` - Handle drop on target
+
+### Drop Validation
+- Validate **target column** exists
+- Check **permissions** for moving cards
+- Update **card history** on successful move
+- Trigger **command pattern** for undo/redo
+
+## Command Pattern
+
+### Command Types
+- `MoveCardCommand` - Move card between columns
+- `AddCardCommand` - Add new card
+- `UpdateCardCommand` - Update card details
+- `DeleteCardCommand` - Remove card
+- `AddColumnCommand` - Add new column
+- `UpdateColumnCommand` - Update column details
+
+### Command History
+- [app/utils/commandHistoryManager.ts](mdc:app/utils/commandHistoryManager.ts) - History management
+- [app/types/commands.ts](mdc:app/types/commands.ts) - Command type definitions
+- Support **undo/redo** operations
+- Maintain **command stack** with limits
+
+## Card Management
+
+### Card Operations
+- **Create** new cards with required fields
+- **Update** card details and metadata
+- **Move** cards between columns
+- **Delete** cards with confirmation
+- **Duplicate** cards for similar applications
+
+### Card History Tracking
+- Track **column changes** with timestamps
+- Store **move history** for audit trail
+- Display **activity timeline** in card details
+- Support **history export** for analysis
+
+## Column Management
+
+### Column Operations
+- **Add** new columns with custom titles
+- **Reorder** columns by drag and drop
+- **Edit** column titles and descriptions
+- **Delete** columns (with card migration)
+- **Archive** columns instead of deletion
+
+### Column Validation
+- Ensure **unique column titles**
+- Validate **column order** consistency
+- Handle **empty column** states
+- Support **column templates** for common workflows
+
+## Notes System
+
+### Note Structure
+```typescript
+interface INote {
+  id: string
+  createdAt: string
+  title: string
+  body?: string
+}
+```
+
+### Note Operations
+- **Add** notes to cards
+- **Edit** existing notes
+- **Delete** notes with confirmation
+- **Search** notes across cards
+- **Export** notes for external use
+
+## Data Persistence
+
+### Local Storage
+- [app/utils/storage.ts](mdc:app/utils/storage.ts) - Local storage management
+- **Auto-save** on every change
+- **Backup** functionality for data recovery
+- **Import/export** for data portability
+
+### Database Integration
+- **Server API** endpoints for board CRUD
+- **User authentication** for board ownership
+- **Board sharing** with public tokens
+- **Data migration** between storage types
+
+## Performance Optimizations
+
+### Virtual Scrolling
+- Implement for **large card lists**
+- Use **lazy loading** for card details
+- **Debounce** search and filter operations
+- **Memoize** expensive computations
+
+### State Updates
+- Use **shallow reactive** for large objects
+- **Batch** multiple state updates
+- **Optimize** re-renders with proper keys
+- **Cache** computed values where appropriate

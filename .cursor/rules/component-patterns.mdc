@@ -1,0 +1,81 @@
+---
+globs: app/components/**/*.vue
+description: Component development patterns and UI guidelines
+---
+
+# Component Development Patterns
+
+## Component Structure
+
+### Standard Component Template
+```vue
+<template>
+  <div class="component-wrapper">
+    <!-- Component content -->
+  </div>
+</template>
+
+<script setup lang="ts">
+// Imports
+import { ref, computed } from 'vue'
+
+// Props and emits
+const props = defineProps<{
+  // Define props here
+}>()
+
+const emit = defineEmits<{
+  // Define emits here
+}>()
+
+// Reactive state
+const state = ref('')
+
+// Computed properties
+const computedValue = computed(() => {
+  // Computation logic
+})
+
+// Methods
+const handleAction = () => {
+  // Action logic
+}
+</script>
+```
+
+## UI Component Guidelines
+
+### Board Components
+- [app/components/Board/Board.vue](mdc:app/components/Board/Board.vue) - Main board container
+- [app/components/Board/BoardColumn.vue](mdc:app/components/Board/BoardColumn.vue) - Column component
+- [app/components/Board/BoardCard.vue](mdc:app/components/Board/BoardCard.vue) - Card component
+
+### UI Components
+- [app/components/UI/Button.vue](mdc:app/components/UI/Button.vue) - Button component
+- [app/components/UI/Modal.vue](mdc:app/components/UI/Modal.vue) - Modal component
+- [app/components/UI/Input.vue](mdc:app/components/UI/Input.vue) - Input component
+
+## Styling Guidelines
+- Use **Tailwind CSS** utility classes
+- Follow **mobile-first** responsive design
+- Use **semantic colour names** (primary, secondary, success, danger)
+- Maintain **consistent spacing** using Tailwind spacing scale
+- Use **Headless UI** components for complex interactions
+
+## Accessibility
+- Include proper **ARIA labels** and roles
+- Ensure **keyboard navigation** support
+- Use **semantic HTML** elements
+- Provide **focus management** for modals and dropdowns
+- Include **alt text** for images
+
+## Component Props
+- Use **TypeScript interfaces** for prop definitions
+- Provide **default values** where appropriate
+- Use **optional props** with `?` for non-required properties
+- Document complex props with JSDoc comments
+
+## Event Handling
+- Use **kebab-case** for event names (`@update-value`, `@close-modal`)
+- Emit **typed events** with proper payloads
+- Use **semantic event names** that describe the action
