@@ -33,7 +33,13 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'Job Application Organiser',
-      meta: [{ name: 'description', content: 'Job Application Organiser' }],
+      meta: [
+        {
+          name: 'description',
+          content:
+            'A modern, full-stack job application organisation system built with Nuxt 4 and Vue 3. Organise your job applications through the entire hiring process using an intuitive Kanban-style board interface.',
+        },
+      ],
     },
   },
 })
