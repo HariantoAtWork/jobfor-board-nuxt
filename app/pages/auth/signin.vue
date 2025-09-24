@@ -138,13 +138,13 @@ const handleSignIn = async () => {
       email: form.value.email,
       password: form.value.password,
       rememberMe: form.value.rememberMe,
-      callbackURL: '/dashboard',
+      callbackURL: '/',
     })
 
     if (signInError) {
       error.value = signInError.message
     } else {
-      await router.push('/dashboard')
+      await router.push('/')
     }
   } catch (err) {
     error.value = err.message || 'An error occurred during sign in'
@@ -158,7 +158,7 @@ const signInWithGoogle = async () => {
   try {
     await signIn.social({
       provider: 'google',
-      callbackURL: '/dashboard',
+      callbackURL: '/',
     })
   } catch (err) {
     error.value = err.message || 'An error occurred during Google sign in'
@@ -172,7 +172,7 @@ const signInWithGithub = async () => {
   try {
     await signIn.social({
       provider: 'github',
-      callbackURL: '/dashboard',
+      callbackURL: '/',
     })
   } catch (err) {
     error.value = err.message || 'An error occurred during GitHub sign in'

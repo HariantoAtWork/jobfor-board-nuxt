@@ -151,7 +151,7 @@ const handleSignUp = async () => {
       email: form.value.email,
       password: form.value.password,
       name: form.value.name,
-      callbackURL: '/dashboard',
+      callbackURL: '/',
     })
 
     if (signUpError) {
@@ -179,7 +179,7 @@ const signUpWithGoogle = async () => {
   try {
     await signIn.social({
       provider: 'google',
-      callbackURL: '/dashboard',
+      callbackURL: '/',
     })
   } catch (err) {
     error.value = err.message || 'An error occurred during Google sign up'
@@ -193,7 +193,7 @@ const signUpWithGithub = async () => {
   try {
     await signIn.social({
       provider: 'github',
-      callbackURL: '/dashboard',
+      callbackURL: '/',
     })
   } catch (err) {
     error.value = err.message || 'An error occurred during GitHub sign up'
