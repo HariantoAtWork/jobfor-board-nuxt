@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import getRouteRules from './lib/getRouteRules'
 
 console.log(
   '--------------------------------',
@@ -42,4 +43,5 @@ export default defineNuxtConfig({
       ],
     },
   },
+  ...getRouteRules(),
 })
