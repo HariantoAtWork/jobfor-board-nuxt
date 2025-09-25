@@ -362,8 +362,8 @@ import { getCardsForColumn, formatTimeAgo } from '~/utils/helpers'
 import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
 // import { getStorageInfo } from '~/utils/storageBackup'
 import dayjs from '~/utils/dayjs-extend'
-// import user from '~/utils/user'
-import { user } from '#shared/utils/useAuth'
+import user from '~/utils/user'
+// import { user } from '#shared/utils/useAuth'
 import nowStore from '~/store/now'
 import {
   formatTime as cardFormatTime,

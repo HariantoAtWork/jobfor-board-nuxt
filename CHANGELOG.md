@@ -4,6 +4,68 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-25T15:48:05+0200
+- **Better Auth API Endpoint Correction** - Fixed session forwarding to use correct Better Auth API endpoint
+  - **Corrected Endpoint**: Changed from `/api/auth/session` to `/api/auth/get-session`
+  - **API Documentation**: Used Context7 to verify correct Better Auth API endpoints
+  - **Session Structure**: Confirmed Better Auth returns `{ user, session }` structure
+  - **Response Handling**: Updated session parsing to match Better Auth response format
+  - **Error Prevention**: Prevents 404 errors when forwarding session requests to external server
+
+### Added - 2025-09-25T15:32:24+0200
+- **Proxy Authentication Support** - Enhanced authentication system to work with external Account Server
+  - **Session Forwarding**: Created `sessionForwarding.server.js` for seamless proxy authentication
+    - Automatically detects when `BETTER_AUTH_PROXY_URL` is configured
+    - Forwards session requests to external auth server while maintaining local session format
+    - Falls back to local authentication when proxy is not configured
+    - Handles session cookie forwarding and response parsing
+    - Provides consistent session data structure for both local and proxied authentication
+  - **Enhanced Session Management**: Updated `session.server.js` to use new forwarding system
+    - Seamless integration with existing authentication code
+    - No changes required to existing API endpoints or components
+    - Maintains backward compatibility with local authentication
+  - **Status Endpoint Enhancement**: Updated `/api/status` to work with both local and proxy authentication
+    - Added `authMode` field to response indicating whether using 'proxy' or 'local' authentication
+    - Enhanced error handling for both authentication modes
+    - Consistent response format regardless of authentication source
+  - **Environment Configuration**: Added `BETTER_AUTH_PROXY_URL` to environment variables
+    - Documented in `env.example` with usage instructions
+    - Enables easy switching between local and proxy authentication
+    - Supports development and production environments
+  - **Boards Integration**: All board operations now work seamlessly with proxy authentication
+    - User ID extraction works correctly from proxied sessions
+    - Database operations maintain user isolation
+    - No changes required to existing board management code
+  - **Backward Compatibility**: System works with both authentication modes
+    - Local authentication continues to work when proxy URL is not set
+    - Automatic fallback ensures no breaking changes
+    - Development and production environments supported
+
+### Added - 2025-09-24T21:08:56+0200
+- **Backend Authentication Status Checker** - Created server-side authentication verification system
+  - **API Endpoint**: New `/api/auth/status` endpoint for checking user authentication status
+    - Uses `better-auth` session management from `modules/0000-auth`
+    - Returns comprehensive authentication information including user details and session data
+    - Proper error handling with graceful fallback for unauthenticated users
+    - Consistent API response format with success/error states and timestamps
+  - **Enhanced Test Page**: Updated `/test-auth/is-logged-in` page with comprehensive UI
+    - **Backend Integration**: Uses server-side API instead of frontend authentication checks
+    - **Visual Status Indicators**: Clear authenticated/not authenticated states with icons and colours
+    - **User Information Display**: Shows detailed user data when authenticated (ID, email, name, verification status)
+    - **Session Information**: Displays session expiry time with proper date formatting
+    - **Interactive Features**: Refresh button to re-check authentication status
+    - **Navigation Links**: Direct links to sign-in and sign-up pages when not authenticated
+    - **Debug Information**: JSON display of full API response for development purposes
+    - **Error Handling**: Comprehensive error display with user-friendly messages
+    - **Loading States**: Proper loading indicators during authentication checks
+    - **Responsive Design**: Mobile-friendly layout with proper spacing and typography
+  - **Server-Side Security**: Authentication verification happens on the server, not client-side
+    - Prevents client-side manipulation of authentication status
+    - Uses secure session cookies and server-side session validation
+    - Follows existing project patterns for API authentication
+  - **TypeScript Integration**: Full type safety with proper interfaces for API responses
+  - **Consistent Styling**: Matches project design system with Tailwind CSS classes
+
 ### Enhanced - 2025-09-16T01:07:24+0200
 - **Custom v-sanitize-html Directive** - Created reusable Vue directive for HTML sanitization
   - **Plugin Implementation**: Created `plugins/sanitize-html.client.js` with comprehensive sanitization
