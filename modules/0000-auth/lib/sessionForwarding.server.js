@@ -4,9 +4,10 @@
  */
 
 export async function getProxiedSession(event) {
+  const { BETTER_AUTH_URL, BETTER_AUTH_PROXY_URL } = process.env
   try {
     // Check if we're using a proxy
-    const proxyUrl = process.env.BETTER_AUTH_PROXY_URL
+    const proxyUrl = BETTER_AUTH_URL || BETTER_AUTH_PROXY_URL
     if (!proxyUrl) {
       return null
     }
