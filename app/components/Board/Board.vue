@@ -1,7 +1,11 @@
 <template>
   <div class="board-container">
     <!-- Storage Recovery Component -->
-    <UIStorageRecovery ref="storageRecoveryRef" @recovered="handleStorageRecovered" @reset="handleStorageReset" />
+    <UIStorageRecovery
+      ref="storageRecoveryRef"
+      @recovered="handleStorageRecovered"
+      @reset="handleStorageReset"
+    />
 
     <!-- Menu Bar -->
     <UIMenuBar />
@@ -13,9 +17,16 @@
           <UILogo />
           <h1 class="text-xl font-semibold">Job Application Organiser</h1>
           <!-- Undo/Redo Buttons -->
-          <UIUndoRedoButtons :can-undo="canUndo" :can-redo="canRedo" :undo-description="undoDescription"
-            :redo-description="redoDescription" :history="getHistory()" @undo="handleUndo" @redo="handleRedo"
-            @clear-history="clearHistory" />
+          <UIUndoRedoButtons
+            :can-undo="canUndo"
+            :can-redo="canRedo"
+            :undo-description="undoDescription"
+            :redo-description="redoDescription"
+            :history="getHistory()"
+            @undo="handleUndo"
+            @redo="handleRedo"
+            @clear-history="clearHistory"
+          />
         </div>
       </div>
     </header>
@@ -23,15 +34,33 @@
     <!-- Board Content -->
     <main class="board-content" @dragover="handleBoardDragOver" @drop="handleBoardDrop">
       <div class="board-columns">
-        <BoardColumn v-for="column in columns" :key="column.id" :column="column"
-          :cards="getCardsForColumn(cards, column.id)" :columns="columns" :drag-state="dragState"
-          :column-drag-state="columnDragState" @dragstart="handleCardDragStart" @dragend="handleCardDragEnd"
-          @drop="handleCardDrop" @addcard="handleAddCard" @editcolumn="handleEditColumn"
-          @emptycolumn="handleEmptyColumn" @deletecolumn="handleDeleteColumn" @cardclick="handleCardClick"
-          @editcard="handleEditCard" @deletecard="handleDeleteCard" @updatecard="handleUpdateCard"
-          @addnote="handleAddNote" @updatenote="handleUpdateNote" @deletenote="handleDeleteNote"
-          @columndragstart="handleColumnDragStart" @columndragend="handleColumnDragEnd" @columndrop="handleColumnDrop"
-          @movecard="handleMoveCard" />
+        <BoardColumn
+          v-for="column in columns"
+          :key="column.id"
+          :column="column"
+          :cards="getCardsForColumn(cards, column.id)"
+          :columns="columns"
+          :drag-state="dragState"
+          :column-drag-state="columnDragState"
+          @dragstart="handleCardDragStart"
+          @dragend="handleCardDragEnd"
+          @drop="handleCardDrop"
+          @addcard="handleAddCard"
+          @editcolumn="handleEditColumn"
+          @emptycolumn="handleEmptyColumn"
+          @deletecolumn="handleDeleteColumn"
+          @cardclick="handleCardClick"
+          @editcard="handleEditCard"
+          @deletecard="handleDeleteCard"
+          @updatecard="handleUpdateCard"
+          @addnote="handleAddNote"
+          @updatenote="handleUpdateNote"
+          @deletenote="handleDeleteNote"
+          @columndragstart="handleColumnDragStart"
+          @columndragend="handleColumnDragEnd"
+          @columndrop="handleColumnDrop"
+          @movecard="handleMoveCard"
+        />
 
         <!-- Add Column Button -->
         <button @click="showAddColumnForm = true" class="add-column-button">
@@ -56,12 +85,15 @@
             </button>
 
             <!-- File Context Menu -->
-            <div v-if="showFileMenu" :class="[
-              'file-context-menu',
-              fileMenuPosition === 'top'
-                ? 'file-context-menu-top'
-                : 'file-context-menu-bottom',
-            ]">
+            <div
+              v-if="showFileMenu"
+              :class="[
+                'file-context-menu',
+                fileMenuPosition === 'top'
+                  ? 'file-context-menu-top'
+                  : 'file-context-menu-bottom',
+              ]"
+            >
               <button @click="triggerFileImport" class="context-menu-item">
                 <Icon name="mdi:file-import" class="w-4 h-4" />
                 Import File
@@ -75,16 +107,25 @@
                 Import from URL
               </button>
               <div class="border-t border-gray-200 my-1"></div>
-              <button @click="showStorageRecovery" class="context-menu-item text-orange-600 hover:bg-orange-50">
+              <button
+                @click="showStorageRecovery"
+                class="context-menu-item text-orange-600 hover:bg-orange-50"
+              >
                 <Icon name="mdi:backup-restore" class="w-4 h-4" />
                 Storage Recovery
               </button>
               <div class="border-t border-gray-200 my-1"></div>
-              <button @click="handleClearBoard" class="context-menu-item text-red-600 hover:bg-red-50">
+              <button
+                @click="handleClearBoard"
+                class="context-menu-item text-red-600 hover:bg-red-50"
+              >
                 <Icon name="mdi:delete-sweep" class="w-4 h-4" />
                 Clear Board
               </button>
-              <button @click="handleDefaultBoard" class="context-menu-item text-blue-600 hover:bg-blue-50">
+              <button
+                @click="handleDefaultBoard"
+                class="context-menu-item text-blue-600 hover:bg-blue-50"
+              >
                 <Icon name="mdi:refresh" class="w-4 h-4" />
                 Default Board
               </button>
@@ -99,12 +140,15 @@
             </button>
 
             <!-- Database Context Menu -->
-            <div v-if="showDatabaseMenu" :class="[
-              'database-context-menu',
-              databaseMenuPosition === 'top'
-                ? 'database-context-menu-top'
-                : 'database-context-menu-bottom',
-            ]">
+            <div
+              v-if="showDatabaseMenu"
+              :class="[
+                'database-context-menu',
+                databaseMenuPosition === 'top'
+                  ? 'database-context-menu-top'
+                  : 'database-context-menu-bottom',
+              ]"
+            >
               <button @click="onLoadBoard" class="context-menu-item">
                 <Icon name="mdi:database-import" class="w-4 h-4" />
                 Load Board
@@ -125,36 +169,75 @@
     </footer>
 
     <!-- Hidden file input for import -->
-    <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFileImport" />
+    <input
+      ref="fileInput"
+      type="file"
+      accept=".json"
+      class="hidden"
+      @change="handleFileImport"
+    />
 
     <!-- Add Column Modal -->
-    <UIModal :is-open="showAddColumnForm" title="Add New Column" @close="showAddColumnForm = false" @confirm="addColumn"
-      :show-confirm-button="true" confirm-text="Add Column">
+    <UIModal
+      :is-open="showAddColumnForm"
+      title="Add New Column"
+      @close="showAddColumnForm = false"
+      @confirm="addColumn"
+      :show-confirm-button="true"
+      confirm-text="Add Column"
+    >
       <UIFormGroup label="Column Title">
-        <UIInput v-model="newColumnTitle" type="text" placeholder="e.g., Phone Interview" @keyup.enter="addColumn" />
+        <UIInput
+          v-model="newColumnTitle"
+          type="text"
+          placeholder="e.g., Phone Interview"
+          @keyup.enter="addColumn"
+        />
       </UIFormGroup>
       <UIFormGroup label="Description (Optional)">
-        <UITextarea v-model="newColumnDescription" :rows="3" placeholder="Additional information about this column" />
+        <UITextarea
+          v-model="newColumnDescription"
+          :rows="3"
+          placeholder="Additional information about this column"
+        />
       </UIFormGroup>
     </UIModal>
 
     <!-- Import URL Modal -->
-    <UIModal :is-open="showImportUrlForm" title="Import from URL" @close="showImportUrlForm = false"
-      @confirm="importFromUrl" :show-confirm-button="true" confirm-text="Import">
+    <UIModal
+      :is-open="showImportUrlForm"
+      title="Import from URL"
+      @close="showImportUrlForm = false"
+      @confirm="importFromUrl"
+      :show-confirm-button="true"
+      confirm-text="Import"
+    >
       <UIFormGroup label="URL">
         <UIInput v-model="importUrl" type="url" placeholder="https://..." />
       </UIFormGroup>
     </UIModal>
 
     <!-- Activity History Modal -->
-    <UIModal :is-open="showHistory" title="Activity History" size="2xl" @close="showHistory = false"
-      :show-footer="false">
+    <UIModal
+      :is-open="showHistory"
+      title="Activity History"
+      size="2xl"
+      @close="showHistory = false"
+      :show-footer="false"
+    >
       <div v-if="activityHistory.length === 0">
-        <UIEmptyState icon="mdi:clock-outline" title="No activity history yet"
-          description="Your board activity will appear here as you move cards and add notes." />
+        <UIEmptyState
+          icon="mdi:clock-outline"
+          title="No activity history yet"
+          description="Your board activity will appear here as you move cards and add notes."
+        />
       </div>
       <div v-else class="space-y-6">
-        <div v-for="(group, monthYear) in groupedActivityHistory" :key="monthYear" class="activity-group">
+        <div
+          v-for="(group, monthYear) in groupedActivityHistory"
+          :key="monthYear"
+          class="activity-group"
+        >
           <div class="activity-group-header">
             <h4 class="text-sm font-semibold text-gray-700">
               {{ monthYear }}
@@ -165,19 +248,28 @@
               <div v-for="activity in group" :key="activity.id" class="activity-item">
                 <div class="flex items-start gap-3">
                   <div class="activity-icon">
-                    <Icon :name="(activity as any).type === 'note'
+                    <Icon
+                      :name="(activity as any).type === 'note'
                       ? 'mdi:note-text'
                       : 'mdi:arrow-right'
-                      " class="w-4 h-4 text-gray-400" />
+                      "
+                      class="w-4 h-4 text-gray-400"
+                    />
                   </div>
                   <div class="activity-content">
-                    <div class="text-gray-900 text-sm" v-sanitize-html="activity.description" />
-                    <p class="text-gray-500 text-xs" :class="{
-                      'text-purple-600': cardFormatTime(
-                        activity.timestamp,
-                        nowStore.now
-                      ).includes('in'),
-                    }">
+                    <div
+                      class="text-gray-900 text-sm"
+                      v-sanitize-html="activity.description"
+                    />
+                    <p
+                      class="text-gray-500 text-xs"
+                      :class="{
+                        'text-purple-600': cardFormatTime(
+                          activity.timestamp,
+                          nowStore.now
+                        ).includes('in'),
+                      }"
+                    >
                       {{ formatActivityTime(activity.timestamp, nowStore.now) }}
                     </p>
                   </div>
@@ -190,16 +282,27 @@
     </UIModal>
 
     <!-- Board Selection Modal -->
-    <UIModal :is-open="showBoardSelectionModal" title="Load Board from Database" size="2xl"
-      @close="showBoardSelectionModal = false" :show-footer="false">
+    <UIModal
+      :is-open="showBoardSelectionModal"
+      title="Load Board from Database"
+      size="2xl"
+      @close="showBoardSelectionModal = false"
+      :show-footer="false"
+    >
       <div v-if="userBoards.length === 0">
-        <UIEmptyState icon="mdi:database-off" title="No boards found in database"
-          description="Create a board by saving your current board first." />
+        <UIEmptyState
+          icon="mdi:database-off"
+          title="No boards found in database"
+          description="Create a board by saving your current board first."
+        />
       </div>
       <div v-else class="space-y-3">
-        <div v-for="board in userBoards" :key="board.id"
+        <div
+          v-for="board in userBoards"
+          :key="board.id"
           class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-          @click="loadSelectedBoard(board.id)">
+          @click="loadSelectedBoard(board.id)"
+        >
           <div class="flex items-center justify-between">
             <div>
               <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
@@ -219,12 +322,18 @@
     </UIModal>
 
     <!-- Board Management Modal -->
-    <div v-if="showBoardManagementModal" class="modal-overlay" @click="showBoardManagementModal = false">
+    <div
+      v-if="showBoardManagementModal"
+      class="modal-overlay"
+      @click="showBoardManagementModal = false"
+    >
       <div class="modal-content max-w-4xl" @click.stop>
         <div class="modal-header flex items-center justify-between">
           <h3 class="text-lg font-medium">Manage Database Boards</h3>
-          <button @click="showBoardManagementModal = false"
-            class="text-gray-500 hover:text-gray-700 flex items-center justify-center">
+          <button
+            @click="showBoardManagementModal = false"
+            class="text-gray-500 hover:text-gray-700 flex items-center justify-center"
+          >
             <Icon name="mdi:close" />
           </button>
         </div>
@@ -232,20 +341,31 @@
           <div v-if="userBoards.length === 0" class="text-center text-gray-500 py-8">
             <Icon name="mdi:database-off" class="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <p>No boards found in database</p>
-            <p class="text-sm mt-2">
-              Create a board by saving your current board first.
-            </p>
+            <p class="text-sm mt-2">Create a board by saving your current board first.</p>
           </div>
           <div v-else class="space-y-3">
-            <div v-for="board in userBoards" :key="board.id" class="border border-gray-200 rounded-lg p-4">
+            <div
+              v-for="board in userBoards"
+              :key="board.id"
+              class="border border-gray-200 rounded-lg p-4"
+            >
               <div class="flex items-start justify-between">
                 <div class="flex-1">
                   <div class="flex items-center gap-2 mb-2">
                     <h4 class="font-medium text-gray-900">{{ board.title }}</h4>
                     <div class="flex items-center gap-1">
-                      <Icon v-if="board.is_public" name="mdi:eye" class="w-4 h-4 text-green-600"
-                        title="Publicly shared" />
-                      <Icon v-else name="mdi:eye-off" class="w-4 h-4 text-gray-400" title="Private" />
+                      <Icon
+                        v-if="board.is_public"
+                        name="mdi:eye"
+                        class="w-4 h-4 text-green-600"
+                        title="Publicly shared"
+                      />
+                      <Icon
+                        v-else
+                        name="mdi:eye-off"
+                        class="w-4 h-4 text-gray-400"
+                        title="Private"
+                      />
                     </div>
                   </div>
                   <p class="text-sm text-gray-500">
@@ -266,26 +386,36 @@
                     <!-- Allow View Share Toggle -->
                     <div class="flex items-center gap-2">
                       <label class="flex items-center gap-2 text-sm">
-                        <input type="checkbox" :checked="board.is_public" @change="
+                        <input
+                          type="checkbox"
+                          :checked="board.is_public"
+                          @change="
                           toggleBoardPublicAccess(
                             board.id,
                             ($event.target as HTMLInputElement)?.checked ||
                             false
                           )
-                          " class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                          "
+                          class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
                         <span class="text-gray-700">Allow View Share</span>
                       </label>
                     </div>
 
                     <!-- Share Button -->
                     <div class="flex items-center gap-2">
-                      <button @click="shareBoard(board)"
-                        class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors flex items-center gap-1">
+                      <button
+                        @click="shareBoard(board)"
+                        class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors flex items-center gap-1"
+                      >
                         <Icon name="mdi:share" class="w-4 h-4" />
                         Share
                       </button>
-                      <button v-if="board.is_public && board.share_token" @click="revokeShareToken(board.id)"
-                        class="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors flex items-center gap-1">
+                      <button
+                        v-if="board.is_public && board.share_token"
+                        @click="revokeShareToken(board.id)"
+                        class="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors flex items-center gap-1"
+                      >
                         <Icon name="mdi:link-off" class="w-4 h-4" />
                         Revoke
                       </button>
@@ -295,12 +425,16 @@
 
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 ml-4">
-                  <button @click="loadSelectedBoard(board.id)"
-                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">
+                  <button
+                    @click="loadSelectedBoard(board.id)"
+                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                  >
                     Load
                   </button>
-                  <button @click="deleteBoard(board.id)"
-                    class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors">
+                  <button
+                    @click="deleteBoard(board.id)"
+                    class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                  >
                     Delete
                   </button>
                 </div>
@@ -312,10 +446,18 @@
     </div>
 
     <!-- Save Board Modal -->
-    <UIModal :is-open="showSaveBoardModal" title="Save Board to Database" size="lg" @close="showSaveBoardModal = false"
-      @confirm="saveBoardToDatabase" :show-confirm-button="true" :confirm-disabled="saveType === 'overwrite' &&
-        (!selectedBoardId || userBoards.length === 0)
-        " :confirm-text="saveType === 'new' ? 'Create Board' : 'Overwrite Board'">
+    <UIModal
+      :is-open="showSaveBoardModal"
+      title="Save Board to Database"
+      size="lg"
+      @close="showSaveBoardModal = false"
+      @confirm="saveBoardToDatabase"
+      :show-confirm-button="true"
+      :confirm-disabled="
+        saveType === 'overwrite' && (!selectedBoardId || userBoards.length === 0)
+      "
+      :confirm-text="saveType === 'new' ? 'Create Board' : 'Overwrite Board'"
+    >
       <!-- Save Type Selection -->
       <UIFormGroup label="Save Type">
         <div class="space-y-2">
@@ -331,23 +473,42 @@
       </UIFormGroup>
 
       <!-- New Board Title (only show when creating new) -->
-      <UIFormGroup v-if="saveType === 'new'" label="Board Title" help-text="Leave empty to use creation date as title">
-        <UIInput v-model="newBoardTitle" type="text" :placeholder="new Date().toISOString()" />
+      <UIFormGroup
+        v-if="saveType === 'new'"
+        label="Board Title"
+        help-text="Leave empty to use creation date as title"
+      >
+        <UIInput
+          v-model="newBoardTitle"
+          type="text"
+          :placeholder="new Date().toISOString()"
+        />
       </UIFormGroup>
 
       <!-- Existing Board Selection (only show when overwriting) -->
       <UIFormGroup v-if="saveType === 'overwrite'" label="Select Board to Overwrite">
         <div v-if="userBoards.length === 0">
-          <UIEmptyState icon="mdi:database-off" title="No existing boards found"
-            description="Create a new board instead" icon-size="md" />
+          <UIEmptyState
+            icon="mdi:database-off"
+            title="No existing boards found"
+            description="Create a new board instead"
+            icon-size="md"
+          />
         </div>
-        <UISelect v-else v-model="selectedBoardId" :options="userBoards.map((board) => ({
-          value: board.id,
-          label: `${board.title} (${new Date(
-            board.created_at
-          ).toLocaleDateString()})`,
-        }))
-          " placeholder="Select a board to overwrite..." required />
+        <UISelect
+          v-else
+          v-model="selectedBoardId"
+          :options="
+            userBoards.map((board) => ({
+              value: board.id,
+              label: `${board.title} (${new Date(
+                board.created_at
+              ).toLocaleDateString()})`,
+            }))
+          "
+          placeholder="Select a board to overwrite..."
+          required
+        />
       </UIFormGroup>
     </UIModal>
   </div>
@@ -364,11 +525,9 @@ import { validateAndSanitizeBoardData } from '~/utils/dataValidator'
 import dayjs from '~/utils/dayjs-extend'
 import user from '~/utils/user'
 // import { user } from '#shared/utils/useAuth'
+// const { user } = useAuth
 import nowStore from '~/store/now'
-import {
-  formatTime as cardFormatTime,
-  formatActivityTime,
-} from '~/utils/dayjs-extend'
+import { formatTime as cardFormatTime, formatActivityTime } from '~/utils/dayjs-extend'
 
 // Board state
 const {
@@ -548,11 +707,7 @@ const handleAddNote = async (
   await addNoteToCard(cardId, noteData)
 }
 
-const handleUpdateNote = (
-  cardId: string,
-  noteId: string,
-  noteData: Partial<INote>
-) => {
+const handleUpdateNote = (cardId: string, noteId: string, noteData: Partial<INote>) => {
   updateNoteInCard(cardId, noteId, noteData)
 }
 
@@ -563,10 +718,7 @@ const handleDeleteNote = async (cardId: string, noteId: string) => {
 // Column management
 const addColumn = async () => {
   if (newColumnTitle.value.trim()) {
-    await addColumnToBoard(
-      newColumnTitle.value.trim(),
-      newColumnDescription.value.trim()
-    )
+    await addColumnToBoard(newColumnTitle.value.trim(), newColumnDescription.value.trim())
     newColumnTitle.value = ''
     newColumnDescription.value = ''
     showAddColumnForm.value = false
@@ -664,9 +816,7 @@ const handleBoardDrop = (event: DragEvent) => {
     })
 
     if (closestColumn) {
-      const columnId = (closestColumn as HTMLElement).getAttribute(
-        'data-column-id'
-      )
+      const columnId = (closestColumn as HTMLElement).getAttribute('data-column-id')
       if (columnId && columnId !== dragState.value.sourceColumnId) {
         dropCard(columnId)
       }
@@ -728,14 +878,11 @@ const importFromUrl = async () => {
       showImportUrlForm.value = false
       importUrl.value = ''
     } else {
-      throw new Error(
-        'Invalid board data structure - data could not be sanitized'
-      )
+      throw new Error('Invalid board data structure - data could not be sanitized')
     }
   } catch (error) {
     console.error('Failed to import from URL:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to import from URL: ' + errorMessage)
   }
 }
@@ -880,8 +1027,7 @@ const onLoadBoard = async () => {
     }
   } catch (error) {
     console.error('Error loading boards:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to load boards: ' + errorMessage)
   }
 }
@@ -962,9 +1108,7 @@ const saveBoardToDatabase = async () => {
       }
 
       // Get the selected board to preserve its title
-      const selectedBoard = userBoards.value.find(
-        (b) => b.id === selectedBoardId.value
-      )
+      const selectedBoard = userBoards.value.find((b) => b.id === selectedBoardId.value)
       const boardTitle = selectedBoard?.title || new Date().toISOString()
 
       response = await fetch(`/api/boards/${selectedBoardId.value}`, {
@@ -999,8 +1143,7 @@ const saveBoardToDatabase = async () => {
     saveType.value = 'new'
   } catch (error) {
     console.error('Error saving board:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to save board: ' + errorMessage)
   }
 }
@@ -1030,8 +1173,7 @@ const onManageBoards = async () => {
     }
   } catch (error) {
     console.error('Error loading boards:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to load boards: ' + errorMessage)
   }
 }
@@ -1061,26 +1203,21 @@ const loadSelectedBoard = async (boardId: string) => {
         console.log('Board loaded:', validated)
         showBoardSelectionModal.value = false
       } else {
-        throw new Error(
-          'Invalid board data structure - data could not be sanitized'
-        )
+        throw new Error('Invalid board data structure - data could not be sanitized')
       }
     } else {
       throw new Error(result.message || 'Failed to load board')
     }
   } catch (error) {
     console.error('Error loading board:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to load board: ' + errorMessage)
   }
 }
 
 const deleteBoard = async (boardId: string) => {
   if (
-    !confirm(
-      'Are you sure you want to delete this board? This action cannot be undone.'
-    )
+    !confirm('Are you sure you want to delete this board? This action cannot be undone.')
   ) {
     return
   }
@@ -1108,8 +1245,7 @@ const deleteBoard = async (boardId: string) => {
     }
   } catch (error) {
     console.error('Error deleting board:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to delete board: ' + errorMessage)
   }
 }
@@ -1148,8 +1284,7 @@ const shareBoard = async (board: any) => {
     }
   } catch (error) {
     console.error('Error sharing board:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to share board: ' + errorMessage)
   }
 }
@@ -1189,8 +1324,7 @@ const toggleBoardPublicAccess = async (boardId: string, isPublic: boolean) => {
     }
   } catch (error) {
     console.error('Error toggling board public access:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to update board access: ' + errorMessage)
   }
 }
@@ -1227,8 +1361,7 @@ const revokeShareToken = async (boardId: string) => {
     }
   } catch (error) {
     console.error('Error revoking share token:', error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     alert('Failed to revoke share link: ' + errorMessage)
   }
 }

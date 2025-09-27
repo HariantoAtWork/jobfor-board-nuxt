@@ -4,6 +4,78 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Refactored - 2025-09-26T19:05:47+0200
+- **Session Forwarding Code Refactoring** - Improved code quality and maintainability of authentication proxy system
+  - **Code Structure**: Extracted helper functions and constants for better organisation
+    - **Constants**: Centralised magic strings (`SESSION_COOKIE_NAME`, `USER_AGENT`, `DEFAULT_SESSION_DURATION`)
+    - **Helper Functions**: Created dedicated functions for common operations (`getProxyUrl`, `createDefaultExpiry`, `normaliseSessionData`)
+    - **Separation of Concerns**: Split complex functions into smaller, focused functions
+  - **Enhanced Error Handling**: Improved error handling and logging throughout the module
+    - **Consistent Error Messages**: Standardised error message format with proper context
+    - **Better Error Propagation**: Proper error throwing and catching with meaningful messages
+    - **Improved Logging**: More descriptive console messages with error details
+  - **Code Readability**: Simplified complex conditional logic and improved function structure
+    - **Function Decomposition**: Broke down large functions into smaller, testable units
+    - **Clear Naming**: Used descriptive function and variable names
+    - **Consistent Patterns**: Applied consistent coding patterns throughout the module
+  - **Maintainability**: Made the code easier to understand, test, and modify
+    - **Single Responsibility**: Each function now has a single, clear purpose
+    - **Reduced Complexity**: Simplified nested conditionals and complex logic
+    - **Better Documentation**: Enhanced JSDoc comments for all functions
+
+### Added - 2025-09-26T15:17:23+0200
+- **Proxy Authentication Debugging** - Enhanced debugging capabilities for external auth server integration
+  - **Enhanced Proxy Logging**: Added comprehensive logging to auth proxy runtime handler
+    - **Request Details**: Logs request path, method, and target URL for debugging
+    - **Cookie Tracking**: Logs session cookie presence and all cookie headers
+    - **Response Monitoring**: Logs response status and Set-Cookie headers from external server
+  - **Improved Session Forwarding**: Enhanced logout functionality with multiple endpoint support
+    - **Multiple Endpoints**: Tries different logout endpoints (`/sign-out`, `/signout`, `/logout`)
+    - **Detailed Logging**: Comprehensive logging for each logout attempt and response
+    - **Error Handling**: Better error reporting with response text capture
+    - **Header Forwarding**: Forwards all original request headers to external server
+  - **Debug Session Endpoint**: New `/api/proxy/debug-session` endpoint for session debugging
+    - **Session Analysis**: Compares local vs external session data
+    - **Cookie Inspection**: Detailed cookie information and validation
+    - **Header Debugging**: Complete request header analysis
+    - **External Server Testing**: Direct testing of external auth server connectivity
+
+### Added - 2025-09-26T14:00:56+0200
+- **Sign Out Test Page** - Created comprehensive sign out functionality for testing authentication
+  - **Sign Out Page**: New `/test-auth/signout` page with complete sign out workflow
+    - **Visual States**: Loading, success, error, and initial states with appropriate icons and colours
+    - **Sign Out Button**: Red-themed button to initiate the sign out process
+    - **Success State**: Green confirmation with navigation options to sign in again or check auth status
+    - **Error Handling**: Comprehensive error display with retry functionality
+    - **Navigation Links**: Direct links to sign in, auth status check, and dashboard
+    - **Debug Information**: JSON display of sign out response for development purposes
+    - **API Integration**: Uses existing `/api/auth/logout` POST endpoint for server-side logout
+    - **Consistent Design**: Matches `is-logged-in.vue` styling and layout patterns
+    - **TypeScript Support**: Full type safety with proper interfaces for API responses
+    - **Responsive Layout**: Mobile-friendly design with proper spacing and typography
+  - **Server-Side Logout**: Leverages existing logout API endpoint with proper error handling
+    - Works with both local and proxy authentication modes
+    - Returns consistent response format with success/error status and timestamps
+    - Handles session cookie management and cleanup
+    - Provides user-friendly error messages and retry options
+
+### Added - 2025-09-25T16:30:23+0200
+- **Server-Side Logout Support** - Added server-side logout functionality for proxy authentication
+  - **Server-Side Logout API**: Created `signOut()` function in session forwarding system
+    - Forwards logout requests to external Account Server when proxy is configured
+    - Falls back to local authentication logout when no proxy is set
+    - Handles session cookie forwarding for external server logout
+    - Returns consistent response format for both local and proxy logout
+  - **Logout API Endpoint**: New `/api/auth/logout` POST endpoint for server-side logout
+    - Works with both local and proxy authentication modes
+    - Returns success/error status with timestamps
+    - Proper error handling and logging
+    - Consistent API response format
+  - **Better Auth Integration**: Uses Better Auth's `auth.api.signOut()` for local logout
+    - Leverages Better Auth's `/sign-out` endpoint for proxy logout
+    - Maintains session cookie management across both modes
+    - Supports both `BETTER_AUTH_URL` and `BETTER_AUTH_PROXY_URL` environment variables
+
 ### Fixed - 2025-09-25T15:48:05+0200
 - **Better Auth API Endpoint Correction** - Fixed session forwarding to use correct Better Auth API endpoint
   - **Corrected Endpoint**: Changed from `/api/auth/session` to `/api/auth/get-session`

@@ -44,10 +44,7 @@
                 <div
                   class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center"
                 >
-                  <Icon
-                    name="mdi-light:account"
-                    class="w-6 h-6 text-blue-600"
-                  />
+                  <Icon name="mdi-light:account" class="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
                   <p class="font-medium text-gray-900">
@@ -64,10 +61,7 @@
 
               <form @submit.prevent="handleLogin" class="space-y-4">
                 <div>
-                  <label
-                    for="email"
-                    class="block text-sm font-medium text-gray-700 mb-1"
-                  >
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
                     Email
                   </label>
                   <input
@@ -118,10 +112,7 @@
             </div>
 
             <!-- Sign Up Form -->
-            <div
-              v-if="showSignUp && !user"
-              class="p-4 border-t border-gray-100"
-            >
+            <div v-if="showSignUp && !user" class="p-4 border-t border-gray-100">
               <h3 class="text-lg font-semibold text-gray-900 mb-4">Sign Up</h3>
 
               <form @submit.prevent="handleSignUp" class="space-y-4">
@@ -215,16 +206,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import {
-  useSession,
-  signIn,
-  signOut,
-  signUp,
-} from '@modules/0000-auth/lib/auth.client'
+const { useSession, signIn, signOut, signUp } = useAuth
 
 // Auth state
 const sessionData = useSession()
 const user = computed(() => sessionData.value?.data?.user || null)
+// import user from '~/utils/user'
 const isPending = computed(() => sessionData.value?.isPending || false)
 
 // Menu state
@@ -259,10 +246,7 @@ const closeMenu = () => {
 }
 
 const handleClickOutside = (event: Event) => {
-  if (
-    menuContainer.value &&
-    !menuContainer.value.contains(event.target as Node)
-  ) {
+  if (menuContainer.value && !menuContainer.value.contains(event.target as Node)) {
     closeMenu()
   }
 }
