@@ -3,7 +3,7 @@ import { auth } from '../lib/auth.server'
 // Constants
 const USER_AGENT = 'JobFor-Board-Nuxt/1.0'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
   if (!event.node.req.url?.startsWith('/api/auth')) return
   const baseUrl =
     process.env.BETTER_AUTH_PROXY_URL || process.env.BETTER_AUTH_URL
