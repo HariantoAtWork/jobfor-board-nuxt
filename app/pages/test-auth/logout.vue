@@ -172,7 +172,7 @@ const handleSignOut = async () => {
   error.value = null
 
   try {
-    const response = await $fetch<SignoutResult>('/api/proxy/logout', {
+    const response = await $fetch<SignoutResult>('/api/auth/sign-out', {
       method: 'POST',
     })
 
