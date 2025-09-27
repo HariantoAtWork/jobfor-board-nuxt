@@ -4,6 +4,34 @@ All notable changes to the Job Application Tracker project will be documented in
 
 ## [Unreleased]
 
+### Fixed - 2025-09-27T10:54:10+0200
+- **Foreign Key Constraint Error** - Fixed board creation failure when using proxy authentication
+  - **Root Cause**: Foreign key constraint on `boards.user_id` referencing `user.id` was failing because proxy users don't exist in local user table
+  - **Database Migration**: Created `20250927105410_remove_foreign_key_constraint.cjs` to remove the foreign key constraint
+  - **Migration Applied**: Successfully removed foreign key constraint from boards table
+  - **Schema Update**: Boards table now allows any user_id without requiring local user record
+  - **Proxy Compatibility**: Board creation now works seamlessly with proxy authentication
+  - **User Isolation**: Board operations still maintain user isolation through application logic
+  - **Backward Compatibility**: Local authentication continues to work without changes
+  - **Database Integrity**: User validation now handled at application level instead of database level
+
+### Enhanced - 2025-09-27T03:10:00+0200
+- **Complete Cookie Forwarding** - Enhanced authentication proxy to forward all cookies instead of just session token
+  - **Runtime Auth Handler** (`modules/0000-auth/runtime/auth.js`): Updated to forward all cookies
+    - **getAllCookies() Function**: New helper function to extract and format all cookies from requests
+    - **Complete Cookie Forwarding**: Now forwards all cookies to external auth server, not just session token
+    - **Improved Logging**: Enhanced cookie logging to show both session cookie and all cookies
+    - **Better Error Handling**: Handles cases where no cookies are present
+  - **Session Forwarding** (`modules/0000-auth/lib/sessionForwarding.server.js`): Updated to use all cookies
+    - **getAllCookies() Function**: Added same helper function for consistency
+    - **fetchProxySession()**: Updated to accept and forward all cookies instead of just session token
+    - **signOutFromProxy()**: Updated to forward all cookies for proper logout handling
+    - **Consistent Implementation**: Both session fetching and sign-out now use complete cookie forwarding
+  - **Benefits**: External auth server now receives all necessary cookies for proper authentication
+    - **Better Compatibility**: Works with auth servers that require multiple cookies
+    - **Improved Security**: Maintains all cookie-based security mechanisms
+    - **Enhanced Functionality**: Supports complex authentication flows requiring multiple cookies
+
 ### Refactored - 2025-09-26T19:05:47+0200
 - **Session Forwarding Code Refactoring** - Improved code quality and maintainability of authentication proxy system
   - **Code Structure**: Extracted helper functions and constants for better organisation
