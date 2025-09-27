@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const baseUrl =
     process.env.BETTER_AUTH_PROXY_URL || process.env.BETTER_AUTH_URL
   if (baseUrl) {
-    console.log('----- Better Auth Proxy')
+    console.log('----- Better Auth: Proxy Mode')
     const path = event.node.req.url.replace('/api/auth', `${baseUrl}/api/auth`)
     return proxyRequest(event, path, {
       headers: {
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
       },
     })
   } else {
-    console.log('----- Better Auth Local')
+    console.log('----- Better Auth: Local Mode')
     return auth.handler(toWebRequest(event))
   }
 })

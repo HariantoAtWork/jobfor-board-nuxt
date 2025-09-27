@@ -1,4 +1,4 @@
-import { getServerSession as getProxiedSession } from './sessionForwarding.server.js'
-
-// Re-export the enhanced session getter
-export { getProxiedSession as getServerSession }
+export const getServerSession = async (event) => {
+  const path = '/api/auth/get-session'
+  return await $fetch(path, event)
+}
